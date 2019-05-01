@@ -3,9 +3,7 @@ package org.utbm.gl52.droneSimulator;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.utbm.gl52.droneSimulator.controller.StartPageController;
 import org.utbm.gl52.droneSimulator.view.StartPageView;
-
 import java.io.IOException;
 
 public class Main extends Application {

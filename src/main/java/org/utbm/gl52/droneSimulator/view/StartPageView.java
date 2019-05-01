@@ -2,8 +2,6 @@ package org.utbm.gl52.droneSimulator.view;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import org.utbm.gl52.droneSimulator.controller.StartPageController;
-
 import java.io.IOException;
 
 public class StartPageView {
@@ -17,7 +15,6 @@ public class StartPageView {
         loader.load();
 
         root = loader.getRoot();
-
     }
 
     public Parent getParent(){
