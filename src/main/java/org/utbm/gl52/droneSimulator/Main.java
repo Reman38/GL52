@@ -9,7 +9,6 @@ import java.io.IOException;
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws IOException {
-
         StartPageView startPageView = new StartPageView();
 
         Scene scene = new Scene(startPageView.getParent());
@@ -21,4 +20,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }

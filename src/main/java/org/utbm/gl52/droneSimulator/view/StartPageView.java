@@ -10,10 +10,9 @@ public class StartPageView {
 
     public StartPageView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
-                getClass().getResource("/fxml/StartPage.fxml")
+            getClass().getResource("/fxml/StartPage.fxml")
         );
         loader.load();
-
         root = loader.getRoot();
     }
 
