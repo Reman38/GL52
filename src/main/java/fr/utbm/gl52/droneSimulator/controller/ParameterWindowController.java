@@ -1,9 +1,9 @@
-package org.utbm.gl52.droneSimulator.controller;
+package fr.utbm.gl52.droneSimulator.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import org.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import java.io.IOException;
 
 public class ParameterWindowController extends ControllerHelper{

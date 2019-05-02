@@ -1,24 +1,22 @@
-package org.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-
 import java.io.IOException;
 
-public class SimulationWindowView {
+public class StartPageView {
 
     private Parent root;
 
-    public SimulationWindowView() throws IOException {
+    public StartPageView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
-                getClass().getResource("/fxml/SimulationWindow.fxml")
+            getClass().getResource("/fxml/StartPage.fxml")
         );
         loader.load();
-
         root = loader.getRoot();
     }
 
-    public javafx.scene.Parent getParent(){
+    public Parent getParent(){
         return root;
     }
 }

@@ -1,9 +1,9 @@
-package org.utbm.gl52.droneSimulator;
+package fr.utbm.gl52.droneSimulator;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.utbm.gl52.droneSimulator.view.StartPageView;
+import fr.utbm.gl52.droneSimulator.view.StartPageView;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -13,7 +13,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Drone Siumulator");
+        primaryStage.setTitle("Drone Simulator");
         primaryStage.show();
     }
 

@@ -1,4 +1,4 @@
-package org.utbm.gl52.droneSimulator.controller;
+package fr.utbm.gl52.droneSimulator.controller;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;

@@ -59,7 +59,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <packageName>com.some.pkg</packageName>
-                            <mainClass>org.utbm.gl52.droneSimulator.Main</mainClass>
+                            <mainClass>fr.utbm.gl52.droneSimulator.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
