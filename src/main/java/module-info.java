@@ -1,4 +1,4 @@
-module org.utbm.gl52.droneSimulator {
+module fr.utbm.gl52.droneSimulator {
     requires javafx.controls;
     requires javafx.fxml;
 
