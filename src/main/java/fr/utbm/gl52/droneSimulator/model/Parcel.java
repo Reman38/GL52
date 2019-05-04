@@ -13,6 +13,7 @@ public class Parcel extends SimulationElement {
         setType(type);
         setSpecie(specie);
     }
+
     public Parcel(String type) {
         super();
         setRandsize();
@@ -21,8 +22,18 @@ public class Parcel extends SimulationElement {
         setType(type);
         setRandSpecie();
     }
+
     public Parcel() {
         super();
+    }
+
+    public static Parcel createRandomizedParcel() {
+        Parcel parcel = new Parcel();
+        parcel.randomize();
+        return parcel;
+    }
+
+    public void randomize() {
         setRandsize();
         // après le setSize ! sinon contrainte de zone pas prise en compte
         setRandX();
@@ -34,37 +45,40 @@ public class Parcel extends SimulationElement {
     public int getSize() {
         return size;
     }
+
     public void setSize(int t) {
         size = t;
     }
+
     public void setRandsize() {
         setSize(getRandInt(40, 50));
     }
 
     public String toString() {
         String s =
-            super.toString()
-            +"size: "+getSize()+System.getProperty("line.separator")
-        ;
+                super.toString()
+                        + "size: " + getSize() + System.getProperty("line.separator");
         return s;
     }
 
-//    public void setX(int x) {
+    //    public void setX(int x) {
 //        coord[0] = x;
 //    }
 //    public void setY(int y) {
 //        coord[1] = y;
 //    }
     public void setRandX() {
-        super.setX(getRandFloat(getWidth()/2, getSimulation().getWidth() - getWidth()/2));
+        super.setX(getRandFloat(getWidth() / 2, Simulation.getMainArea().getWidth() - getWidth() / 2));
     }
-    public void setRandY(){
-        super.setY(getRandFloat(getHeight()/2, getSimulation().getHeight() - getHeight()/2));
+
+    public void setRandY() {
+        super.setY(getRandFloat(getHeight() / 2, Simulation.getMainArea().getHeight() - getHeight() / 2));
     }
 
     public float getWidth() {
         return getSize();
     }
+
     public float getHeight() {
         return getSize();
     }
@@ -78,18 +92,20 @@ public class Parcel extends SimulationElement {
     }
 
     public boolean isVegetable() {
-        return getType()=="vegetable";
+        return getType() == "vegetable";
     }
+
     public boolean isMeat() {
-        return getType()=="meat";
+        return getType() == "meat";
     }
 
     public void setRandSpecie() {
         if (isVegetable())
-            specie = getRandValueOf(new String[]{"apple","avocado","banana","beet","bell-pepper","broccoli","brussels-sprouts","cabbage-1","cabbage","carrot","cherry","corn","cucumbers","eggplant","garlic","grapes","hot-pepper","kiwi","lemon","mango","mushrooms","olives","onion","orange","peach","pear","peas","pineapple","pomegranate","potato","pumpkin","radish","raspberries","strawberry","tomato","watermelon"});
+            specie = getRandValueOf(new String[]{"apple", "avocado", "banana", "beet", "bell-pepper", "broccoli", "brussels-sprouts", "cabbage-1", "cabbage", "carrot", "cherry", "corn", "cucumbers", "eggplant", "garlic", "grapes", "hot-pepper", "kiwi", "lemon", "mango", "mushrooms", "olives", "onion", "orange", "peach", "pear", "peas", "pineapple", "pomegranate", "potato", "pumpkin", "radish", "raspberries", "strawberry", "tomato", "watermelon"});
         else if (isMeat())
-            specie = getRandValueOf(new String[]{"bacon","eggs","fish","ham","ribs","sausage-1","sausage-2","sausage-3","sausage","steak"});
+            specie = getRandValueOf(new String[]{"bacon", "eggs", "fish", "ham", "ribs", "sausage-1", "sausage-2", "sausage-3", "sausage", "steak"});
     }
+
     private void setRandType() {
         if (getRandBool())
             setVegetable(true);
@@ -100,6 +116,7 @@ public class Parcel extends SimulationElement {
     public void setVegetable(boolean vegetable) {
         this.type = "vegetable";
     }
+
     public void setMeat(boolean meat) {
         this.type = "meat";
     }

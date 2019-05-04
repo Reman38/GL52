@@ -8,13 +8,11 @@ public class Area extends SimulationElement {
     private float width;
     private float height;
 
-    public Area(float x, float y, float caseWidth, float caseHeight, Area precedentXArea, Area precedentYArea) {
+    public Area(float x, float y, float caseWidth, float caseHeight) {
         setX(x);
         setY(y);
         setWidth(caseWidth);
         setHeight(caseHeight);
-
-        setRandBiome(precedentXArea, precedentYArea);
     }
 
     public float getWidth() {
@@ -57,19 +55,6 @@ public class Area extends SimulationElement {
     }
     private void setRandBiome() {
         Vector<String> biomeAllowed = new Vector<String>();
-
-        if (Board.isDirt())
-            biomeAllowed.add("dirt");
-        if (Board.isGrass())
-            biomeAllowed.add("grass");
-        if (Board.isWater())
-            biomeAllowed.add("water");
-        if (Board.isSand())
-            biomeAllowed.add("sand");
-        if (Board.isSnow())
-            biomeAllowed.add("snow");
-        if (Board.isGap())
-            biomeAllowed.add("gap");
 
         setBiome(getRandStringOf(biomeAllowed));
     }

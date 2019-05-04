@@ -1,6 +1,9 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import java.util.ArrayList;
+
 public class Drone extends SimulationElement {
+    // TODO float array to vector 2/3
     // v2: TODO récupérer zone possible pour les drone ?
 
     // constantes de classe
@@ -13,6 +16,16 @@ public class Drone extends SimulationElement {
 
     public Drone() {
         rotation = 0;
+    }
+
+    public void randomize() {
+        setRandCoord();
+    }
+
+    public static Drone createRandomizedDrone() {
+        Drone drone = new Drone();
+        drone.randomize();
+        return drone;
     }
 
     /*
@@ -96,13 +109,9 @@ public class Drone extends SimulationElement {
     }
 
     // v2
-    public boolean reactToDrone(Drone drone) {
-        Boolean react = false;
-
-        // interact
-        react = true; // TODO conserver ?
-
-        return react;
+    public void exchangeData(Drone drone) {
+//        this.data.merge(drone.data);
+//        drone.data.merge(this.data);
     }
 
     public boolean meet(Drone drone) {
@@ -120,6 +129,35 @@ public class Drone extends SimulationElement {
             react = true;
         }
         return react;
+    }
+
+    public void handleDroneInteraction() {
+        ArrayList<Drone> drones = Simulation.getDrones();
+
+        for (int j = 0; j < drones.size(); ++j) {
+            Drone drone = drones.get(j);
+            if (this != drone && this.detect(drone)) {
+                this.exchangeData(drone);
+            }
+        }
+    }
+
+    public void handleParcelsInteraction() {
+        ArrayList<Parcel> parcels = Simulation.getParcels();
+
+        if (!this.isBusy()) { // dans un premier temps on peut estimer que un drone fait entierement sa livraison avant d'en envisager un autre / avant de lacher un colis pour en prendre une autre // TODO changer le comportement
+            for (int k = 0; k < parcels.size(); ++k) {
+                Parcel parcel = parcels.get(k);
+
+                if (this.detect(parcel)) {
+                    boolean react = this.reactToParcel(parcel);
+                    if (react) {
+                        this.setBusy(true);
+                        break; // si on réagit, (premier de la liste) on arrête les tests pour ce drone TODO améliorer au plus proche dans un premier temps
+                    }
+                }
+            }
+        }
     }
 
     public boolean meet(Parcel f) {

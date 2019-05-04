@@ -6,10 +6,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class SimulationElement {
     // un tableau car si on est amené à faire un environnement 3D, on aura juste à manipuler cet attribut et pas en créer un autre
     // valeur par défault pour ne pas planter getX() et getY() // TODO indiquer la dimension et retourner 0 ou null serait mieux
-    protected float[] coord = {Simulation.getWidth()/2, Simulation.getHeight()/2};
+    protected float[] coord = {Simulation.getMainArea().getWidth()/2, Simulation.getMainArea().getHeight()/2};
 
     protected String picture;
-    public static Simulation simulation; // sert à délimiter les valeurs des coordonnées à la zone du simulation // TODO passer seulement les dimensions
 
     SimulationElement(){}
 
@@ -26,13 +25,6 @@ public abstract class SimulationElement {
     }
     public void setY(float y) {
         coord[1] = y;
-    }
-
-    public static void setSimulation(Simulation v) {
-        simulation = v;
-    }
-    public static Simulation getSimulation() {
-        return simulation;
     }
 
     public String getPicture() {
@@ -119,9 +111,9 @@ public abstract class SimulationElement {
         return Math.abs(getY() - y);
     }
 
-    public static Area getCase(double x, double y){
+    public static Area getArea(double x, double y){
         Area areaReturn = null;
-        for (Area area: Board.getAreas()){
+        for (Area area: Simulation.getAreas()){
             if (
                 x >= area.getX() && x < area.getX()+area.getWidth()
                 && y >= area.getY() && y < area.getY()+area.getHeight()
