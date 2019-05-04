@@ -13,11 +13,11 @@ public abstract class SimulationElement implements SimulationElementInterface {
         return coord[1];
     }
 
-    public void setX(float x) {
+    public void setX(float x) throws OutOfMainAreaException {
         coord[0] = x;
     }
 
-    public void setY(float y) {
+    public void setY(float y) throws OutOfMainAreaException {
         coord[1] = y;
     }
 
