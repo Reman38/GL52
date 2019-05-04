@@ -4,7 +4,7 @@ package fr.utbm.gl52.droneSimulator.model;
 //import Controller.MouseOther;
 import java.util.ArrayList;
 
-public class Vivarium{
+public class Simulation {
     //    private ArrayList<SimulationElement> gameElements = new ArrayList<SimulationElement>();
     private static ArrayList<Animal> animals = new ArrayList<Animal>();
     private static ArrayList<Food> foods = new ArrayList<Food>();
@@ -25,7 +25,7 @@ public class Vivarium{
     }
     public static void setSpeed(float speed) {
         if (speed >= 1)
-            Vivarium.speed = speed;
+            Simulation.speed = speed;
     }
     public static void addToSpeed(int nb) {
         setSpeed(getSpeed()+nb);
@@ -41,14 +41,14 @@ public class Vivarium{
         return height;
     }
     public static void setWidth(int width) {
-        Vivarium.width = width;
+        Simulation.width = width;
     }
     public static void setHeight(int height) {
-        Vivarium.height = height;
+        Simulation.height = height;
     }
 
-    Vivarium() {
-        SimulationElement.setVivarium(this); // rattachement du Pan au manageur graphique
+    Simulation() {
+        SimulationElement.setSimulation(this); // rattachement du Pan au manageur graphique
     }
 
     public static void setAnimals(ArrayList<Animal> as) {
@@ -201,7 +201,7 @@ public class Vivarium{
         return live;
     }
     public static void setLive(boolean live) {
-        Vivarium.live = live;
+        Simulation.live = live;
     }
 
     public static int getTime() {
@@ -209,7 +209,7 @@ public class Vivarium{
     }
 
     public static void setTime(int time) {
-        Vivarium.time = time;
+        Simulation.time = time;
     }
 
     public static void removeAllFoods() {
@@ -217,11 +217,11 @@ public class Vivarium{
     }
 
     public static void setAnimalNumber(int animalNumber) {
-        Vivarium.animalNumber = animalNumber;
+        Simulation.animalNumber = animalNumber;
     }
 
     public static void setFoodNumber(int foodNumber) {
-        Vivarium.foodNumber = foodNumber;
+        Simulation.foodNumber = foodNumber;
     }
 
     public static int getAnimalNumber() {

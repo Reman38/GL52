@@ -26,7 +26,7 @@ public class Drone extends SimulationElement {
     }
 
     public void setRandCoord() {
-        setRandCoord(c); // TODO change Area to ManagedZone
+        setRandCoord(c);
     }
 
     /*
@@ -144,8 +144,8 @@ public class Drone extends SimulationElement {
         boolean aquaticBiome = false;
         boolean terrestrialBiome = false;
 
-        for (Area c : Board.getAreas()) {
-            if (c.getBiome() == "water")
+        for (Area area : Board.getAreas()) {
+            if (area.getBiome() == "water")
                 aquaticBiome = true;
             else
                 terrestrialBiome = true;
@@ -161,12 +161,12 @@ public class Drone extends SimulationElement {
         }
     }
 
-    public boolean isApossibleCase(Area c) {
-        return (c != null && isApossibleBiome(c));
+    public boolean isApossibleCase(Area area) {
+        return (area != null && isApossibleBiome(area));
     }
 
-    public boolean isApossibleBiome(Area c) {
-        return ((c.getBiome() == "water" && isAquatic()) || (c.getBiome() != "gap" && c.getBiome() != "water" && isTerrestrial()));
+    public boolean isApossibleBiome(Area area) {
+        return ((area.getBiome() == "water" && isAquatic()) || (area.getBiome() != "gap" && area.getBiome() != "water" && isTerrestrial()));
     }
 
     /*
@@ -392,7 +392,7 @@ public class Drone extends SimulationElement {
     private void makeBaby() {
         fr.utbm.gl52.droneSimulator.model.Drone a = SpecieManager.getSpecie(getSpecie());
         a.setRandCoord(getCase());
-        Vivarium.getAnimals().add(a);
+        Simulation.getAnimals().add(a);
     }
 
     private Area getCase() {
@@ -433,7 +433,7 @@ public class Drone extends SimulationElement {
     }
 
     public void kill(fr.utbm.gl52.droneSimulator.model.Drone a) {
-        Vivarium.removeAnimal(a);
+        Simulation.removeAnimal(a);
     }
 
     /*
@@ -467,7 +467,7 @@ public class Drone extends SimulationElement {
     }
 
     public void eat(Food f) {
-        Vivarium.removeFood(f);
+        Simulation.removeFood(f);
         // TODO activer ou supprimer grow(aj.getSize());
     }
 

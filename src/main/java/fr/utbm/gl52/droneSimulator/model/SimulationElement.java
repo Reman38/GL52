@@ -6,10 +6,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public abstract class SimulationElement {
     // un tableau car si on est amené à faire un environnement 3D, on aura juste à manipuler cet attribut et pas en créer un autre
     // valeur par défault pour ne pas planter getX() et getY() // TODO indiquer la dimension et retourner 0 ou null serait mieux
-    protected float[] coord = {Vivarium.getWidth()/2, Vivarium.getHeight()/2};
+    protected float[] coord = {Simulation.getWidth()/2, Simulation.getHeight()/2};
 
     protected String picture;
-    public static Vivarium vivarium; // sert à délimiter les valeurs des coordonnées à la zone du vivarium // TODO passer seulement les dimensions
+    public static Simulation simulation; // sert à délimiter les valeurs des coordonnées à la zone du simulation // TODO passer seulement les dimensions
 
     SimulationElement(){}
 
@@ -20,7 +20,7 @@ public abstract class SimulationElement {
     public float getY() {
         return coord[1];
     }
-    // nous laissons la possibilté de positionner un élément en dehors du vivarium, et gérons les cas spécifiques en fonctions des entités manipulées (animal, nourriture, case du board, etc.)
+    // nous laissons la possibilté de positionner un élément en dehors du simulation, et gérons les cas spécifiques en fonctions des entités manipulées (animal, nourriture, case du board, etc.)
     public void setX(float x) {
         coord[0] = x;
     }
@@ -28,11 +28,11 @@ public abstract class SimulationElement {
         coord[1] = y;
     }
 
-    public static void setVivarium(Vivarium v) {
-        vivarium = v;
+    public static void setSimulation(Simulation v) {
+        simulation = v;
     }
-    public static Vivarium getVivarium() {
-        return vivarium;
+    public static Simulation getSimulation() {
+        return simulation;
     }
 
     public String getPicture() {
@@ -121,26 +121,26 @@ public abstract class SimulationElement {
 
     public static Area getCase(double x, double y){
         Area areaReturn = null;
-        for (Area c: Board.getAreas()){
+        for (Area area: Board.getAreas()){
             if (
-                x >= c.getX() && x < c.getX()+c.getWidth()
-                && y >= c.getY() && y < c.getY()+c.getHeight()
+                x >= area.getX() && x < area.getX()+area.getWidth()
+                && y >= area.getY() && y < area.getY()+area.getHeight()
             ){
-                areaReturn = c;
+                areaReturn = area;
             }
         }
         return areaReturn;
     }
 
-    public void setRandX(Area c) {
-        setX(getRandFloat(c.getX()+getWidth() / 2,(c.getX() + c.getWidth())-getWidth() / 2));
+    public void setRandX(Area area) {
+        setX(getRandFloat(area.getX()+getWidth() / 2,(area.getX() + area.getWidth())-getWidth() / 2));
     }
-    public void setRandY(Area c) {
-        setY(getRandFloat(c.getY()+getHeight() / 2, (c.getY() + c.getHeight())-getHeight() / 2));
+    public void setRandY(Area area) {
+        setY(getRandFloat(area.getY()+getHeight() / 2, (area.getY() + area.getHeight())-getHeight() / 2));
     }
-    public void setRandCoord(Area c){
-        setRandX(c);
-        setRandY(c);
+    public void setRandCoord(Area area){
+        setRandX(area);
+        setRandY(area);
     }
 
     public abstract float getWidth();

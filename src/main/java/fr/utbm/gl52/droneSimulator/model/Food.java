@@ -56,10 +56,10 @@ public class Food extends SimulationElement {
 //        coord[1] = y;
 //    }
     public void setRandX() {
-        super.setX(getRandFloat(getWidth()/2, getVivarium().getWidth() - getWidth()/2));
+        super.setX(getRandFloat(getWidth()/2, getSimulation().getWidth() - getWidth()/2));
     }
     public void setRandY(){
-        super.setY(getRandFloat(getHeight()/2, getVivarium().getHeight() - getHeight()/2));
+        super.setY(getRandFloat(getHeight()/2, getSimulation().getHeight() - getHeight()/2));
     }
 
     public float getWidth() {

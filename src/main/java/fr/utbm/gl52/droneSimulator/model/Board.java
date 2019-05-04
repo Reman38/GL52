@@ -18,8 +18,8 @@ public class Board extends SimulationElement {
     public Board(){
         // création du board de jeu, le nombre de case est un multiple de la largeur et de la hauteur du modele pour avoir des areas carrés (raison purement esthétique)
         // 100 pour avoir des areas assez grande
-        numberDivisionX = Vivarium.getWidth()/125;
-        numberDivisionY = Vivarium.getHeight()/125;
+        numberDivisionX = Simulation.getWidth()/125;
+        numberDivisionY = Simulation.getHeight()/125;
 
         float caseWidth = (float) Math.ceil(getWidth()/numberDivisionX);
         float caseHeight = (float) Math.ceil(getHeight()/numberDivisionY);
@@ -46,11 +46,11 @@ public class Board extends SimulationElement {
     }
 
     public float getWidth() {
-        return Vivarium.getWidth();
+        return Simulation.getWidth();
     }
 
     public float getHeight() {
-        return Vivarium.getHeight();
+        return Simulation.getHeight();
     }
 
     public static boolean isDirt() {
@@ -95,8 +95,8 @@ public class Board extends SimulationElement {
 
     public static boolean hasACompatibleBiome(Animal a) {
         Boolean hasACompatibleBiome = false;
-        for (Area c: getAreas()){
-            if (a.isApossibleBiome(c)){
+        for (Area area: getAreas()){
+            if (a.isApossibleBiome(area)){
                 hasACompatibleBiome = true;
                 break;
             }
