@@ -26,7 +26,7 @@ public class Drone extends SimulationElement {
     }
 
     public void setRandCoord() {
-        setRandCoord(c); // TODO change Case to ManagedZone
+        setRandCoord(c); // TODO change Area to ManagedZone
     }
 
     /*
@@ -144,7 +144,7 @@ public class Drone extends SimulationElement {
         boolean aquaticBiome = false;
         boolean terrestrialBiome = false;
 
-        for (Case c : Board.getCases()) {
+        for (Area c : Board.getAreas()) {
             if (c.getBiome() == "water")
                 aquaticBiome = true;
             else
@@ -161,11 +161,11 @@ public class Drone extends SimulationElement {
         }
     }
 
-    public boolean isApossibleCase(Case c) {
+    public boolean isApossibleCase(Area c) {
         return (c != null && isApossibleBiome(c));
     }
 
-    public boolean isApossibleBiome(Case c) {
+    public boolean isApossibleBiome(Area c) {
         return ((c.getBiome() == "water" && isAquatic()) || (c.getBiome() != "gap" && c.getBiome() != "water" && isTerrestrial()));
     }
 
@@ -178,20 +178,20 @@ public class Drone extends SimulationElement {
         float newY = (float) (getY() + (speed * Math.sin(-rotation)));
 
         // récupération des cases sur lequel l'animal serait situé
-        Case newTLCase = getCase(newX - getWidth() / 2, newY - getHeight() / 2);
-        Case newTRCase = getCase(newX + getWidth() / 2, newY - getHeight() / 2);
-        Case newBLCase = getCase(newX - getWidth() / 2, newY + getHeight() / 2);
-        Case newBRCase = getCase(newX + getWidth() / 2, newY + getHeight() / 2);
+        Area newTLArea = getCase(newX - getWidth() / 2, newY - getHeight() / 2);
+        Area newTRArea = getCase(newX + getWidth() / 2, newY - getHeight() / 2);
+        Area newBLArea = getCase(newX - getWidth() / 2, newY + getHeight() / 2);
+        Area newBRArea = getCase(newX + getWidth() / 2, newY + getHeight() / 2);
 
         // est-ce que les cases d'arrivé potentielles ont un biome compatible ?
         int impossiblePlaceNb = 0;
-        if (!isApossibleCase(newTLCase))
+        if (!isApossibleCase(newTLArea))
             ++impossiblePlaceNb;
-        if (!isApossibleCase(newTRCase))
+        if (!isApossibleCase(newTRArea))
             ++impossiblePlaceNb;
-        if (!isApossibleCase(newBLCase))
+        if (!isApossibleCase(newBLArea))
             ++impossiblePlaceNb;
-        if (!isApossibleCase(newBRCase))
+        if (!isApossibleCase(newBRArea))
             ++impossiblePlaceNb;
 
         if (impossiblePlaceNb == 0) {
@@ -199,25 +199,25 @@ public class Drone extends SimulationElement {
             setY(newY);
         } else {
             double angle = 0;
-            if (!isApossibleCase(newTLCase) && !isApossibleCase(newTRCase)) {
+            if (!isApossibleCase(newTLArea) && !isApossibleCase(newTRArea)) {
                 if (rotation < Math.PI / 2) {
                     angle = -Math.PI / 2;
                 } else {
                     angle = Math.PI / 2;
                 }
-            } else if (!isApossibleCase(newBLCase) && !isApossibleCase(newBRCase)) {
+            } else if (!isApossibleCase(newBLArea) && !isApossibleCase(newBRArea)) {
                 if (rotation < 3 * Math.PI / 2) {
                     angle = -Math.PI / 2;
                 } else {
                     angle = Math.PI / 2;
                 }
-            } else if (!isApossibleCase(newTLCase) && !isApossibleCase(newBLCase)) {
+            } else if (!isApossibleCase(newTLArea) && !isApossibleCase(newBLArea)) {
                 if (rotation < Math.PI) {
                     angle = -Math.PI / 2;
                 } else {
                     angle = Math.PI / 2;
                 }
-            } else if (!isApossibleCase(newTRCase) && !isApossibleCase(newBRCase)) {
+            } else if (!isApossibleCase(newTRArea) && !isApossibleCase(newBRArea)) {
                 if (rotation > 3 * Math.PI / 2 && rotation < 2 * Math.PI) {
                     angle = -Math.PI / 2;
                 } else {
@@ -395,7 +395,7 @@ public class Drone extends SimulationElement {
         Vivarium.getAnimals().add(a);
     }
 
-    private Case getCase() {
+    private Area getCase() {
         return SimulationElement.getCase(getX(), getY());
     }
 

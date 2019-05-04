@@ -119,26 +119,26 @@ public abstract class SimulationElement {
         return Math.abs(getY() - y);
     }
 
-    public static Case getCase(double x, double y){
-        Case caseReturn = null;
-        for (Case c: Board.getCases()){
+    public static Area getCase(double x, double y){
+        Area areaReturn = null;
+        for (Area c: Board.getAreas()){
             if (
                 x >= c.getX() && x < c.getX()+c.getWidth()
                 && y >= c.getY() && y < c.getY()+c.getHeight()
             ){
-                caseReturn = c;
+                areaReturn = c;
             }
         }
-        return caseReturn;
+        return areaReturn;
     }
 
-    public void setRandX(Case c) {
+    public void setRandX(Area c) {
         setX(getRandFloat(c.getX()+getWidth() / 2,(c.getX() + c.getWidth())-getWidth() / 2));
     }
-    public void setRandY(Case c) {
+    public void setRandY(Area c) {
         setY(getRandFloat(c.getY()+getHeight() / 2, (c.getY() + c.getHeight())-getHeight() / 2));
     }
-    public void setRandCoord(Case c){
+    public void setRandCoord(Area c){
         setRandX(c);
         setRandY(c);
     }

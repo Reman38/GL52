@@ -2,19 +2,19 @@ package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Vector;
 
-public class Case extends SimulationElement {
+public class Area extends SimulationElement {
     private String biome;
     //TODO envisager factoriser avec animal
     private float width;
     private float height;
 
-    public Case(float x, float y, float caseWidth, float caseHeight, Case precedentXCase, Case precedentYCase) {
+    public Area(float x, float y, float caseWidth, float caseHeight, Area precedentXArea, Area precedentYArea) {
         setX(x);
         setY(y);
         setWidth(caseWidth);
         setHeight(caseHeight);
 
-        setRandBiome(precedentXCase, precedentYCase);
+        setRandBiome(precedentXArea, precedentYArea);
     }
 
     public float getWidth() {
@@ -37,17 +37,17 @@ public class Case extends SimulationElement {
     private void setBiome(String b) {
         biome = b;
     }
-    private void setRandBiome(Case precedentXCase, Case precedentYCase) {
+    private void setRandBiome(Area precedentXArea, Area precedentYArea) {
         if (getRandInt(1,100) > 5){
             if (getRandBool()){
-                if (precedentXCase != null)
-                    setBiome(precedentXCase.getBiome());
+                if (precedentXArea != null)
+                    setBiome(precedentXArea.getBiome());
                 else
                     setRandBiome();
             }
             else{
-                if (precedentYCase != null)
-                    setBiome(precedentYCase.getBiome());
+                if (precedentYArea != null)
+                    setBiome(precedentYArea.getBiome());
                 else
                     setRandBiome();
             }

@@ -13,32 +13,32 @@ public class Board extends SimulationElement {
     private static boolean sand;
     private static boolean gap;
 
-    private static ArrayList<Case> cases = new ArrayList<Case>();
+    private static ArrayList<Area> areas = new ArrayList<Area>();
 
     public Board(){
-        // création du board de jeu, le nombre de case est un multiple de la largeur et de la hauteur du modele pour avoir des cases carrés (raison purement esthétique)
-        // 100 pour avoir des cases assez grande
+        // création du board de jeu, le nombre de case est un multiple de la largeur et de la hauteur du modele pour avoir des areas carrés (raison purement esthétique)
+        // 100 pour avoir des areas assez grande
         numberDivisionX = Vivarium.getWidth()/125;
         numberDivisionY = Vivarium.getHeight()/125;
 
         float caseWidth = (float) Math.ceil(getWidth()/numberDivisionX);
         float caseHeight = (float) Math.ceil(getHeight()/numberDivisionY);
 
-        Case precedentXCase = null;
-        Case precedentYCase = null;
+        Area precedentXArea = null;
+        Area precedentYArea = null;
         for (int i = 0; i < numberDivisionX; ++i) {
             for (int j = 0; j < numberDivisionY; ++j) {
                 if (i>1)
-                    precedentXCase = cases.get((i-1)*numberDivisionY+j-1);
+                    precedentXArea = areas.get((i-1)*numberDivisionY+j-1);
 
-                precedentYCase = new Case(i*caseWidth, j*caseHeight, (i==numberDivisionX-1)?(getWidth()-caseWidth*(numberDivisionX-1)):caseWidth, (j==numberDivisionY-1)?(getHeight()-caseHeight*(numberDivisionY-1)):caseHeight, precedentXCase, precedentYCase);
-                cases.add(precedentYCase);
+                precedentYArea = new Area(i*caseWidth, j*caseHeight, (i==numberDivisionX-1)?(getWidth()-caseWidth*(numberDivisionX-1)):caseWidth, (j==numberDivisionY-1)?(getHeight()-caseHeight*(numberDivisionY-1)):caseHeight, precedentXArea, precedentYArea);
+                areas.add(precedentYArea);
             }
         }
     }
 
-    public static ArrayList<Case> getCases() {
-        return cases;
+    public static ArrayList<Area> getAreas() {
+        return areas;
     }
 
     public static boolean isGap() {
@@ -95,7 +95,7 @@ public class Board extends SimulationElement {
 
     public static boolean hasACompatibleBiome(Animal a) {
         Boolean hasACompatibleBiome = false;
-        for (Case c: getCases()){
+        for (Area c: getAreas()){
             if (a.isApossibleBiome(c)){
                 hasACompatibleBiome = true;
                 break;
