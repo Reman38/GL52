@@ -1,10 +1,6 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-import java.util.Vector;
-
 public class Area extends SimulationElement {
-    private String biome;
-    //TODO envisager factoriser avec animal
     private float width;
     private float height;
 
@@ -27,36 +23,6 @@ public class Area extends SimulationElement {
     }
     public void setHeight(float h) {
         height = h;
-    }
-
-    public String getBiome() {
-        return biome;
-    }
-    private void setBiome(String b) {
-        biome = b;
-    }
-    private void setRandBiome(Area precedentXArea, Area precedentYArea) {
-        if (getRandInt(1,100) > 5){
-            if (getRandBool()){
-                if (precedentXArea != null)
-                    setBiome(precedentXArea.getBiome());
-                else
-                    setRandBiome();
-            }
-            else{
-                if (precedentYArea != null)
-                    setBiome(precedentYArea.getBiome());
-                else
-                    setRandBiome();
-            }
-        }
-        else
-            setRandBiome();
-    }
-    private void setRandBiome() {
-        Vector<String> biomeAllowed = new Vector<String>();
-
-        setBiome(getRandStringOf(biomeAllowed));
     }
 
 }

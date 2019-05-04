@@ -1,11 +1,11 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 public class Parcel extends SimulationElement {
-    private int size;
+    private Integer size;
     private String type;
     private String specie;
 
-    public Parcel(int x, int y, String type, String specie) {
+    public Parcel(Integer x, Integer y, String type, String specie) {
         super();
         setRandsize();
         setX(x);
@@ -42,16 +42,16 @@ public class Parcel extends SimulationElement {
         setRandSpecie();
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
-    public void setSize(int t) {
+    public void setSize(Integer t) {
         size = t;
     }
 
     public void setRandsize() {
-        setSize(getRandInt(40, 50));
+        setSize(RandomHelper.getRandInt(40, 50));
     }
 
     public String toString() {
@@ -61,18 +61,18 @@ public class Parcel extends SimulationElement {
         return s;
     }
 
-    //    public void setX(int x) {
+    //    public void setX(Integer x) {
 //        coord[0] = x;
 //    }
-//    public void setY(int y) {
+//    public void setY(Integer y) {
 //        coord[1] = y;
 //    }
     public void setRandX() {
-        super.setX(getRandFloat(getWidth() / 2, Simulation.getMainArea().getWidth() - getWidth() / 2));
+        super.setX(RandomHelper.getRandFloat(getWidth() / 2, Simulation.getMainArea().getWidth() - getWidth() / 2));
     }
 
     public void setRandY() {
-        super.setY(getRandFloat(getHeight() / 2, Simulation.getMainArea().getHeight() - getHeight() / 2));
+        super.setY(RandomHelper.getRandFloat(getHeight() / 2, Simulation.getMainArea().getHeight() - getHeight() / 2));
     }
 
     public float getWidth() {
@@ -101,13 +101,13 @@ public class Parcel extends SimulationElement {
 
     public void setRandSpecie() {
         if (isVegetable())
-            specie = getRandValueOf(new String[]{"apple", "avocado", "banana", "beet", "bell-pepper", "broccoli", "brussels-sprouts", "cabbage-1", "cabbage", "carrot", "cherry", "corn", "cucumbers", "eggplant", "garlic", "grapes", "hot-pepper", "kiwi", "lemon", "mango", "mushrooms", "olives", "onion", "orange", "peach", "pear", "peas", "pineapple", "pomegranate", "potato", "pumpkin", "radish", "raspberries", "strawberry", "tomato", "watermelon"});
+            specie = RandomHelper.getRandValueOf(new String[]{"apple", "avocado", "banana", "beet", "bell-pepper", "broccoli", "brussels-sprouts", "cabbage-1", "cabbage", "carrot", "cherry", "corn", "cucumbers", "eggplant", "garlic", "grapes", "hot-pepper", "kiwi", "lemon", "mango", "mushrooms", "olives", "onion", "orange", "peach", "pear", "peas", "pineapple", "pomegranate", "potato", "pumpkin", "radish", "raspberries", "strawberry", "tomato", "watermelon"});
         else if (isMeat())
-            specie = getRandValueOf(new String[]{"bacon", "eggs", "fish", "ham", "ribs", "sausage-1", "sausage-2", "sausage-3", "sausage", "steak"});
+            specie = RandomHelper.getRandValueOf(new String[]{"bacon", "eggs", "fish", "ham", "ribs", "sausage-1", "sausage-2", "sausage-3", "sausage", "steak"});
     }
 
     private void setRandType() {
-        if (getRandBool())
+        if (RandomHelper.getRandBool())
             setVegetable(true);
         else
             setMeat(true);

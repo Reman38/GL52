@@ -7,8 +7,8 @@ public class Drone extends SimulationElement {
     // v2: TODO récupérer zone possible pour les drone ?
 
     // constantes de classe
-    static final private int size = 5;
-    static final private int speed = 5;
+    static final private Integer size = 5;
+    static final private Integer speed = 5;
 
     // attributs
     private float rotation; // TODO degres ou radian ?
@@ -37,7 +37,7 @@ public class Drone extends SimulationElement {
         return s;
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
@@ -53,7 +53,7 @@ public class Drone extends SimulationElement {
         return getSize();
     }
 
-    public int getSpeed() {
+    public Integer getSpeed() {
         return speed;
     }
 
@@ -88,12 +88,12 @@ public class Drone extends SimulationElement {
         setRotation(newOrientation);
     }
 
-    public void setRotation(int x, int y) {
+    public void setRotation(Integer x, Integer y) {
         setRotation(angleCalcul(x, y));
     }
 
     public void setRandRotation() {
-        setRotation(getRandInt(0, (int) (2 * Math.PI)));
+        setRotation(RandomHelper.getRandInt(0, (int) (2 * Math.PI)));
     }
 
     public void rotation(float radian) {
@@ -134,7 +134,7 @@ public class Drone extends SimulationElement {
     public void handleDroneInteraction() {
         ArrayList<Drone> drones = Simulation.getDrones();
 
-        for (int j = 0; j < drones.size(); ++j) {
+        for (Integer j = 0; j < drones.size(); ++j) {
             Drone drone = drones.get(j);
             if (this != drone && this.detect(drone)) {
                 this.exchangeData(drone);
@@ -146,7 +146,7 @@ public class Drone extends SimulationElement {
         ArrayList<Parcel> parcels = Simulation.getParcels();
 
         if (!this.isBusy()) { // dans un premier temps on peut estimer que un drone fait entierement sa livraison avant d'en envisager un autre / avant de lacher un colis pour en prendre une autre // TODO changer le comportement
-            for (int k = 0; k < parcels.size(); ++k) {
+            for (Integer k = 0; k < parcels.size(); ++k) {
                 Parcel parcel = parcels.get(k);
 
                 if (this.detect(parcel)) {
@@ -178,9 +178,9 @@ public class Drone extends SimulationElement {
     }
 
     /* v2 */
-    static final private int visibleDistance = 10000; // TODO v2
+    static final private Integer visibleDistance = 10000; // TODO v2
 
-    public int getVisibleDistance() {
+    public Integer getVisibleDistance() {
         return visibleDistance;
     }
 }

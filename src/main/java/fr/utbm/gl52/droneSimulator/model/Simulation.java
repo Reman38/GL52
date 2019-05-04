@@ -9,10 +9,10 @@ public class Simulation {
 
     private static boolean play = true;
 
-    private static int time;
+    private static Integer time;
     private static float speed; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
-    private static int parcelNumber;
-    private static int droneNumber;
+    private static Integer parcelNumber;
+    private static Integer droneNumber;
 
     private static final float mainAreaWidth = 160;
     private static final float mainAreaHeight = 90;
@@ -45,16 +45,16 @@ public class Simulation {
     }
 
     // TODO refactor : width and height are defined by mainArea singleton ones
-//    public static int getWidth() {
+//    public static Integer getWidth() {
 //        return width;
 //    }
-//    public static int getHeight() {
+//    public static Integer getHeight() {
 //        return height;
 //    }
-//    public static void setWidth(int width) {
+//    public static void setWidth(Integer width) {
 //        Simulation.width = width;
 //    }
-//    public static void setHeight(int height) {
+//    public static void setHeight(Integer height) {
 //        Simulation.height = height;
 //    }
 
@@ -94,13 +94,13 @@ public class Simulation {
     }
 
     private static void popParcel() {
-        for (int i = 1; i < getParcelNumber(); ++i) {
+        for (Integer i = 1; i < getParcelNumber(); ++i) {
             parcels.add(Parcel.createRandomizedParcel());
         }
     }
 
     private static void popDrone() {
-        for (int i = 1; i < getDroneNumber(); ++i) {
+        for (Integer i = 1; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone());
         }
     }
@@ -115,7 +115,7 @@ public class Simulation {
                 Parcel.createRandomizedParcel();
 
             // TODO reessayer avec foreach, fix thread conflit
-            for (int i = 0; i < drones.size(); ++i) {
+            for (Integer i = 0; i < drones.size(); ++i) {
                 Drone drone1 = drones.get(i);
                 drone1.handleParcelsInteraction();
                 drone1.handleDroneInteraction();
@@ -143,11 +143,11 @@ public class Simulation {
         Simulation.play = play;
     }
 
-    public static int getTime() {
+    public static Integer getTime() {
         return time;
     }
 
-    public static void setTime(int time) {
+    public static void setTime(Integer time) {
         Simulation.time = time;
     }
 
@@ -155,11 +155,11 @@ public class Simulation {
         return drones;
     }
 
-    public static int getDroneNumber() {
+    public static Integer getDroneNumber() {
         return droneNumber;
     }
 
-    public static void setDroneNumber(int animalNumber) {
+    public static void setDroneNumber(Integer animalNumber) {
         Simulation.droneNumber = animalNumber;
     }
 
@@ -167,11 +167,11 @@ public class Simulation {
         return parcels;
     }
 
-    public static int getParcelNumber() {
+    public static Integer getParcelNumber() {
         return parcelNumber;
     }
 
-    public static void setParcelNumber(int parcelNumber) {
+    public static void setParcelNumber(Integer parcelNumber) {
         Simulation.parcelNumber = parcelNumber;
     }
 
