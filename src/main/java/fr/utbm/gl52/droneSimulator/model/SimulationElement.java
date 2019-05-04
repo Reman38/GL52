@@ -40,8 +40,6 @@ public abstract class SimulationElement {
         return s;
     }
 
-
-
     // TODO À DÉPLACER AILLEURS J'IMAGINE
     public static boolean getRandBool() {
         Boolean bool = false;
