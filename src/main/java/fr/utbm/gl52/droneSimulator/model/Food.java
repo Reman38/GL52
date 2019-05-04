@@ -1,6 +1,6 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-public class Food extends GameElement {
+public class Food extends SimulationElement {
     private int size;
     private String type;
     private String specie;

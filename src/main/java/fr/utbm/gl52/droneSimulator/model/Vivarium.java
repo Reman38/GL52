@@ -5,7 +5,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import java.util.ArrayList;
 
 public class Vivarium{
-    //    private ArrayList<GameElement> gameElements = new ArrayList<GameElement>();
+    //    private ArrayList<SimulationElement> gameElements = new ArrayList<SimulationElement>();
     private static ArrayList<Animal> animals = new ArrayList<Animal>();
     private static ArrayList<Food> foods = new ArrayList<Food>();
     private static Board board;
@@ -48,7 +48,7 @@ public class Vivarium{
     }
 
     Vivarium() {
-        GameElement.setVivarium(this); // rattachement du Pan au manageur graphique
+        SimulationElement.setVivarium(this); // rattachement du Pan au manageur graphique
     }
 
     public static void setAnimals(ArrayList<Animal> as) {

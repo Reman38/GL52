@@ -2,7 +2,7 @@ package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Vector;
 
-public class Case extends GameElement {
+public class Case extends SimulationElement {
     private String biome;
     //TODO envisager factoriser avec animal
     private float width;

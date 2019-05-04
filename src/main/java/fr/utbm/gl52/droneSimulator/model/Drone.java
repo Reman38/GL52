@@ -1,56 +1,17 @@
-package Model;
+package fr.utbm.gl52.droneSimulator.model;
 
-import java.util.ArrayList;
-import java.util.Properties;
+public class Drone extends SimulationElement {
+    // constantes de classe
+    static final private int size = 5;
+    static final private int speed = 5;
+    static final private int visibleDistance = 10000; // TODO v2
 
-public class Animal extends GameElement{
-    private int size;
-    private float orientation = 0; // en radian
-    private int speed;
-    private int visibleDistance;
-    private float visibleAngle;
+    // attributs
+    private float rotation; // TODO degres ou radian ?
+    private boolean busy; // TODO conserver ?
 
-    private String specie;
-    private boolean carnivorous;
-    private boolean herbivorous;
-    private boolean insectivorous;
-
-    private boolean insect;
-
-    private boolean terrestrial;
-    private boolean aquatic;
-
-    private boolean busy;
-    private int sexe;
-    private float fertilityRate;
-
-    /*
-        Constructeurs
-    */
-    public Animal(){}
-    public Animal(Properties prop) {
-        super();
-        setSpecie(prop.getProperty("specie"));
-        setSize(Integer.parseInt(prop.getProperty("size")));
-        setSpeed(Integer.parseInt(prop.getProperty("speed")));
-        setVisibleDistance(Integer.parseInt(prop.getProperty("visibleDistance")));
-        setVisibleAngle(Float.parseFloat(prop.getProperty("visibleAngle")));
-        setRandOrientation();
-        if (prop.getProperty("sexe") != null)
-            setSexe(Integer.parseInt(prop.getProperty("sexe")));
-        else
-            setRandSexe();
-        setCarnivorous(Boolean.parseBoolean(prop.getProperty("carnivorous")));
-        setHerbivorous(Boolean.parseBoolean(prop.getProperty("herbivorous")));
-        setInsectivorous(Boolean.parseBoolean(prop.getProperty("insectivorous")));
-        setTerrestrial(Boolean.parseBoolean(prop.getProperty("terrestrial")));
-        setAquatic(Boolean.parseBoolean(prop.getProperty("aquatic")));
-        setInsect(Boolean.parseBoolean(prop.getProperty("insect")));
-        setFertilityRate(Float.parseFloat(prop.getProperty("fertilityRate")));
-    }
-
-    public void saveSpecie(){
-        SpecieManager.saveSpecie(this);
+    public Drone() {
+        rotation = 0;
     }
 
     /*
@@ -60,52 +21,21 @@ public class Animal extends GameElement{
     public String toString() {
         String s =
                 super.toString()
-                        + "size: " + getSize() + System.getProperty("line.separator")
-                        + "orientation: " + getOrientation() + System.getProperty("line.separator")
-                        + "speed: " + getSpeed() + System.getProperty("line.separator")
-                        + "visibleDistance: " + getVisibleDistance() + System.getProperty("line.separator");
+                        + "rotation: " + getRotation() + System.getProperty("line.separator")
         return s;
     }
 
-    /*
-        Gestion de la position
-        // TODO améliorer pour restreindre aux cases avec des biomes compatiblent
-        // TODO lancer une exeption si le rayon n'est pas défini ou = à 0
-        // TODO envisager séparer les cases terrestrent et aquatiques dans 2 listes dans board
-    */
-    public ArrayList<Case> getPossibleCases(){
-        ArrayList<Case> possibleCases = new ArrayList<Case>();
-        for (Case c:Board.getCases()){
-            if (isApossibleBiome(c))
-                possibleCases.add(c);
-        }
-        return possibleCases;
-    }
     public void setRandCoord() {
-        ArrayList<Case> possibleCases = getPossibleCases();
-
-        Case c = possibleCases.get(getRandInt(0, possibleCases.size()-1));
-        setRandCoord(c);
+        setRandCoord(c); // TODO change Case to ManagedZone
     }
 
     /*
         Gestion de la taille
     */
-    public int getSize() {
-        return size;
-    }
-    public void setSize(int t) {
-        size = t;
-    }
-    public void setRandsize() {
-        setSize(getRandInt(40, 50));
-    }
-    //    public void grow(int s) {
-//        setSize(getSize() + s);
-//    }
     public float getWidth() {
         return getSize();
     }
+
     public float getHeight() {
         return getSize();
     }
@@ -116,9 +46,11 @@ public class Animal extends GameElement{
     public int getSpeed() {
         return speed;
     }
+
     public void setSpeed(int s) {
         speed = s;
     }
+
     public void setRandSpeed() {
         setSpeed(getRandInt(1, 3));
     }
@@ -129,6 +61,7 @@ public class Animal extends GameElement{
     public int getVisibleDistance() {
         return visibleDistance;
     }
+
     public void setVisibleDistance(int vd) {
         visibleDistance = vd;
     }
@@ -142,11 +75,13 @@ public class Animal extends GameElement{
     public float getVisibleAngle() {
         return visibleAngle;
     }
+
     public void setVisibleAngle(float radian) {
         visibleAngle = radian;
     }
+
     public void setRandVisibleAngle() {
-        setVisibleAngle(getRandFloat((float) (Math.PI/8), (float) (2*Math.PI)));
+        setVisibleAngle(getRandFloat((float) (Math.PI / 8), (float) (2 * Math.PI)));
     }
 
     /*
@@ -155,27 +90,34 @@ public class Animal extends GameElement{
     public boolean isCarnivorous() {
         return carnivorous;
     }
+
     public boolean isHerbivorous() {
         return herbivorous;
     }
+
     public boolean isInsectivorous() {
         return insectivorous;
     }
+
     public void setCarnivorous(boolean carnivorous) {
         this.carnivorous = carnivorous;
     }
+
     public void setHerbivorous(boolean herbivorous) {
         this.herbivorous = herbivorous;
     }
+
     public void setInsectivorous(boolean insectivorous) {
         this.insectivorous = insectivorous;
     }
+
     public boolean hasARegime() {
         return isCarnivorous() || isHerbivorous() || isInsectivorous();
     }
+
     public void setRandRegime() {
         while (!hasARegime()) {
-            if (getRandInt(1,100)<=10) {
+            if (getRandInt(1, 100) <= 10) {
                 setCarnivorous(true);
             }
             if (getRandBool()) {
@@ -193,21 +135,23 @@ public class Animal extends GameElement{
     public void setTerrestrial(boolean terrestrial) {
         this.terrestrial = terrestrial;
     }
+
     public void setAquatic(boolean aquatic) {
         this.aquatic = aquatic;
     }
-    public void setRandPossibleBiome() {
-        boolean aquaticBiome=false;
-        boolean terrestrialBiome=false;
 
-        for (Case c:Board.getCases()){
-            if (c.getBiome()=="water")
+    public void setRandPossibleBiome() {
+        boolean aquaticBiome = false;
+        boolean terrestrialBiome = false;
+
+        for (Case c : Board.getCases()) {
+            if (c.getBiome() == "water")
                 aquaticBiome = true;
             else
                 terrestrialBiome = true;
         }
 
-        if (aquaticBiome || terrestrialBiome){
+        if (aquaticBiome || terrestrialBiome) {
             while (!(isTerrestrial() || isAquatic())) {
                 if (terrestrialBiome && getRandBool())
                     setTerrestrial(true);
@@ -216,11 +160,13 @@ public class Animal extends GameElement{
             }
         }
     }
+
     public boolean isApossibleCase(Case c) {
         return (c != null && isApossibleBiome(c));
     }
+
     public boolean isApossibleBiome(Case c) {
-        return ((c.getBiome()=="water" && isAquatic()) || (c.getBiome()!="gap" && c.getBiome()!="water" && isTerrestrial()));
+        return ((c.getBiome() == "water" && isAquatic()) || (c.getBiome() != "gap" && c.getBiome() != "water" && isTerrestrial()));
     }
 
     /*
@@ -228,14 +174,14 @@ public class Animal extends GameElement{
     */
     public void move() {
         // TODO améliorer performances avec une agrégation de currentCase pour retirer les tests si le déplacement ne change pas de case (les 4 ?)
-        float newX = (float) (getX() + (speed * Math.cos(orientation)));
-        float newY = (float) (getY() + (speed * Math.sin(-orientation)));
+        float newX = (float) (getX() + (speed * Math.cos(rotation)));
+        float newY = (float) (getY() + (speed * Math.sin(-rotation)));
 
         // récupération des cases sur lequel l'animal serait situé
-        Case newTLCase = getCase(newX-getWidth()/2, newY-getHeight()/2);
-        Case newTRCase = getCase(newX+getWidth()/2, newY-getHeight()/2);
-        Case newBLCase = getCase(newX-getWidth()/2, newY+getHeight()/2);
-        Case newBRCase = getCase(newX+getWidth()/2, newY+getHeight()/2);
+        Case newTLCase = getCase(newX - getWidth() / 2, newY - getHeight() / 2);
+        Case newTRCase = getCase(newX + getWidth() / 2, newY - getHeight() / 2);
+        Case newBLCase = getCase(newX - getWidth() / 2, newY + getHeight() / 2);
+        Case newBRCase = getCase(newX + getWidth() / 2, newY + getHeight() / 2);
 
         // est-ce que les cases d'arrivé potentielles ont un biome compatible ?
         int impossiblePlaceNb = 0;
@@ -248,55 +194,48 @@ public class Animal extends GameElement{
         if (!isApossibleCase(newBRCase))
             ++impossiblePlaceNb;
 
-        if (impossiblePlaceNb == 0){
+        if (impossiblePlaceNb == 0) {
             setX(newX);
             setY(newY);
-        }
-        else{
+        } else {
             double angle = 0;
-            if(!isApossibleCase(newTLCase) && !isApossibleCase(newTRCase)){
-                if (orientation < Math.PI/2){
-                    angle = -Math.PI/2;
+            if (!isApossibleCase(newTLCase) && !isApossibleCase(newTRCase)) {
+                if (rotation < Math.PI / 2) {
+                    angle = -Math.PI / 2;
+                } else {
+                    angle = Math.PI / 2;
                 }
-                else{
-                    angle = Math.PI/2;
+            } else if (!isApossibleCase(newBLCase) && !isApossibleCase(newBRCase)) {
+                if (rotation < 3 * Math.PI / 2) {
+                    angle = -Math.PI / 2;
+                } else {
+                    angle = Math.PI / 2;
                 }
-            }
-            else if(!isApossibleCase(newBLCase) && !isApossibleCase(newBRCase)){
-                if (orientation < 3 * Math.PI/2){
-                    angle = -Math.PI/2;
+            } else if (!isApossibleCase(newTLCase) && !isApossibleCase(newBLCase)) {
+                if (rotation < Math.PI) {
+                    angle = -Math.PI / 2;
+                } else {
+                    angle = Math.PI / 2;
                 }
-                else{
-                    angle = Math.PI/2;
+            } else if (!isApossibleCase(newTRCase) && !isApossibleCase(newBRCase)) {
+                if (rotation > 3 * Math.PI / 2 && rotation < 2 * Math.PI) {
+                    angle = -Math.PI / 2;
+                } else {
+                    angle = Math.PI / 2;
                 }
-            }
-            else if(!isApossibleCase(newTLCase) && !isApossibleCase(newBLCase)){
-                if (orientation < Math.PI){
-                    angle = -Math.PI/2;
-                }
-                else{
-                    angle = Math.PI/2;
-                }
-            }
-            else if(!isApossibleCase(newTRCase) && !isApossibleCase(newBRCase)){
-                if (orientation > 3*Math.PI/2 && orientation < 2*Math.PI){
-                    angle = -Math.PI/2;
-                }
-                else{
-                    angle = Math.PI/2;
-                }
-            }
-            else
+            } else
                 angle = -Math.PI;
 
             rotation((float) angle);
         }
 
     }
-    public void goTo(GameElement ge) {
+
+    public void goTo(SimulationElement ge) {
         setOrientation(ge, false);
     }
-    public void flee(Animal a) {
+
+    public void flee(fr.utbm.gl52.droneSimulator.model.Drone a) {
         setOrientation(a, true);
     }
 
@@ -306,15 +245,19 @@ public class Animal extends GameElement{
     public String getSpecie() {
         return specie;
     }
+
     public static String getRandSpecie() {
-        return getRandValueOf(new String[]{"angler","anteater","bear","bee","chameleon","crab","crocodile","duck","eagle","elephant","fly","fox","frog","giraffe","globefish","hedgehog","hippopotamus","lion","mosquito","mouse","owl","piranha","rabbit","scorpio","sea-urchin","shark","sheep","skunk","sloth","snake","spider","squid","starfish","tiger","turtle","wasp","wolf"});
+        return getRandValueOf(new String[]{"angler", "anteater", "bear", "bee", "chameleon", "crab", "crocodile", "duck", "eagle", "elephant", "fly", "fox", "frog", "giraffe", "globefish", "hedgehog", "hippopotamus", "lion", "mosquito", "mouse", "owl", "piranha", "rabbit", "scorpio", "sea-urchin", "shark", "sheep", "skunk", "sloth", "snake", "spider", "squid", "starfish", "tiger", "turtle", "wasp", "wolf"});
     }
+
     public void setRandSpecie() {
         specie = getRandSpecie();
     }
+
     public boolean isAquatic() {
         return aquatic;
     }
+
     public boolean isTerrestrial() {
         return terrestrial;
     }
@@ -325,77 +268,82 @@ public class Animal extends GameElement{
     public boolean isBusy() {
         return busy;
     }
+
     public void setBusy(boolean b) {
         busy = b;
     }
 
     /*
-        Gestion de l'orientation
+        Gestion de l'rotation
     */
-    public float getOrientation() {
-        return orientation;
+    public float getRotation() {
+        return rotation;
     }
-    public void setOrientation(float radian) {
-        orientation = simplifyAngle(radian);
+
+    public void setRotation(float radian) {
+        rotation = simplifyAngle(radian);
     }
-    public void setOrientation(GameElement ge, boolean goAwayFrom) {
+
+    public void setOrientation(SimulationElement ge, boolean goAwayFrom) {
         float newOrientation = angleCalcul(ge);
 
         if (goAwayFrom)
             newOrientation += Math.PI;
 
-        setOrientation(newOrientation);
+        setRotation(newOrientation);
     }
+
     public void setOrientation(int x, int y) {
-        setOrientation(angleCalcul(x, y));
+        setRotation(angleCalcul(x, y));
     }
 
     public void setRandOrientation() {
-        setOrientation(getRandInt(0, (int) (2 * Math.PI)));
+        setRotation(getRandInt(0, (int) (2 * Math.PI)));
     }
+
     public void rotation(float radian) {
-        setOrientation(getOrientation() + radian);
+        setRotation(getRotation() + radian);
     }
+
     public void setNaturalOrientation() {
-        if (getRandInt(1,10)<9)
+        if (getRandInt(1, 10) < 9)
             rotation(getRandFloat(-0.075f, 0.075f));
     }
 
     /*
         Fonctions d'interaction
     */
-    public boolean see(GameElement ge) {
+    public boolean see(SimulationElement ge) {
         float angle = angleCalcul(ge);
-        float angleWithTwoPi = (float) (angle+2*Math.PI);
-        float halfVisibleAngle = getVisibleAngle()/2;
-        float angleMin = getOrientation() - halfVisibleAngle;
-        float angleMax = getOrientation() + halfVisibleAngle;
+        float angleWithTwoPi = (float) (angle + 2 * Math.PI);
+        float halfVisibleAngle = getVisibleAngle() / 2;
+        float angleMin = getRotation() - halfVisibleAngle;
+        float angleMax = getRotation() + halfVisibleAngle;
 
         return
                 distanceCalcul(ge) < getVisibleDistance()
-                        &&(
+                        && (
                         (angleMin < angle && angleMax > angle)
                                 ||
                                 (angleMin < angleWithTwoPi && angleMax > angleWithTwoPi)
                 )
                 ;
     }
+
     /*
         Fonctions d'interaction - animaux
     */
     // si dans le rayon et dans l'angle
-    public boolean reactToAnimal(Animal a) {
+    public boolean reactToAnimal(fr.utbm.gl52.droneSimulator.model.Drone a) {
         Boolean react = false;
-        if (isSameSpecie(a)){
+        if (isSameSpecie(a)) {
             goTo(a);
             react = true;
-        }
-        else{
-            if (isPredator(a)){
+        } else {
+            if (isPredator(a)) {
                 goTo(a);
                 react = true;
-            }
-            else if (isPrey(a)){
+            } else if (isPrey(a)) {
                 flee(a);
                 react = true;
             }
@@ -404,75 +352,78 @@ public class Animal extends GameElement{
         return react;
     }
 
-    public boolean meet(Animal a) {
-        return (distanceCalcul(a) < (getSize()/2 + a.getSize()/2));
+    public boolean meet(fr.utbm.gl52.droneSimulator.model.Drone a) {
+        return (distanceCalcul(a) < (getSize() / 2 + a.getSize() / 2));
     }
 
-    public float getLukeToKill(Animal a) {
-        float luke = getSize()/a.getSize();
+    public float getLukeToKill(fr.utbm.gl52.droneSimulator.model.Drone a) {
+        float luke = getSize() / a.getSize();
 
         if (getSize() > a.getSize())
-            luke = 1/luke;
+            luke = 1 / luke;
 
         return luke;
     }
-    public boolean isPredator(Animal a) {
+
+    public boolean isPredator(fr.utbm.gl52.droneSimulator.model.Drone a) {
         boolean isPredator = false;
 
-        if ( (isCarnivorous() && a.isVertebrate()) || (isInsectivorous() && a.isInsect()) )
+        if ((isCarnivorous() && a.isVertebrate()) || (isInsectivorous() && a.isInsect()))
             isPredator = true;
 
         return isPredator;
     }
-    public boolean isPrey(Animal a) {
+
+    public boolean isPrey(fr.utbm.gl52.droneSimulator.model.Drone a) {
         boolean isPrey = false;
 
-        if ( (a.isCarnivorous() && isVertebrate()) || (a.isInsectivorous() && isInsect()) )
+        if ((a.isCarnivorous() && isVertebrate()) || (a.isInsectivorous() && isInsect()))
             isPrey = true;
 
         return isPrey;
     }
-    private void makeLove(Animal a) {
+
+    private void makeLove(fr.utbm.gl52.droneSimulator.model.Drone a) {
         // TODO ajouter dans l'ajout d'eespece et dans la recuperation des caracs d'especes
-        if(getRandInt(1,100) < getFertilityRate())
+        if (getRandInt(1, 100) < getFertilityRate())
             makeBaby();
     }
+
     private void makeBaby() {
-        Animal a = SpecieManager.getSpecie(getSpecie());
+        fr.utbm.gl52.droneSimulator.model.Drone a = SpecieManager.getSpecie(getSpecie());
         a.setRandCoord(getCase());
         Vivarium.getAnimals().add(a);
     }
 
     private Case getCase() {
-        return GameElement.getCase(getX(), getY());
+        return SimulationElement.getCase(getX(), getY());
     }
 
     public int getSexe() {
         return sexe;
     }
+
     private void setSexe(int s) {
         sexe = s;
     }
+
     private void setRandSexe() {
-        setSexe(getRandInt(0,1));
+        setSexe(getRandInt(0, 1));
     }
 
-    public void interact(Animal a) {
-        if (!isSameSpecie(a)){
-            if (isPredator(a)){
+    public void interact(fr.utbm.gl52.droneSimulator.model.Drone a) {
+        if (!isSameSpecie(a)) {
+            if (isPredator(a)) {
 //                if (getRandInt(1,100) < getLukeToKill(a))
                 kill(a);
-            }
-            else if (isPrey(a)){
+            } else if (isPrey(a)) {
 //                if (getRandInt(1,100) < a.getLukeToKill(this))
                 a.kill(this);
-            }
-            else{
+            } else {
                 flee(a);
                 a.flee(this);
             }
-        }
-        else{
+        } else {
             if ((getSexe() == 2 && a.getSexe() == 2) || (getSexe() == 0 && a.getSexe() == 1) || (a.getSexe() == 0 && getSexe() == 1))
                 makeLove(a);
 
@@ -481,9 +432,10 @@ public class Animal extends GameElement{
         }
     }
 
-    public void kill(Animal a) {
+    public void kill(fr.utbm.gl52.droneSimulator.model.Drone a) {
         Vivarium.removeAnimal(a);
     }
+
     /*
         Fonctions d'interaction - nourriture
         TODO faire une action sur l'animal mangeur sur la vie, la taille ou autre
@@ -495,21 +447,25 @@ public class Animal extends GameElement{
                         || (f.getType() == "deadInsecte" && isInsectivorous())
         );
     }
+
     public boolean reactToFood(Food f) {
         Boolean react = false;
-        if (isEatable(f)){
+        if (isEatable(f)) {
             goTo(f);
             react = true;
         }
         return react;
     }
+
     public boolean meet(Food f) {
-        return (distanceCalcul(f) < (getSize()/2 + f.getSize()/2));
+        return (distanceCalcul(f) < (getSize() / 2 + f.getSize() / 2));
     }
+
     public void interact(Food f) {
         if (isEatable(f))
             eat(f);
     }
+
     public void eat(Food f) {
         Vivarium.removeFood(f);
         // TODO activer ou supprimer grow(aj.getSize());
@@ -522,6 +478,7 @@ public class Animal extends GameElement{
     public boolean isInsect() {
         return insect;
     }
+
     public boolean isVertebrate() {
         return !isInsect();
     }
@@ -530,13 +487,14 @@ public class Animal extends GameElement{
         this.insect = insect;
     }
 
-    public boolean isSameSpecie(Animal a) {
+    public boolean isSameSpecie(fr.utbm.gl52.droneSimulator.model.Drone a) {
         return getSpecie().equals(a.getSpecie());
     }
 
     public float getFertilityRate() {
         return fertilityRate;
     }
+
     public void setFertilityRate(float fr) {
         fertilityRate = fr;
     }

@@ -3,7 +3,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
-public abstract class GameElement{
+public abstract class SimulationElement {
     // un tableau car si on est amené à faire un environnement 3D, on aura juste à manipuler cet attribut et pas en créer un autre
     // valeur par défault pour ne pas planter getX() et getY() // TODO indiquer la dimension et retourner 0 ou null serait mieux
     protected float[] coord = {Vivarium.getWidth()/2, Vivarium.getHeight()/2};
@@ -11,7 +11,7 @@ public abstract class GameElement{
     protected String picture;
     public static Vivarium vivarium; // sert à délimiter les valeurs des coordonnées à la zone du vivarium // TODO passer seulement les dimensions
 
-    GameElement(){}
+    SimulationElement(){}
 
     // getteurs
     public float getX() {
@@ -99,13 +99,13 @@ public abstract class GameElement{
         return v.get(getRandInt(0, v.size()-1));
     }
 
-    public double distanceCalcul(GameElement ge) {
+    public double distanceCalcul(SimulationElement ge) {
         return Math.sqrt(Math.pow(distanceXCalcul(ge), 2) + Math.pow(distanceYCalcul(ge), 2));
     }
-    public double distanceXCalcul(GameElement ge) {
+    public double distanceXCalcul(SimulationElement ge) {
         return Math.abs(getX() - ge.getX());
     }
-    public double distanceYCalcul(GameElement ge) {
+    public double distanceYCalcul(SimulationElement ge) {
         return Math.abs(getY() - ge.getY());
     }
 
@@ -160,7 +160,7 @@ public abstract class GameElement{
     }
 
     // ajuste le calcul trigonométrique de l'angle en fonction de la position relative du second objet
-    public float angleCalcul(GameElement ge) {
+    public float angleCalcul(SimulationElement ge) {
         return angleCalcul(ge.getX(), ge.getY());
     }
     public float angleCalcul(float x, float y) {

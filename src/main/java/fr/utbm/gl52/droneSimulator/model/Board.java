@@ -2,7 +2,7 @@ package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.ArrayList;
 
-public class Board extends GameElement{
+public class Board extends SimulationElement {
     private int numberDivisionX;
     private int numberDivisionY;
 
