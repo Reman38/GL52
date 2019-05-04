@@ -20,7 +20,7 @@ public class Drone extends SimulationElement {
         TODO terminer une fois les attributs fixés
     */
     public String toString() {
-        String s = super.toString() + "rotation: " + getRotation() + System.getProperty("line.separator")
+        String s = super.toString() + "rotation: " + getRotation() + System.getProperty("line.separator");
         return s;
     }
 
@@ -42,10 +42,6 @@ public class Drone extends SimulationElement {
 
     public int getSpeed() {
         return speed;
-    }
-
-    public void setSpeed(int s) {
-        speed = s;
     }
 
     public void move() {
@@ -113,57 +109,40 @@ public class Drone extends SimulationElement {
         return (distanceCalcul(drone) < (getSize() / 2 + drone.getSize() / 2));
     }
 
-    public boolean reactToParcel(Parcel f) {
+    public boolean isTransportable(Parcel parcel) {
+        return true; // TODO
+    }
+
+    public boolean reactToParcel(Parcel parcel) {
         Boolean react = false;
-        if (isEatable(f)) {
-            goTo(f);
+        if (isTransportable(parcel)) {
+            goTo(parcel);
             react = true;
         }
         return react;
     }
-
-
-
 
     public boolean meet(Parcel f) {
         return (distanceCalcul(f) < (getSize() / 2 + f.getSize() / 2));
     }
 
     public void interact(Parcel f) {
-        if (isEatable(f))
-            eat(f);
+        if (isTransportable(f))
+            load(f);
     }
 
-    public void eat(Parcel f) {
-        Simulation.removeFood(f);
-        // TODO activer ou supprimer grow(aj.getSize());
+    public void load(Parcel f) {
+        Simulation.removeParcel(f);
     }
 
-    public void setSpecie(String specie) {
-        this.specie = specie;
+    public void charge() {
+        // TODO
     }
-
-    public boolean isSameSpecie(Drone drone) {
-        return getSpecie().equals(drone.getSpecie());
-    }
-
-    public float getFertilityRate() {
-        return fertilityRate;
-    }
-
-    public void setFertilityRate(float fr) {
-        fertilityRate = fr;
-    }
-
 
     /* v2 */
     static final private int visibleDistance = 10000; // TODO v2
 
     public int getVisibleDistance() {
         return visibleDistance;
-    }
-
-    public void setVisibleDistance(int vd) {
-        visibleDistance = vd;
     }
 }

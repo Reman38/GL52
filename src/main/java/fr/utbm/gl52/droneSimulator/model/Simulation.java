@@ -65,7 +65,7 @@ public class Simulation {
 
     public static ArrayList<Parcel> getParcels() { return parcels;}
 
-    public static void removeFood(Parcel f) {
+    public static void removeParcel(Parcel f) {
         parcels.remove(f);
     }
 
