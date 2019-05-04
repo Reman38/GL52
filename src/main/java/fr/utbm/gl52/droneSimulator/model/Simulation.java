@@ -8,7 +8,6 @@ public class Simulation {
     //    private ArrayList<SimulationElement> gameElements = new ArrayList<SimulationElement>();
     private static ArrayList<Animal> animals = new ArrayList<Animal>();
     private static ArrayList<Food> foods = new ArrayList<Food>();
-    private static Board board;
     // on pivilégie un tableau en 16/9 pour la plupart des écrans d'ordinateurs
     private static int width;
     private static int height;
@@ -19,6 +18,9 @@ public class Simulation {
     private static boolean live = true;
     private static int time = 0;
     private static float speed = 17; // assez petit pour un déplacement qui semble plus naturel (contigu et non sacadé)
+
+//    private static Board board;
+    private static Area mainArea;
 
     public static float getSpeed() {
         return speed;
@@ -230,5 +232,9 @@ public class Simulation {
 
     public static int getFoodNumber() {
         return foodNumber;
+    }
+
+    public static Area getMainArea() {
+        return mainArea;
     }
 }
