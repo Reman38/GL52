@@ -1,25 +1,19 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-//import Controller.MouseFood;
-//import Controller.MouseOther;
 import java.util.ArrayList;
 
 public class Simulation {
-    //    private ArrayList<SimulationElement> gameElements = new ArrayList<SimulationElement>();
-    private static ArrayList<Animal> animals = new ArrayList<Animal>();
-    private static ArrayList<Parcel> parcels = new ArrayList<Parcel>();
-    // on pivilégie un tableau en 16/9 pour la plupart des écrans d'ordinateurs
-    private static int width;
-    private static int height;
+    private static ArrayList<Drone> drones = new ArrayList<>();
+    private static ArrayList<Parcel> parcels = new ArrayList<>();
 
-    private static int foodNumber;
-    private static int animalNumber;
+    private static int parcelNumber;
+    private static int droneNumber;
 
-    private static boolean live = true;
+    private static boolean play = true;
     private static int time = 0;
-    private static float speed = 17; // assez petit pour un déplacement qui semble plus naturel (contigu et non sacadé)
+    private static float speed = 17; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
 
-//    private static Board board;
+//    private static Board board; // TODO terminer de refactor
     private static Area mainArea;
 
     public static float getSpeed() {
@@ -53,15 +47,15 @@ public class Simulation {
         SimulationElement.setSimulation(this); // rattachement du Pan au manageur graphique
     }
 
-    public static void setAnimals(ArrayList<Animal> as) {
-        animals = as;
+    public static void setDrones(ArrayList<Drone> as) {
+        drones = as;
     }
 
     public static void setParcels(ArrayList<Parcel> as) {
         parcels = as;
     }
 
-    public static ArrayList<Animal> getAnimals() { return animals;}
+    public static ArrayList<Drone> getDrones() { return drones;}
 
     public static ArrayList<Parcel> getParcels() { return parcels;}
 
@@ -69,35 +63,35 @@ public class Simulation {
         parcels.remove(f);
     }
 
-    public static void removeAnimal(Animal a) {
-        animals.remove(a);
+    public static void removeDrone(Drone a) {
+        drones.remove(a);
     }
 
-    public static void removeAllAnimals() { animals.clear(); }
+    public static void removeAllDrones() { drones.clear(); }
 
     public static void live() {
-        board = new Board();
-        setBoard(board);
+        mainArea = new Board();
+        setBoard(mainArea);
 
-        for (int i=1; i<getAnimalNumber(); ++i){
-            Animal a;
+        for (int i=1; i<getDroneNumber(); ++i){
+            Drone a;
 
             do
-                a = SpecieManager.getSpecie(Animal.getRandSpecie());
+                a = SpecieManager.getSpecie(Drone.getRandSpecie());
             while(!Board.hasACompatibleBiome(a));
 
             a.setRandCoord();
-            animals.add(a);
+            drones.add(a);
         }
 
-        for (int i=1; i<getFoodNumber(); ++i){
+        for (int i = 1; i< getParcelNumber(); ++i){
             parcels.add(new Parcel());
         }
 
         // interactions entre les entités du jeu
         while (true) {
 
-            if (isLive()) {
+            if (isPlay()) {
                 addToTime(1);
                 
                 if (getTime()%1020==0) // toutes les 60 secondes
@@ -106,15 +100,15 @@ public class Simulation {
                 // améliorer pour ne pas faire 2 fois les mêmes tests : tableau dédié et pop animal testé ou break
                 // TODO reessayer avec forach, fix thread conflit
 
-                for (int i = 0; i < animals.size(); ++i) {
-                    Animal ai = animals.get(i);
+                for (int i = 0; i < drones.size(); ++i) {
+                    Drone ai = drones.get(i);
                     ai.setBusy(false);
 
                     // action entre animaux, concerne les deux
                     // interactions prioritaire
                     // j=i car on ne duplique pas les tests a1 avec a2 et a2 avec a1
-                    for (int j = i + 1; j < animals.size(); ++j) {
-                        Animal aj = animals.get(j);
+                    for (int j = i + 1; j < drones.size(); ++j) {
+                        Drone aj = drones.get(j);
 
                         if (ai.meet(aj)) {
                             ai.interact(aj);
@@ -134,14 +128,14 @@ public class Simulation {
                         }
                         if (!ai.isBusy()) {
                             // j=0 car un animal peut voir un autre sans que l'autre ne le voit, il faut donc tester les 2 possibilités
-                            for (int j = 0; j < animals.size(); ++j) {
+                            for (int j = 0; j < drones.size(); ++j) {
                                 if (i != j) {
-                                    Animal aj = animals.get(j);
+                                    Drone aj = drones.get(j);
 
                                     // ne concerne qu'un animal
                                     // interactions secondaire
                                     if (ai.see(aj)) {
-                                        boolean react = ai.reactToAnimal(aj);
+                                        boolean react = ai.reactToDrone(aj);
                                         if (react) {
                                             ai.setBusy(true);
                                             break; // si on réagit, on arrête les tests pour cet animal
@@ -173,8 +167,8 @@ public class Simulation {
                 }
 
                 // modification du modèle
-                for (int i = 0; i < animals.size(); ++i) {
-                    (animals.get(i)).move(); // déplacement des animaux
+                for (int i = 0; i < drones.size(); ++i) {
+                    (drones.get(i)).move(); // déplacement des animaux
                 }
             }
 
@@ -199,11 +193,11 @@ public class Simulation {
         board = p;
     }
 
-    public static boolean isLive() {
-        return live;
+    public static boolean isPlay() {
+        return play;
     }
-    public static void setLive(boolean live) {
-        Simulation.live = live;
+    public static void setPlay(boolean play) {
+        Simulation.play = play;
     }
 
     public static int getTime() {
@@ -218,20 +212,20 @@ public class Simulation {
         parcels.clear();
     }
 
-    public static void setAnimalNumber(int animalNumber) {
-        Simulation.animalNumber = animalNumber;
+    public static void setDroneNumber(int animalNumber) {
+        Simulation.droneNumber = animalNumber;
     }
 
-    public static void setFoodNumber(int foodNumber) {
-        Simulation.foodNumber = foodNumber;
+    public static void setParcelNumber(int parcelNumber) {
+        Simulation.parcelNumber = parcelNumber;
     }
 
-    public static int getAnimalNumber() {
-        return animalNumber;
+    public static int getDroneNumber() {
+        return droneNumber;
     }
 
-    public static int getFoodNumber() {
-        return foodNumber;
+    public static int getParcelNumber() {
+        return parcelNumber;
     }
 
     public static Area getMainArea() {
