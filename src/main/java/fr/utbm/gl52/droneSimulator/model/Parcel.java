@@ -1,11 +1,11 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-public class Food extends SimulationElement {
+public class Parcel extends SimulationElement {
     private int size;
     private String type;
     private String specie;
 
-    public Food(int x, int y, String type, String specie) {
+    public Parcel(int x, int y, String type, String specie) {
         super();
         setRandsize();
         setX(x);
@@ -13,7 +13,7 @@ public class Food extends SimulationElement {
         setType(type);
         setSpecie(specie);
     }
-    public Food(String type) {
+    public Parcel(String type) {
         super();
         setRandsize();
         setRandX();
@@ -21,7 +21,7 @@ public class Food extends SimulationElement {
         setType(type);
         setRandSpecie();
     }
-    public Food() {
+    public Parcel() {
         super();
         setRandsize();
         // après le setSize ! sinon contrainte de zone pas prise en compte

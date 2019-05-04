@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Simulation {
     //    private ArrayList<SimulationElement> gameElements = new ArrayList<SimulationElement>();
     private static ArrayList<Animal> animals = new ArrayList<Animal>();
-    private static ArrayList<Food> foods = new ArrayList<Food>();
+    private static ArrayList<Parcel> parcels = new ArrayList<Parcel>();
     // on pivilégie un tableau en 16/9 pour la plupart des écrans d'ordinateurs
     private static int width;
     private static int height;
@@ -57,16 +57,16 @@ public class Simulation {
         animals = as;
     }
 
-    public static void setFoods(ArrayList<Food> as) {
-        foods = as;
+    public static void setParcels(ArrayList<Parcel> as) {
+        parcels = as;
     }
 
     public static ArrayList<Animal> getAnimals() { return animals;}
 
-    public static ArrayList<Food> getFoods() { return foods;}
+    public static ArrayList<Parcel> getParcels() { return parcels;}
 
-    public static void removeFood(Food f) {
-        foods.remove(f);
+    public static void removeFood(Parcel f) {
+        parcels.remove(f);
     }
 
     public static void removeAnimal(Animal a) {
@@ -91,7 +91,7 @@ public class Simulation {
         }
 
         for (int i=1; i<getFoodNumber(); ++i){
-            foods.add(new Food());
+            parcels.add(new Parcel());
         }
 
         // interactions entre les entités du jeu
@@ -101,7 +101,7 @@ public class Simulation {
                 addToTime(1);
                 
                 if (getTime()%1020==0) // toutes les 60 secondes
-                    foods.add(new Food("vegetable"));
+                    parcels.add(new Parcel("vegetable"));
 
                 // améliorer pour ne pas faire 2 fois les mêmes tests : tableau dédié et pop animal testé ou break
                 // TODO reessayer avec forach, fix thread conflit
@@ -123,8 +123,8 @@ public class Simulation {
                         }
                     }
                     if (!ai.isBusy()) {
-                        for (int k = 0; k < foods.size(); ++k) {
-                            Food f = foods.get(k);
+                        for (int k = 0; k < parcels.size(); ++k) {
+                            Parcel f = parcels.get(k);
 
                             if (ai.meet(f)) {
                                 ai.interact(f);
@@ -152,9 +152,9 @@ public class Simulation {
                                 }
                             }
                             if (!ai.isBusy()) {
-                                for (int k = 0; k < foods.size(); ++k) {
+                                for (int k = 0; k < parcels.size(); ++k) {
                                     if (i != k) {
-                                        Food fk = foods.get(k);
+                                        Parcel fk = parcels.get(k);
 
                                         if (ai.see(fk)) {
                                             boolean react = ai.reactToFood(fk);
@@ -215,7 +215,7 @@ public class Simulation {
     }
 
     public static void removeAllFoods() {
-        foods.clear();
+        parcels.clear();
     }
 
     public static void setAnimalNumber(int animalNumber) {
