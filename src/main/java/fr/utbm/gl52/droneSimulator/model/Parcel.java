@@ -2,7 +2,7 @@ package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Date;
 
-public class Parcel extends SimulationElement {
+public class Parcel extends SquaredSimulationElement {
     private Date popTime;
     private Float weight;
     private Date timeDeliveryGoal;
@@ -25,22 +25,7 @@ public class Parcel extends SimulationElement {
         setRandWeight();
 
         // après le setRandWeight car set la size pour la vue ; sinon contrainte de zone non prise en compte
-        setRandX();
-        setRandY();
-    }
-
-    public String toString() {
-        String s =
-            super.toString() +
-            "weight: " + getWeight() + System.getProperty("line.separator");
-        return s;
-    }
-
-    private void setRandX() {
-        setRandX(Simulation.getMainArea());
-    }
-    private void setRandY() {
-        setRandY(Simulation.getMainArea());
+        setRandCoord(Simulation.getMainArea());
     }
 
     public void setRandWeight() {
@@ -59,5 +44,12 @@ public class Parcel extends SimulationElement {
     }
     public void setWeight(Float weight) {
         this.weight = weight;
+    }
+
+    public String toString() {
+        String s =
+                super.toString() +
+                        "weight: " + getWeight() + System.getProperty("line.separator");
+        return s;
     }
 }

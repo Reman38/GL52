@@ -1,6 +1,6 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-public class MathHelper {
+public abstract class MathHelper {
     public static Float simplifyAngle(Float angle) {
         while (angle > 2 * getPi())
             angle -= 2 * getPi();
@@ -15,5 +15,46 @@ public class MathHelper {
 
     public static Float getPi() {
         return (float) Math.PI;
+    }
+
+    public static double calculDistanceWith(SimulationElement se1, SimulationElement se2) {
+        return Math.sqrt(Math.pow(distanceXCalcul(se1, se2), 2) + Math.pow(distanceYCalcul(se1, se2), 2));
+    }
+
+    private static double distanceXCalcul(SimulationElement se1, SimulationElement se2) {
+        return Math.abs(se1.getX() - se2.getX());
+    }
+
+    private static double distanceYCalcul(SimulationElement se1, SimulationElement se2) {
+        return Math.abs(se1.getY() - se2.getY());
+    }
+
+    public static Float calculAngleWith(SimulationElement se1, SimulationElement se2) {
+        Float YmaY = se1.getY() - se2.getY();
+        Float XmaX = se1.getX() - se2.getX();
+
+        Float angle;
+        if (XmaX == 0) {
+            if (YmaY < 0)
+                angle = (MathHelper.getPi() / 2);
+            else
+                angle = (-MathHelper.getPi() / 2);
+        } else if (YmaY == 0) {
+            if (XmaX < 0)
+                angle = 0f;
+            else
+                angle = MathHelper.getPi();
+        } else {
+            angle = (float) Math.atan(distanceYCalcul(se1, se2) / distanceXCalcul(se1, se2));
+
+            if (XmaX < 0 && YmaY < 0)
+                angle = -angle;
+            else if (XmaX > 0 && YmaY < 0)
+                angle += MathHelper.getPi();
+            else if (XmaX > 0 && YmaY > 0)
+                angle = (MathHelper.getPi() - angle);
+        }
+
+        return MathHelper.simplifyAngle(angle);
     }
 }

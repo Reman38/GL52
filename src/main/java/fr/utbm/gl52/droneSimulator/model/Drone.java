@@ -3,7 +3,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Drone extends SimulationElement {
+public class Drone extends SquaredSimulationElement {
     // constantes
     static final private Float size = 5f;
     static final private Float speed = 5f;
@@ -38,7 +38,7 @@ public class Drone extends SimulationElement {
             private Date popTime;
 
             public ParcelRecord(Parcel p) {
-                coord = p.coord;
+                coord = p.getCoord();
                 popTime = p.getPopTime();
                 lastDetectedDateTime = new Date();
             }
@@ -73,17 +73,6 @@ public class Drone extends SimulationElement {
         setRandCoord();
     }
 
-    public String toString() {
-        String s =
-                super.toString() +
-                        "isBusy: " + (isBusy() ? "busy" : "free") +
-                        "isLoaded: " + (isLoaded() ? "loaded" : "empty") +
-                        "chargeBattery: " + getCharge() + "%" +
-                        "rotate: " + getRotation() +
-                        System.getProperty("line.separator");
-        return s;
-    }
-
     public void move() {
         Float newX = getX() + (speed * (float) Math.cos(rotation));
         Float newY = getY() + (speed * (float) Math.sin(-rotation));
@@ -101,7 +90,7 @@ public class Drone extends SimulationElement {
     }
 
     public Boolean detect(SimulationElement ge) {
-        return calculDistanceWith(ge) < getDetectionRange();
+        return MathHelper.calculDistanceWith(this, ge) < getDetectionRange();
     }
 
     public void exchangeData(Drone drone) {
@@ -148,13 +137,13 @@ public class Drone extends SimulationElement {
         return detectedParcel;
     }
 
-    public Boolean isOverThe(Parcel f) {
-        return calculDistanceWith(f) < getSize() / 2;
+    public Boolean isOverThe(Parcel parcel) {
+        return MathHelper.calculDistanceWith(this, parcel) < getSize() / 2;
     }
 
-    public void interactWith(Parcel f) {
-        if (isTransportable(f))
-            load(f);
+    public void interactWith(Parcel parcel) {
+        if (isTransportable(parcel))
+            load(parcel);
         else 
             callHelp();
     }
@@ -180,12 +169,8 @@ public class Drone extends SimulationElement {
     }
 
     public void setRotation(SimulationElement ge) {
-        Float rotation = calculAngleWith(ge);
+        Float rotation = MathHelper.calculAngleWith(this, ge);
         setRotation(rotation);
-    }
-
-    public void setRotation(Float x, Float y) {
-        setRotation(calculAngleWith(x, y));
     }
 
     public void setRandRotation() {
@@ -201,24 +186,12 @@ public class Drone extends SimulationElement {
         return isLoaded;
     }
 
-    public Float getWidth() {
-        return getSize();
-    }
-
-    public Float getHeight() {
-        return getSize();
-    }
-
     public Float getSpeed() {
         return speed;
     }
 
     public Integer getDetectionRange() {
         return visibleDistance;
-    }
-
-    public Float getSize() {
-        return size;
     }
 
     public Float getCharge() {
@@ -243,5 +216,16 @@ public class Drone extends SimulationElement {
 
     public Float getRotation() {
         return rotation;
+    }
+
+    public String toString() {
+        String s =
+                super.toString() +
+                        "isBusy: " + (isBusy() ? "busy" : "free") +
+                        "isLoaded: " + (isLoaded() ? "loaded" : "empty") +
+                        "chargeBattery: " + getCharge() + "%" +
+                        "rotate: " + getRotation() +
+                        System.getProperty("line.separator");
+        return s;
     }
 }
