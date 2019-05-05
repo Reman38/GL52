@@ -3,18 +3,20 @@ package fr.utbm.gl52.droneSimulator.model;
 import java.util.ArrayList;
 
 public class Drone extends SimulationElement {
-    // TODO float array to vector 2/3
-    // v2: TODO récupérer zone possible pour les drone ?
-
-    // constantes de classe
+    // constantes
     static final private Integer size = 5;
     static final private Integer speed = 5;
 
     // attributs
+    private boolean isBusy;
+    private boolean isLoaded;
+    private float charge;
     private float rotation; // TODO degres ou radian ?
-    private boolean busy; // TODO conserver ?
 
     public Drone() {
+        isBusy = false;
+        isLoaded = false;
+        charge = 100;
         rotation = 0;
     }
 
@@ -67,11 +69,11 @@ public class Drone extends SimulationElement {
     }
 
     public boolean isBusy() {
-        return busy;
+        return isBusy;
     }
 
     public void setBusy(boolean b) {
-        busy = b;
+        isBusy = b;
     }
 
     public float getRotation() {

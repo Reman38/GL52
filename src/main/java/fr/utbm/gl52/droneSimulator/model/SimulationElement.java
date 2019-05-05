@@ -1,7 +1,5 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public abstract class SimulationElement implements SimulationElementInterface {
     protected float[] coord;
 

@@ -6,6 +6,7 @@ public class Simulation {
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
     private static ArrayList<Area> areas = new ArrayList<>();
+    private static MainArea mainArea;
 
     private static boolean play = true;
 
@@ -16,9 +17,6 @@ public class Simulation {
 
     private static final float mainAreaWidth = 160;
     private static final float mainAreaHeight = 90;
-
-    //    private static Board board; // TODO terminer de refactor
-    private static Area mainArea;
 
     public Simulation() {
         time = 0;
