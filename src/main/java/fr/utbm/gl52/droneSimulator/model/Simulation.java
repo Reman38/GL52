@@ -11,27 +11,23 @@ public class Simulation {
     private static Boolean play = true;
 
     private static Integer time;
-    private static Float speed; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
+    private static Float speed;
     private static Integer parcelNumber;
     private static Integer droneNumber;
 
-    private static final Float mainAreaWidth = 160f;
-    private static final Float mainAreaHeight = 90f;
+    private static final Float mainAreaWidth = 16f;
+    private static final Float mainAreaHeight = 9f;
 
     public Simulation() {
         time = 0;
-        speed = 17;
+        speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
         droneNumber = 5;
         parcelNumber = 5;
     }
 
-    public static Float getSpeed() {
-        return speed;
-    }
-
-    public static void setSpeed(Float speed) {
+    public static void setSpeed(Float f) {
         if (speed >= 1)
-            Simulation.speed = speed;
+            speed = f;
     }
 
     public static void addNumberToSpeed(Float nb) {
@@ -39,35 +35,13 @@ public class Simulation {
     }
 
     public static void addPercentageToSpeed(Float nb) {
-        setSpeed(getSpeed() + getSpeed() * nb);
+        setSpeed(getSpeed() * (1 + nb));
     }
 
-    // TODO refactor : width and height are defined by mainArea singleton ones
-//    public static Integer getWidth() {
-//        return width;
-//    }
-//    public static Integer getHeight() {
-//        return height;
-//    }
-//    public static void setWidth(Integer width) {
-//        Simulation.width = width;
-//    }
-//    public static void setHeight(Integer height) {
-//        Simulation.height = height;
-//    }
-
-    public static void setDrones(ArrayList<Drone> drones) {
-        Simulation.drones = drones;
-    }
-
-    public static void setParcels(ArrayList<Parcel> parcels) {
-        Simulation.parcels = parcels;
-    }
 
     public static void removeParcel(Parcel parcel) {
         parcels.remove(parcel);
     }
-
     public static void removeAllParcels() {
         parcels.clear();
     }
@@ -75,17 +49,16 @@ public class Simulation {
     public static void removeDrone(Drone drone) {
         drones.remove(drone);
     }
-
     public static void removeAllDrones() {
         drones.clear();
     }
 
-    private static void setMainArea() {
+    private static void initMainArea() {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
     public static void start() {
-        setMainArea();
+        initMainArea();
         popDrone();
         popParcel();
 //        update();
@@ -120,7 +93,7 @@ public class Simulation {
         }
 
         try {
-            Thread.sleep((int) getSpeed());
+            Thread.sleep(17); // TODO replace with getSpeed
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -130,51 +103,50 @@ public class Simulation {
         setTime(getTime() + 1);
     }
 
+    /* getteurs et setteurs triviaux */
     public static Boolean isPlay() {
         return play;
     }
-
-    public static void setPlay(Boolean play) {
-        Simulation.play = play;
+    public static Float getSpeed() {
+        return speed;
     }
-
     public static Integer getTime() {
         return time;
     }
-
-    public static void setTime(Integer time) {
-        Simulation.time = time;
-    }
-
     public static ArrayList<Drone> getDrones() {
         return drones;
     }
-
     public static Integer getDroneNumber() {
         return droneNumber;
     }
-
-    public static void setDroneNumber(Integer animalNumber) {
-        Simulation.droneNumber = animalNumber;
-    }
-
     public static ArrayList<Parcel> getParcels() {
         return parcels;
     }
-
     public static Integer getParcelNumber() {
         return parcelNumber;
     }
-
-    public static void setParcelNumber(Integer parcelNumber) {
-        Simulation.parcelNumber = parcelNumber;
-    }
-
     public static Area getMainArea() {
         return mainArea;
     }
-
     public static ArrayList<Area> getAreas() {
         return areas;
+    }
+    public static void setPlay(Boolean b) {
+        play = b;
+    }
+    public static void setTime(Integer i) {
+        time = i;
+    }
+    public static void setDroneNumber(Integer i) {
+        droneNumber = i;
+    }
+    public static void setParcelNumber(Integer i) {
+        parcelNumber = i;
+    }
+    public static void setDrones(ArrayList<Drone> drones) {
+        drones = drones;
+    }
+    public static void setParcels(ArrayList<Parcel> parcels) {
+        parcels = parcels;
     }
 }
