@@ -71,6 +71,11 @@ public class Simulation {
     }
 
     private static void popDrone() {
+        //debug purpose
+        Drone drone = new Drone();
+        drone.setX(10.0f);
+        drone.setY(10.0f);
+        drones.add(drone);
         for (Integer i = 1; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone());
         }

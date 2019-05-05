@@ -16,7 +16,7 @@ public class RectangleElement {
         setWidth(se.getWidth());
         setHeight(se.getHeight());
 
-        setProperColor();
+        setProperColor(se);
     }
 
     public Float getX() {
@@ -25,10 +25,6 @@ public class RectangleElement {
 
     public Float getY() {
         return coord[1];
-    }
-
-    public Boolean isFilled() {
-        return isFilled;
     }
 
     public Rectangle getShape() {
@@ -46,22 +42,27 @@ public class RectangleElement {
         return rectangle;
     }
 
-    public void setProperColor() {
-        switch (getClass().getName()){
+    public void setProperColor(SimulationElement se) {
+        switch (se.getClass().getSimpleName()){
             case "Drone":
                 setColor("red");
+                setFilled(true);
                 break;
             case "Parcel":
                 setColor("green");
+                setFilled(true);
                 break;
             case "Areal":
                 setColor("blue");
+                setFilled(false);
                 break;
             case "MainArea":
                 setColor("black");
+                setFilled(false);
                 break;
             default:
-
+                setColor("black");
+                setFilled(true);
                 break;
         }
     }
@@ -90,5 +91,11 @@ public class RectangleElement {
     }
     public String getColor() {
         return color;
+    }
+    public Boolean isFilled() {
+        return isFilled;
+    }
+    public void setFilled(Boolean filled) {
+        isFilled = filled;
     }
 }
