@@ -3,7 +3,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import fr.utbm.gl52.droneSimulator.exception.OutOfMainAreaException;
 
 public abstract class SimulationElement implements SimulationElementInterface {
-    protected Float[] coord;
+    protected Float[] coord = {0f,0f}; // TODO j'aime pas
 
     public static Area getArea(double x, double y) {
         Area areaReturn = null;

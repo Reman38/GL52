@@ -9,7 +9,7 @@ public class ParameterWindowView {
 
     public ParameterWindowView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
-                getClass().getResource("/fxml/ParameterWindow.fxml")
+            getClass().getResource("/fxml/ParameterWindow.fxml")
         );
         loader.load();
 

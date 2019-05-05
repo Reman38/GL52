@@ -1,5 +1,14 @@
 package fr.utbm.gl52.droneSimulator.controller;
 
-public class SimulationWindowController {
+import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
 
+public class SimulationWindowController {
+//    @FXML
+//    public Pane simulationPane;
+
+    public SimulationWindowController() {
+
+//        System.out.println(simulationPane);
+    }
 }
