@@ -5,8 +5,9 @@ import java.util.Date;
 
 public class Drone extends SimulationElement {
     // constantes
-    static final private Integer size = 5;
-    static final private Integer speed = 5;
+    static final private Float size = 5f;
+    static final private Float speed = 5f;
+    static final private Integer visibleDistance = 10000;
 
     // attributs
     private Boolean isBusy;
@@ -14,24 +15,52 @@ public class Drone extends SimulationElement {
     private Float charge;
     private Float rotation; // TODO degres ou radian ?
 
-    ArrayList<DetectedParcel> detectedParcels = new ArrayList<DetectedParcel>();
-    public class DetectedParcel {
-        private Float[] coord; // TODO factoriser avec SimulationElement
-        private Date lastDetectedDateTime;
+    // TODO prise de décision par rapport aux paquets
+    /*
+    if (isTransportable(parcel)) {
+        goTo(parcel);
+        react = true;
+    }
+    if (react) {
+        setBusy(true);
+        break; // si on réagit, (premier de la liste) on arrête les tests pour ce drone TODO améliorer au plus proche dans un premier temps
+    }
+    */
 
-        public DetectedParcel(Parcel p){
-            coord = p.coord;
-            lastDetectedDateTime = new Date();
+    Memory memory;
+
+    public class Memory {
+        ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
+
+        public class ParcelRecord {
+            private Float[] coord; // TODO factoriser avec SimulationElement
+            private Date lastDetectedDateTime;
+            private Date popTime;
+
+            public ParcelRecord(Parcel p) {
+                coord = p.coord;
+                popTime = p.getPopTime();
+                lastDetectedDateTime = new Date();
+            }
+        }
+
+        public void add(Parcel p) {
+            // TODO if not already in the list
+            parcelRecords.add(new ParcelRecord(p));
+        }
+
+        public void remove() {
+            // TODO remove detectedParcel if not detected when flying near it
         }
     }
 
     public Drone() {
         isBusy = false;
         isLoaded = false;
-        charge = 100;
-        rotation = 0;
+        charge = 100f;
+        rotation = 0f;
 
-        routageTable = new ArrayList<DetectedParcel>();
+        memory = new Memory();
     }
 
     public static Drone createRandomizedDrone() {
@@ -49,66 +78,45 @@ public class Drone extends SimulationElement {
                 super.toString() +
                         "isBusy: " + (isBusy() ? "busy" : "free") +
                         "isLoaded: " + (isLoaded() ? "loaded" : "empty") +
-                        "charge: " + getCharge() + "%" +
-                        "rotation: " + getRotation() +
+                        "chargeBattery: " + getCharge() + "%" +
+                        "rotate: " + getRotation() +
                         System.getProperty("line.separator");
         return s;
     }
 
     public void move() {
-        Float newX = (Float) (getX() + (speed * Math.cos(rotation)));
-        Float newY = (Float) (getY() + (speed * Math.sin(-rotation)));
+        Float newX = getX() + (speed * (float) Math.cos(rotation));
+        Float newY = getY() + (speed * (float) Math.sin(-rotation));
+
+        setX(newX);
+        setY(newY);
     }
 
-    public void goTo(SimulationElement ge) {
-        setRotation(ge);
+    public void goTo(SimulationElement se) {
+        setRotation(se);
     }
 
-    public Boolean isBusy() {
-        return isBusy;
+    public void rotate(Float f) {
+        setRotation(getRotation() + f);
     }
 
-    public Float getRotation() {
-        return rotation;
-    }
-
-
-    public void rotation(Float radian) {
-        setRotation(getRotation() + radian);
-    }
-
-    // v2
     public Boolean detect(SimulationElement ge) {
-        Float angle = angleCalcul(ge);
-        Float angleWithTwoPi = (Float) (angle + 2 * Math.PI);
-
-        return distanceCalcul(ge) < getVisibleDistance();
+        return calculDistanceWith(ge) < getDetectionRange();
     }
 
-    // v2
     public void exchangeData(Drone drone) {
-//        data.merge(drone.data);
-//        drone.data.merge(data);
-    }
-
-    public Boolean meet(Drone drone) {
-        return (distanceCalcul(drone) < (getSize() / 2 + drone.getSize() / 2));
+        // TODO appeler à l'aide pour porter un colis
+        // TODO detect drones
+        // TODO detect parcels
+        // data.merge(drone.data);
+        // drone.data.merge(data);
     }
 
     public Boolean isTransportable(Parcel parcel) {
         return true; // TODO
     }
 
-    public Boolean reactToParcel(Parcel parcel) {
-        Boolean react = false;
-        if (isTransportable(parcel)) {
-            goTo(parcel);
-            react = true;
-        }
-        return react;
-    }
-
-    public void handleDroneInteraction() {
+    public void handleDroneInteractions() {
         ArrayList<Drone> drones = Simulation.getDrones();
 
         for (Integer j = 0; j < drones.size(); ++j) {
@@ -119,74 +127,80 @@ public class Drone extends SimulationElement {
         }
     }
 
-    public void handleParcelsInteraction() {
-        ArrayList<Parcel> parcels = Simulation.getParcels();
+    public void handleParcelInteractions() {
+        ArrayList<Parcel> detectedParcels = getDetectedParcel();
 
-        if (!isBusy()) { // dans un premier temps on peut estimer que un drone fait entierement sa livraison avant d'en envisager un autre / avant de lacher un colis pour en prendre une autre // TODO changer le comportement
-            for (Integer k = 0; k < parcels.size(); ++k) {
-                Parcel parcel = parcels.get(k);
-
-                if (detect(parcel)) {
-                    Boolean react = reactToParcel(parcel);
-                    if (react) {
-                        setBusy(true);
-                        break; // si on réagit, (premier de la liste) on arrête les tests pour ce drone TODO améliorer au plus proche dans un premier temps
-                    }
-                }
-            }
+        for (Parcel parcel : detectedParcels) {
+            memory.add(parcel);
         }
     }
 
-    public Boolean meet(Parcel f) {
-        return (distanceCalcul(f) < (getSize() / 2 + f.getSize() / 2));
+    private ArrayList<Parcel> getDetectedParcel() {
+        ArrayList<Parcel> detectedParcel = new ArrayList<>();
+
+        // TODO : améliorer le réalisme, ici on boucle sur les paquets présent dans la simulation..
+        for (Parcel parcel : Simulation.getParcels()) {
+            if (detect(parcel)) {
+                detectedParcel.add(parcel);
+            }
+        }
+
+        return detectedParcel;
     }
 
-    public void interact(Parcel f) {
+    public Boolean isOverThe(Parcel f) {
+        return calculDistanceWith(f) < getSize() / 2;
+    }
+
+    public void interactWith(Parcel f) {
         if (isTransportable(f))
             load(f);
+        else 
+            callHelp();
+    }
+
+    private void callHelp() {
+//        TODO
     }
 
     public void load(Parcel f) {
         Simulation.removeParcel(f);
     }
 
-    public void charge() {
+    public void chargeBattery() {
         // TODO
     }
 
-    /* v2 */
-    static final private Integer visibleDistance = 10000; // TODO v2
-
-
-    public Boolean isLoaded() {
-        return isLoaded;
+    public void land() {
+        // TODO
     }
 
     public void setRotation(Float radian) {
-        rotation = simplifyAngle(radian);
+        rotation = MathHelper.simplifyAngle(radian);
     }
 
     public void setRotation(SimulationElement ge) {
-        Float newOrientation = angleCalcul(ge);
-
-        setRotation(newOrientation);
+        Float rotation = calculAngleWith(ge);
+        setRotation(rotation);
     }
 
-    public void setRotation(Integer x, Integer y) {
-        setRotation(angleCalcul(x, y));
+    public void setRotation(Float x, Float y) {
+        setRotation(calculAngleWith(x, y));
     }
 
     public void setRandRotation() {
-        setRotation(RandomHelper.getRandInt(0, (int) (2 * Math.PI)));
+        setRotation(RandomHelper.getRandFloat(0f, (float) (2 * Math.PI)));
     }
 
     public void setRandCoord() {
         setRandCoord(Simulation.getMainArea());
     }
 
-
-
     /* getteurs et setteurs triviaux */
+    public Boolean isLoaded() {
+        return isLoaded;
+    }
+
     public Float getWidth() {
         return getSize();
     }
@@ -195,15 +209,15 @@ public class Drone extends SimulationElement {
         return getSize();
     }
 
-    public Integer getSpeed() {
+    public Float getSpeed() {
         return speed;
     }
 
-    public Integer getVisibleDistance() {
+    public Integer getDetectionRange() {
         return visibleDistance;
     }
 
-    public Integer getSize() {
+    public Float getSize() {
         return size;
     }
 
@@ -223,4 +237,11 @@ public class Drone extends SimulationElement {
         isBusy = b;
     }
 
+    public Boolean isBusy() {
+        return isBusy;
+    }
+
+    public Float getRotation() {
+        return rotation;
+    }
 }

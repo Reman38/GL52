@@ -1,7 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Vector;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.ThreadLocalRandom; // TODO revoir l'utilité
 
 public class RandomHelper {
     public static Boolean getRandBool() {
@@ -31,7 +31,7 @@ public class RandomHelper {
     }
 
     public static Float getRandFloat(Float min, Float max) {
-        Float nb = 0;
+        Float nb = 0f;
         try {
             nb = min + (max - min) * (ThreadLocalRandom.current().nextFloat());
         } catch (Exception e) {

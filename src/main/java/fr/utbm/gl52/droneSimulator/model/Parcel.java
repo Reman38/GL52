@@ -1,19 +1,18 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-public class Parcel extends SimulationElement {
-    private Integer size;
-    private String type;
-    private Float weight;
-    // TODO delivery time constraint
+import java.util.Date;
 
-    public Parcel(Integer x, Integer y) {
-        super();
-        setX(x);
-        setY(y);
-    }
+public class Parcel extends SimulationElement {
+    private Date popTime;
+    private Float weight;
+    private Date timeDeliveryGoal;
 
     public Parcel() {
-        super();
+    }
+
+    public Parcel(Float x, Float y) {
+        setX(x);
+        setY(y);
     }
 
     public static Parcel createRandomized() {
@@ -25,36 +24,40 @@ public class Parcel extends SimulationElement {
     public void randomize() {
         setRandWeight();
 
-        // après le setRandWeight car set la size pour la vue ; sinon contrainte de zone pas prise en compte
+        // après le setRandWeight car set la size pour la vue ; sinon contrainte de zone non prise en compte
         setRandX();
         setRandY();
-    }
-
-    public Integer getSize() {
-        return size;
-    }
-
-    public void setSize(Integer t) {
-        size = t;
-    }
-
-    public void setRandWeight() {
-        setSize(RandomHelper.getRandInt(0, 20));
     }
 
     public String toString() {
         String s =
             super.toString() +
-            "size: " + getSize() + System.getProperty("line.separator");
+            "weight: " + getWeight() + System.getProperty("line.separator");
         return s;
     }
 
-    // TODO peut etre refactor
-    public Float getWidth() {
-        return getSize();
+    private void setRandX() {
+        setRandX(Simulation.getMainArea());
+    }
+    private void setRandY() {
+        setRandY(Simulation.getMainArea());
     }
 
-    public Float getHeight() {
-        return getSize();
+    public void setRandWeight() {
+        setWeight(RandomHelper.getRandFloat(0f, 20f));
+    }
+
+    /* getteurs et setteurs triviaux */
+    public Date getPopTime() {
+        return popTime;
+    }
+    public void setPopTime(Date popTime) {
+        this.popTime = popTime;
+    }
+    public Float getWeight() {
+        return weight;
+    }
+    public void setWeight(Float weight) {
+        this.weight = weight;
     }
 }

@@ -112,12 +112,10 @@ public class Simulation {
             if (getTime() % 1020 == 0) // toutes les 60 secondes
                 Parcel.createRandomized();
 
-            // TODO reessayer avec foreach, fix thread conflit
-            for (Integer i = 0; i < drones.size(); ++i) {
-                Drone drone1 = drones.get(i);
-                drone1.handleParcelsInteraction();
-                drone1.handleDroneInteraction();
-                drone1.move();
+            for (Drone drone : drones) {
+                drone.handleParcelInteractions();
+                drone.handleDroneInteractions();
+                drone.move();
             }
         }
 
