@@ -1,21 +1,23 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-public abstract class SimulationElement implements SimulationElementInterface {
-    protected float[] coord;
+import fr.utbm.gl52.droneSimulator.exception.OutOfMainAreaException;
 
-    public float getX() {
+public abstract class SimulationElement implements SimulationElementInterface {
+    protected Float[] coord;
+
+    public Float getX() {
         return coord[0];
     }
 
-    public float getY() {
+    public Float getY() {
         return coord[1];
     }
 
-    public void setX(float x) throws OutOfMainAreaException {
+    public void setX(Float x) throws OutOfMainAreaException {
         coord[0] = x;
     }
 
-    public void setY(float y) throws OutOfMainAreaException {
+    public void setY(Float y) throws OutOfMainAreaException {
         coord[1] = y;
     }
 
@@ -36,15 +38,15 @@ public abstract class SimulationElement implements SimulationElementInterface {
         return Math.abs(getY() - ge.getY());
     }
 
-    public double distanceCalcul(float x, float y) {
+    public double distanceCalcul(Float x, Float y) {
         return Math.sqrt(Math.pow(distanceXCalcul(x), 2) + Math.pow(distanceYCalcul(y), 2));
     }
 
-    private double distanceXCalcul(float x) {
+    private double distanceXCalcul(Float x) {
         return Math.abs(getX() - x);
     }
 
-    private double distanceYCalcul(float y) {
+    private double distanceYCalcul(Float y) {
         return Math.abs(getY() - y);
     }
 
@@ -78,7 +80,7 @@ public abstract class SimulationElement implements SimulationElementInterface {
         Fonctions mathématiques
     */
     // Modulo
-    protected float simplifyAngle(float angle) {
+    protected Float simplifyAngle(Float angle) {
         // angle %= 2*Math.PI;
         while (angle > 2 * Math.PI)
             angle -= 2 * Math.PI;
@@ -88,40 +90,40 @@ public abstract class SimulationElement implements SimulationElementInterface {
     }
 
     // ajuste le calcul trigonométrique de l'angle en fonction de la position relative du second objet
-    public float angleCalcul(SimulationElement ge) {
+    public Float angleCalcul(SimulationElement ge) {
         return angleCalcul(ge.getX(), ge.getY());
     }
 
-    public float angleCalcul(float x, float y) {
-        float YmaY = getY() - y;
-        float XmaX = getX() - x;
+    public Float angleCalcul(Float x, Float y) {
+        Float YmaY = getY() - y;
+        Float XmaX = getX() - x;
 
-        float angle;
+        Float angle;
         if (XmaX == 0) {
             if (YmaY < 0)
-                angle = (float) (Math.PI / 2);
+                angle = (Float) (Math.PI / 2);
             else
-                angle = (float) (-Math.PI / 2);
+                angle = (Float) (-Math.PI / 2);
         } else if (YmaY == 0) {
             if (XmaX < 0)
                 angle = 0;
             else
-                angle = (float) Math.PI;
+                angle = (Float) Math.PI;
         } else {
-            angle = (float) Math.atan(distanceYCalcul(y) / distanceXCalcul(x));
+            angle = (Float) Math.atan(distanceYCalcul(y) / distanceXCalcul(x));
 
             if (XmaX < 0 && YmaY < 0)
                 angle = -angle;
             else if (XmaX > 0 && YmaY < 0)
                 angle += Math.PI;
             else if (XmaX > 0 && YmaY > 0)
-                angle = (float) (Math.PI - angle);
+                angle = (Float) (Math.PI - angle);
         }
 
         return simplifyAngle(angle);
     }
 
-    public static float degreeToRadian(Integer degres) {
-        return (float) Math.toRadians(degres);
+    public static Float degreeToRadian(Integer degres) {
+        return (Float) Math.toRadians(degres);
     }
 }

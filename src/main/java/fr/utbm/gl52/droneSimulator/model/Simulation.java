@@ -8,15 +8,15 @@ public class Simulation {
     private static ArrayList<Area> areas = new ArrayList<>();
     private static MainArea mainArea;
 
-    private static boolean play = true;
+    private static Boolean play = true;
 
     private static Integer time;
-    private static float speed; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
+    private static Float speed; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
     private static Integer parcelNumber;
     private static Integer droneNumber;
 
-    private static final float mainAreaWidth = 160;
-    private static final float mainAreaHeight = 90;
+    private static final Float mainAreaWidth = 160f;
+    private static final Float mainAreaHeight = 90f;
 
     public Simulation() {
         time = 0;
@@ -25,20 +25,20 @@ public class Simulation {
         parcelNumber = 5;
     }
 
-    public static float getSpeed() {
+    public static Float getSpeed() {
         return speed;
     }
 
-    public static void setSpeed(float speed) {
+    public static void setSpeed(Float speed) {
         if (speed >= 1)
             Simulation.speed = speed;
     }
 
-    public static void addNumberToSpeed(float nb) {
+    public static void addNumberToSpeed(Float nb) {
         setSpeed(getSpeed() + nb);
     }
 
-    public static void addPercentageToSpeed(float nb) {
+    public static void addPercentageToSpeed(Float nb) {
         setSpeed(getSpeed() + getSpeed() * nb);
     }
 
@@ -81,19 +81,19 @@ public class Simulation {
     }
 
     private static void setMainArea() {
-        mainArea = new Area(0, 0, mainAreaWidth, mainAreaHeight);
+        mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
     public static void start() {
         setMainArea();
         popDrone();
         popParcel();
-        update();
+//        update();
     }
 
     private static void popParcel() {
         for (Integer i = 1; i < getParcelNumber(); ++i) {
-            parcels.add(Parcel.createRandomizedParcel());
+            parcels.add(Parcel.createRandomized());
         }
     }
 
@@ -110,7 +110,7 @@ public class Simulation {
 
             // TODO refactor plutot que ce commentaire (qui a l'air faux au passage)
             if (getTime() % 1020 == 0) // toutes les 60 secondes
-                Parcel.createRandomizedParcel();
+                Parcel.createRandomized();
 
             // TODO reessayer avec foreach, fix thread conflit
             for (Integer i = 0; i < drones.size(); ++i) {
@@ -126,18 +126,17 @@ public class Simulation {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     private static void incrementTime() {
         setTime(getTime() + 1);
     }
 
-    public static boolean isPlay() {
+    public static Boolean isPlay() {
         return play;
     }
 
-    public static void setPlay(boolean play) {
+    public static void setPlay(Boolean play) {
         Simulation.play = play;
     }
 

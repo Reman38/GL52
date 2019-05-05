@@ -4,7 +4,7 @@ import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomHelper {
-    public static boolean getRandBool() {
+    public static Boolean getRandBool() {
         Boolean bool = false;
         if (getRandInt(0, 1) == 1) {
             bool = true;
@@ -30,8 +30,8 @@ public class RandomHelper {
         return nb;
     }
 
-    public static float getRandFloat(float min, float max) {
-        float nb = 0;
+    public static Float getRandFloat(Float min, Float max) {
+        Float nb = 0;
         try {
             nb = min + (max - min) * (ThreadLocalRandom.current().nextFloat());
         } catch (Exception e) {
