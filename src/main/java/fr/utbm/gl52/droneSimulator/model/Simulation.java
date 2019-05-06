@@ -1,13 +1,11 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Simulation {
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
     private static ArrayList<Area> areas = new ArrayList<>();
-    private static List<ChargingStation> chargingStations = new ArrayList<>();
     private static MainArea mainArea;
 
     private static Boolean play = true;
@@ -16,27 +14,20 @@ public class Simulation {
     private static Float speed;
     private static Integer parcelNumber;
     private static Integer droneNumber;
-    private static  Integer chargingStation;
-    private static Float[] droneWeightCapacity = new Float[2];
-    private static Integer[] droneBatteryCapacity = new Integer[2];
 
     private static final Float mainAreaWidth = 16000f;
     private static final Float mainAreaHeight = 9000f;
 
     public Simulation() {
         time = 0;
-        setSpeed(10f); // pour voir les éléments se déplacer
-        droneNumber = 1;
+        speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
+        droneNumber = 10;
         parcelNumber = 10;
-        chargingStation = 5;
-        droneWeightCapacity[0] = 0.1f;
-        droneWeightCapacity[1] = 20f;
-        droneBatteryCapacity[0] = 5;
-        droneBatteryCapacity[1] = 55;
     }
 
     public static void setSpeed(Float f) {
-        speed = f; // TODO ajouter controle et exception
+        if (speed >= 1)
+            speed = f;
     }
 
     public static void addNumberToSpeed(Float nb) {
@@ -66,14 +57,12 @@ public class Simulation {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
-    public static void start() {
+    public void start() {
         initMainArea();
-        //popAreas();
-        //popParcels();
-        //popDrones();
-        //popChargingStations();
-        //Thread simulationThread = new Thread(Simulation::update);
-        //simulationThread.start();
+        popAreas();
+        popParcels();
+        popDrones();
+//        update();
     }
 
     private static void popParcels() {
@@ -83,7 +72,7 @@ public class Simulation {
     }
 
     private static void popAreas() {
-        for (Integer i = 0; i < 1; ++i) {
+        for (Integer i = 0; i < 3; ++i) {
             areas.add(Area.createRandomized());
         }
     }
@@ -94,35 +83,26 @@ public class Simulation {
         }
     }
 
-    private static void popChargingStations(){
-        for (Integer i = 0; i < getChargingStationNumber(); ++i) {
-            chargingStations.add(ChargingStation.createRandomizedChargingStations());
-        }
-    }
-
     public static void update() {
+        // interactions entre les entités du jeu
         while (isPlay()) {
-            // TODO ajust
             incrementTime();
 
-            // TODO refactor
-//            if (getTime() % 60 == 0){
-//                System.out.println("ok");
-//                parcels.add(Parcel.createRandomized());
-//            }
+            // TODO refactor plutot que ce commentaire (qui a l'air faux au passage)
+            if (getTime() % 1020 == 0) // toutes les 60 secondes
+                Parcel.createRandomized();
 
             for (Drone drone : drones) {
                 drone.handleParcelInteractions();
                 drone.handleDroneInteractions();
                 drone.move();
             }
+        }
 
-            try {
-                Thread.sleep((long) (1000 / 30 / getSpeed())); // TODO déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
-//              Thread.sleep(0, (int) (1000000000 / 30 / getSpeed()));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            Thread.sleep(17); // TODO replace with getSpeed
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
@@ -175,25 +155,5 @@ public class Simulation {
     }
     public static void setParcels(ArrayList<Parcel> parcels) {
         parcels = parcels;
-    }
-
-    public static List<ChargingStation> getChargingStations() {
-        return chargingStations;
-    }
-
-    public static Integer getChargingStationNumber() {
-        return chargingStation;
-    }
-
-    public static void setChargingStationNumber(Integer chargingStation) {
-        Simulation.chargingStation = chargingStation;
-    }
-
-    public static Float[] getDroneWeightCapacity() {
-        return droneWeightCapacity;
-    }
-
-    public static Integer[] getDroneBatteryCapacity() {
-        return droneBatteryCapacity;
     }
 }
