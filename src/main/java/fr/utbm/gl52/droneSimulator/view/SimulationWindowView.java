@@ -4,6 +4,7 @@ import fr.utbm.gl52.droneSimulator.model.Area;
 import fr.utbm.gl52.droneSimulator.model.Drone;
 import fr.utbm.gl52.droneSimulator.model.Parcel;
 import fr.utbm.gl52.droneSimulator.model.Simulation;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;

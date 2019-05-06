@@ -1,4 +1,4 @@
-package fr.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import javafx.scene.shape.Shape;
 
@@ -9,7 +9,6 @@ interface GraphicElementInterface {
     void isFilled(boolean b);
     void setColor(String s);
 
-    Float[] getCoord();
     Boolean isFilled();
     Float getHeight();
     Float getWidth();

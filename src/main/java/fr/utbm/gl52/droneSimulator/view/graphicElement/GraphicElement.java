@@ -1,22 +1,29 @@
-package fr.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import fr.utbm.gl52.droneSimulator.exception.NotSupportedValueException;
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 
 public abstract class GraphicElement implements GraphicElementInterface{
-    private Float[] coord;
-    private Float width;
-    private Float height;
+    private Float[] coord = new Float[2];
+//    private Float[] coord = {0f,0f}; / TODO remove
+    public Float width;
+    public Float height;
     private String color;
     private Boolean isFilled;
 
     private static Float coefficient;
 
     public GraphicElement(SimulationElement se) {
-        setCoord(se.getCoord());
-        setWidth(se.getWidth());
-        setHeight(se.getHeight());
     }
+
+    public void setX(Float x) {
+        coord[0] = x;
+    }
+
+    public void setY(Float y) {
+        coord[1] = y;
+    }
+
 
     public static void setCoefficient(Float _coefficient) throws NotSupportedValueException{
         if (_coefficient <= 0)
@@ -61,9 +68,6 @@ public abstract class GraphicElement implements GraphicElementInterface{
         return coord[1] * getCoefficient();
     }
 
-    public Float[] getCoord() {
-        return coord;
-    }
     public String getColor() {
         return color;
     }

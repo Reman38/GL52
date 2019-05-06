@@ -1,11 +1,9 @@
-package fr.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 import javafx.scene.shape.Rectangle;
 
-public class ParcelGraphicElement extends RectangleElement{
-    private static Float fixCoefficient = 200f;
-
+public class ParcelGraphicElement extends CenteredAndErgonomicGraphicElement {
     public ParcelGraphicElement(SimulationElement se) {
         super(se);
 
@@ -16,10 +14,6 @@ public class ParcelGraphicElement extends RectangleElement{
     public static Rectangle getShape(SimulationElement se) {
         ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(se);
         return parcelGraphicElement.getShape();
-    }
-
-    public static Float getFixCoefficient() {
-        return fixCoefficient;
     }
 
     public Float getHeight() {

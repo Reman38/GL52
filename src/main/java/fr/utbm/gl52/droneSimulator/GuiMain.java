@@ -12,11 +12,12 @@ public class GuiMain extends Application {
 
     public void start(Stage primaryStage) throws IOException {
 //        StartPageView startPageView = new StartPageView();
-        SimulationWindowView startPageView = new SimulationWindowView(); // pour dev
+        SimulationWindowView startPageView = new SimulationWindowView(); // TODO remove dev
 
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drone Simulator");
+        primaryStage.setMaximized(true); // TODO remove dev
         primaryStage.show();
     }
 

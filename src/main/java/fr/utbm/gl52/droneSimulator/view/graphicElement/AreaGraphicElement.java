@@ -1,9 +1,9 @@
-package fr.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 import javafx.scene.shape.Rectangle;
 
-public class AreaGraphicElement extends RectangleElement{
+public class AreaGraphicElement extends RectangleGraphicElement {
     public AreaGraphicElement(SimulationElement se) {
         super(se);
 

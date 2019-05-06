@@ -1,4 +1,4 @@
-package fr.utbm.gl52.droneSimulator.view;
+package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 import javafx.scene.paint.Color;
@@ -6,9 +6,13 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
-public abstract class RectangleElement extends GraphicElement{
-    public RectangleElement(SimulationElement se) {
+public abstract class RectangleGraphicElement extends GraphicElement{
+    public RectangleGraphicElement(SimulationElement se) {
         super(se);
+
+        setCoord(se.getCoord());
+        setWidth(se.getWidth());
+        setHeight(se.getHeight());
     }
 
     public Shape setShapeStyle(Shape shape) {

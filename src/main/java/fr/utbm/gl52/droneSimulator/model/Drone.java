@@ -32,7 +32,7 @@ public class Drone extends SquaredSimulationElement {
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
 
         public class ParcelRecord {
-            private Float[] coord; // TODO factoriser avec SimulationElement
+            private Float[] coord = new Float[2];;
             private Date lastDetectedDateTime;
             private Date popTime;
 
@@ -54,7 +54,7 @@ public class Drone extends SquaredSimulationElement {
     }
 
     public Drone() {
-        super(1f);
+        super(.8f);
 
         isBusy = false;
         isLoaded = false;
