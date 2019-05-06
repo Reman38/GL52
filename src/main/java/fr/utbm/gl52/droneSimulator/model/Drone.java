@@ -3,22 +3,20 @@ package fr.utbm.gl52.droneSimulator.model;
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 18f/30f; // 41 mph, 65 kmh, 18ms
-    static final private Integer visibleDistance = 100000;
+    static final private Float speed = 5f;
+    static final private Integer visibleDistance = 10000;
 
     // attributs
     private Boolean isBusy;
     private Boolean isLoaded;
-    private Integer batteryCapacity;
+    private Float charge;
     private Float rotation; // TODO degres ou radian ?
-    private Float weightCapacity;
 
-// TODO prise de décision par rapport aux paquets
+    // TODO prise de décision par rapport aux paquets
     /*
     if (isTransportable(parcel)) {
         goTo(parcel);
@@ -62,8 +60,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
         isBusy = false;
         isLoaded = false;
-        batteryCapacity = Simulation.getDroneBatteryCapacity()[1];
-        weightCapacity = Simulation.getDroneWeightCapacity()[0];
+        charge = 100f;
         rotation = 0f;
 
         memory = new Memory();
@@ -71,35 +68,23 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
     public static Drone createRandomizedDrone() {
         Drone drone = new Drone();
-        try {
-            drone.randomize();
-        } catch (OutOfMainAreaException e) {
-            e.printStackTrace();
-        }
+        drone.randomize();
         return drone;
     }
 
-    public void randomize() throws OutOfMainAreaException {
+    public void randomize() {
         setRandCoord();
-        setRandRotation();
     }
 
     public void move() {
-        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
-        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
+        Float newX = getX() + (speed * (float) Math.cos(rotation));
+        Float newY = getY() + (speed * (float) Math.sin(-rotation));
 
         try {
             setX(newX);
             setY(newY);
         } catch (OutOfMainAreaException e) {
-            if (newX < Simulation.getMainArea().getX() || newX > Simulation.getMainArea().getWidth()) {
-                rotation += MathHelper.getPi()/3;
-            }
-            if (newY < Simulation.getMainArea().getY() || newY > Simulation.getMainArea().getHeight()) {
-                rotation += MathHelper.getPi()/3;
-            }
-
-            move();
+            e.printStackTrace();
         }
     }
 
@@ -199,7 +184,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         setRotation(RandomHelper.getRandFloat(0f, (float) (2 * Math.PI)));
     }
 
-    public void setRandCoord() throws OutOfMainAreaException {
+    public void setRandCoord() {
         setRandCoord(Simulation.getMainArea());
     }
 
@@ -216,21 +201,16 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         return visibleDistance;
     }
 
-    public Integer getBatteryCapacity() {
-        return batteryCapacity;
+    public Float getCharge() {
+        return charge;
     }
 
     public void setLoaded(Boolean b) {
         isLoaded = b;
     }
 
-    public void setBatteryCapacity(Integer i) {
-        if(i < Simulation.getDroneBatteryCapacity()[0] || i > Simulation.getDroneBatteryCapacity()[1]){
-            throw new IllegalArgumentException("battery capacity must be between " + Simulation.getDroneBatteryCapacity()[0] + " and " + Simulation.getDroneBatteryCapacity()[1] + " (" + i + " given)");
-        } else {
-            this.batteryCapacity = i;
-
-        }
+    public void setCharge(Float f) {
+        charge = f;
     }
 
     public void setBusy(Boolean b) {
@@ -245,29 +225,14 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         return rotation;
     }
 
-    public Float getWeightCapacity() {
-        return weightCapacity;
-    }
-
-    public void setWeightCapacity(Float weightCapacity) {
-        if(weightCapacity < Simulation.getDroneWeightCapacity()[0] || weightCapacity > Simulation.getDroneWeightCapacity()[1]){
-            throw new IllegalArgumentException("weigh capacity must be between " + Simulation.getDroneWeightCapacity()[0] + " and " + Simulation.getDroneWeightCapacity()[1] + " (" + weightCapacity + " given)");
-        } else {
-            this.weightCapacity = weightCapacity;
-
-        }
-    }
-
-    @Override
     public String toString() {
-        return "Drone{" +
-                "isBusy=" + isBusy +
-                ", isLoaded=" + isLoaded +
-                ", batteryCapacity=" + batteryCapacity +
-                ", rotation=" + rotation +
-                ", weightCapacity=" + weightCapacity +
-                ", memory=" + memory +
-                ", coord=" + Arrays.toString(coord) +
-                '}';
+        String s =
+                super.toString() +
+                        "isBusy: " + (isBusy() ? "busy" : "free") +
+                        "isLoaded: " + (isLoaded() ? "loaded" : "empty") +
+                        "chargeBattery: " + getCharge() + "%" +
+                        "rotate: " + getRotation() +
+                        System.getProperty("line.separator");
+        return s;
     }
 }
