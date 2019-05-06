@@ -16,6 +16,7 @@ public class GuiMain extends Application {
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Drone Simulator");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
