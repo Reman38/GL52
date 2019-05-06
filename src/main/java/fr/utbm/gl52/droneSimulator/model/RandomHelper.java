@@ -16,7 +16,7 @@ public abstract class RandomHelper {
         Integer nb = 0;
         try {
             nb = ThreadLocalRandom.current().nextInt(min, max + 1);
-        } catch (Exception e){
+        } catch (Exception e) {
         }
         return nb;
     }

@@ -1,9 +1,11 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Drone extends SquaredSimulationElement {
+public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
     static final private Float speed = 5f;
     static final private Integer visibleDistance = 10000;
@@ -78,8 +80,12 @@ public class Drone extends SquaredSimulationElement {
         Float newX = getX() + (speed * (float) Math.cos(rotation));
         Float newY = getY() + (speed * (float) Math.sin(-rotation));
 
-        setX(newX);
-        setY(newY);
+        try {
+            setX(newX);
+            setY(newY);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
     }
 
     public void goTo(SimulationElement se) {

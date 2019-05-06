@@ -21,8 +21,8 @@ public class Simulation {
     public Simulation() {
         time = 0;
         speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
-        droneNumber = 50;
-        parcelNumber = 50;
+        droneNumber = 10;
+        parcelNumber = 10;
     }
 
     public static void setSpeed(Float f) {
@@ -72,7 +72,7 @@ public class Simulation {
     }
 
     private static void popAreas() {
-        for (Integer i = 0; i < 5; ++i) {
+        for (Integer i = 0; i < 3; ++i) {
             areas.add(Area.createRandomized());
         }
     }

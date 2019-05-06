@@ -6,5 +6,4 @@ module fr.utbm.gl52.droneSimulator {
     opens fr.utbm.gl52.droneSimulator to javafx.fxml;
     exports fr.utbm.gl52.droneSimulator;
     exports fr.utbm.gl52.droneSimulator.controller;
-
 }

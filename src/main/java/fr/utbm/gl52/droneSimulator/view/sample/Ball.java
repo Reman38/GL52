@@ -1,4 +1,4 @@
-package fr.utbm.gl52.droneSimulator.sample;
+package fr.utbm.gl52.droneSimulator.view.sample;
 
 import javafx.scene.shape.Circle;
 

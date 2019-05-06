@@ -1,6 +1,6 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-import fr.utbm.gl52.droneSimulator.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 
 public abstract class SimulationElement implements SimulationElementInterface {
     protected Float[] coord = new Float[2];
@@ -21,17 +21,21 @@ public abstract class SimulationElement implements SimulationElementInterface {
         return areaReturn;
     }
 
-    protected void setRandX(Area area) {
-        setX(RandomHelper.getRandFloat(area.getX() + getWidth() / 2, (area.getX() + area.getWidth()) - getWidth() / 2));
+    protected void setRandX(Area area) throws OutOfMainAreaException {
+        setX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
     }
 
-    protected void setRandY(Area area) {
-        setY(RandomHelper.getRandFloat(area.getY() + getHeight() / 2, (area.getY() + area.getHeight()) - getHeight() / 2));
+    protected void setRandY(Area area) throws OutOfMainAreaException {
+        setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
     }
 
     public void setRandCoord(Area area) {
-        setRandX(area);
-        setRandY(area);
+        try {
+            setRandX(area);
+            setRandY(area);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
     }
 
     /* getteurs et setteurs triviaux */
@@ -48,11 +52,17 @@ public abstract class SimulationElement implements SimulationElementInterface {
     }
 
     public void setX(Float x) throws OutOfMainAreaException {
-        coord[0] = x;
+        if (Simulation.getMainArea().isInAreaXBoundary(x))
+            throw new OutOfMainAreaException("x out of mainArea boundary");
+        else
+            coord[0] = x;
     }
 
     public void setY(Float y) throws OutOfMainAreaException {
-        coord[1] = y;
+        if (Simulation.getMainArea().isInAreaYBoundary(y))
+            throw new OutOfMainAreaException("y out of mainArea boundary");
+        else
+            coord[1] = y;
     }
 
     public String toString() {
