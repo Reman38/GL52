@@ -15,8 +15,8 @@ public class Simulation {
     private static Integer parcelNumber;
     private static Integer droneNumber;
 
-    private static final Float mainAreaWidth = 16f;
-    private static final Float mainAreaHeight = 9f;
+    private static final Float mainAreaWidth = 160f;
+    private static final Float mainAreaHeight = 90f;
 
     public Simulation() {
         time = 0;

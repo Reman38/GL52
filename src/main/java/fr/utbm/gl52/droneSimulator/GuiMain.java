@@ -1,5 +1,6 @@
 package fr.utbm.gl52.droneSimulator;
 
+import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import fr.utbm.gl52.droneSimulator.view.StartPageView;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -10,7 +11,8 @@ import java.io.IOException;
 public class GuiMain extends Application {
 
     public void start(Stage primaryStage) throws IOException {
-        StartPageView startPageView = new StartPageView();
+//        StartPageView startPageView = new StartPageView();
+        SimulationWindowView startPageView = new SimulationWindowView(); // pour dev
 
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);

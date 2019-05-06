@@ -24,6 +24,8 @@ public class SimulationWindowView {
         Simulation simulation = new Simulation();
         simulation.start();
 
+        GraphicElement.setCoefficient(10f);
+
         for (Drone drone: Simulation.getDrones()) {
             RectangleElement rectangleElement = new RectangleElement(drone);
             Rectangle rectangle = rectangleElement.getShape();

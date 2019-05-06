@@ -18,5 +18,4 @@ public class SquaredSimulationElement extends SimulationElement{
     public Float getHeight() {
         return getSize();
     }
-
 }
