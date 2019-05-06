@@ -1,11 +1,10 @@
 package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
-import fr.utbm.gl52.droneSimulator.exception.NotSupportedValueException;
+import fr.utbm.gl52.droneSimulator.model.exception.NotSupportedValueException;
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 
 public abstract class GraphicElement implements GraphicElementInterface{
     private Float[] coord = new Float[2];
-//    private Float[] coord = {0f,0f}; / TODO remove
     public Float width;
     public Float height;
     private String color;
@@ -24,12 +23,15 @@ public abstract class GraphicElement implements GraphicElementInterface{
         coord[1] = y;
     }
 
-
-    public static void setCoefficient(Float _coefficient) throws NotSupportedValueException{
-        if (_coefficient <= 0)
-            throw new NotSupportedValueException("Coefficient can't be <= 0");
-        else
-            coefficient = _coefficient;
+    public static void setCoefficient(Float _coefficient){
+        try {
+            if (_coefficient <= 0)
+                throw new NotSupportedValueException("Coefficient can't be <= 0");
+            else
+                coefficient = _coefficient;
+        } catch (NotSupportedValueException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setCoord(Float[] _coord) {

@@ -1,4 +1,4 @@
-package fr.utbm.gl52.droneSimulator.exception;
+package fr.utbm.gl52.droneSimulator.model.exception;
 
 public class NotSupportedValueException extends RuntimeException {
     public NotSupportedValueException(String message){

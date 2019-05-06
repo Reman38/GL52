@@ -2,7 +2,7 @@ package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Date;
 
-public class Parcel extends SquaredSimulationElement {
+public class Parcel extends CenteredAndSquaredSimulationElement {
     private Date popTime;
     private Float weight;
     private Date timeDeliveryGoal;
