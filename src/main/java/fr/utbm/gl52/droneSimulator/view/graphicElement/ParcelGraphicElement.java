@@ -15,11 +15,4 @@ public class ParcelGraphicElement extends CenteredAndErgonomicGraphicElement {
         ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(se);
         return parcelGraphicElement.getShape();
     }
-
-    public Float getHeight() {
-        return super.getHeight() * getFixCoefficient();
-    }
-    public Float getWidth() {
-        return super.getWidth() * getFixCoefficient();
-    }
 }

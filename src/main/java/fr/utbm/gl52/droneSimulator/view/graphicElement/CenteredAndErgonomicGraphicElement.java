@@ -3,7 +3,7 @@ package fr.utbm.gl52.droneSimulator.view.graphicElement;
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 
 public abstract class CenteredAndErgonomicGraphicElement extends RectangleGraphicElement {
-    private static Float fixCoefficient = 1f;
+    private static Float fixCoefficient = 200f;
 
     public CenteredAndErgonomicGraphicElement(SimulationElement se) {
         super(se);
