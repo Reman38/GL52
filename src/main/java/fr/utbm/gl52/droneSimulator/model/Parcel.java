@@ -8,11 +8,7 @@ public class Parcel extends SquaredSimulationElement {
     private Date timeDeliveryGoal;
 
     public Parcel() {
-    }
-
-    public Parcel(Float x, Float y) {
-        setX(x);
-        setY(y);
+        super(5f);
     }
 
     public static Parcel createRandomized() {

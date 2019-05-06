@@ -7,12 +7,12 @@ public class Area extends SimulationElement {
     protected Float width;
     protected Float height;
 
-    public Area(Float x, Float y, Float caseWidth, Float caseHeight) {
+    public Area(Float x, Float y, Float width, Float height) {
         try {
             setX(x);
             setY(y);
-            setWidth(caseWidth);
-            setHeight(caseHeight);
+            setWidth(width);
+            setHeight(height);
         } catch (OutOfMainAreaException | NotSupportedValueException e) {
             e.printStackTrace();
         }

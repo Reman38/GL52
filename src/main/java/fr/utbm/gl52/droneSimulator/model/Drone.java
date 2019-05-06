@@ -5,7 +5,6 @@ import java.util.Date;
 
 public class Drone extends SquaredSimulationElement {
     // constantes
-    static final private Float size = 5f;
     static final private Float speed = 5f;
     static final private Integer visibleDistance = 10000;
 
@@ -55,6 +54,8 @@ public class Drone extends SquaredSimulationElement {
     }
 
     public Drone() {
+        super(5f);
+
         isBusy = false;
         isLoaded = false;
         charge = 100f;

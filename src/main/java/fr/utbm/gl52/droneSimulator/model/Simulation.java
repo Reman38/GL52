@@ -57,7 +57,7 @@ public class Simulation {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
-    public static void start() {
+    public void start() {
         initMainArea();
         popDrone();
         popParcel();
@@ -65,13 +65,13 @@ public class Simulation {
     }
 
     private static void popParcel() {
-        for (Integer i = 1; i < getParcelNumber(); ++i) {
+        for (Integer i = 0; i < getParcelNumber(); ++i) {
             parcels.add(Parcel.createRandomized());
         }
     }
 
     private static void popDrone() {
-        for (Integer i = 1; i < getDroneNumber(); ++i) {
+        for (Integer i = 0; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone());
         }
     }

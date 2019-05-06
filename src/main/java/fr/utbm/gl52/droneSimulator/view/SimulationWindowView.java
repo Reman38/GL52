@@ -19,9 +19,7 @@ public class SimulationWindowView {
         loader.load();
 
         root = loader.getRoot();
-
         Pane test = (Pane) root.lookup("#simulationPane");
-        System.out.println(test);
 
         Simulation simulation = new Simulation();
         simulation.start();
@@ -31,7 +29,6 @@ public class SimulationWindowView {
             Rectangle rectangle = rectangleElement.getShape();
             test.getChildren().add(rectangle);
         }
-
     }
 
     public javafx.scene.Parent getParent() {

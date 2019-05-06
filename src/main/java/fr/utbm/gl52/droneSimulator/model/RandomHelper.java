@@ -3,7 +3,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom; // TODO revoir l'utilité
 
-public class RandomHelper {
+public abstract class RandomHelper {
     public static Boolean getRandBool() {
         Boolean bool = false;
         if (getRandInt(0, 1) == 1) {
@@ -16,13 +16,13 @@ public class RandomHelper {
         Integer nb = 0;
         try {
             nb = ThreadLocalRandom.current().nextInt(min, max + 1);
-        } catch (Exception e) {
+        } catch (Exception e){
         }
         return nb;
     }
 
-    public static double getRandDouble(double min, double max) {
-        double nb = 0;
+    public static Double getRandDouble(Double min, Double max) {
+        Double nb = 0d;
         try {
             nb = ThreadLocalRandom.current().nextDouble(min, max + 1);
         } catch (Exception e) {
