@@ -1,7 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 public class SquaredSimulationElement extends SimulationElement{
-    private Float size = 0.5f;
+    private Float size;
 
     public SquaredSimulationElement(Float _size){
         size = _size;

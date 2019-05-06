@@ -15,14 +15,14 @@ public class Simulation {
     private static Integer parcelNumber;
     private static Integer droneNumber;
 
-    private static final Float mainAreaWidth = 160f;
-    private static final Float mainAreaHeight = 90f;
+    private static final Float mainAreaWidth = 16000f;
+    private static final Float mainAreaHeight = 9000f;
 
     public Simulation() {
         time = 0;
         speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
-        droneNumber = 5;
-        parcelNumber = 5;
+        droneNumber = 50;
+        parcelNumber = 50;
     }
 
     public static void setSpeed(Float f) {
@@ -59,18 +59,25 @@ public class Simulation {
 
     public void start() {
         initMainArea();
-        popDrone();
-        popParcel();
+        popAreas();
+        popParcels();
+        popDrones();
 //        update();
     }
 
-    private static void popParcel() {
+    private static void popParcels() {
         for (Integer i = 0; i < getParcelNumber(); ++i) {
             parcels.add(Parcel.createRandomized());
         }
     }
 
-    private static void popDrone() {
+    private static void popAreas() {
+        for (Integer i = 0; i < 5; ++i) {
+            areas.add(Area.createRandomized());
+        }
+    }
+
+    private static void popDrones() {
         for (Integer i = 0; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone());
         }

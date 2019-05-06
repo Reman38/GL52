@@ -8,7 +8,7 @@ public class Parcel extends SquaredSimulationElement {
     private Date timeDeliveryGoal;
 
     public Parcel() {
-        super(5f);
+        super(.5f);
     }
 
     public static Parcel createRandomized() {

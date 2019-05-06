@@ -54,7 +54,7 @@ public class Drone extends SquaredSimulationElement {
     }
 
     public Drone() {
-        super(5f);
+        super(1f);
 
         isBusy = false;
         isLoaded = false;

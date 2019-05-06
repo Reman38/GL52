@@ -1,25 +1,25 @@
 package fr.utbm.gl52.droneSimulator.view;
 
-import fr.utbm.gl52.droneSimulator.exception.NotSupportedValueException;
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
-public class RectangleElement extends GraphicElement{
-    private Float[] coord;
-    private Float width;
-    private Float height;
-    private String color;
-    private Boolean isFilled;
-
-    private static Float coefficient;
-
+public abstract class RectangleElement extends GraphicElement{
     public RectangleElement(SimulationElement se) {
         super(se);
+    }
 
-        // drone
-        setColor("blue");
-        isFilled(true);
+    public Shape setShapeStyle(Shape shape) {
+        if(isFilled())
+            shape.setFill(Paint.valueOf(getColor()));
+        else{
+            shape.setFill(Color.TRANSPARENT);
+            shape.setStroke(Paint.valueOf(getColor()));
+        }
+
+        return shape;
     }
 
     public Rectangle getShape() {
@@ -29,10 +29,7 @@ public class RectangleElement extends GraphicElement{
         rectangle.setHeight(getHeight());
         rectangle.setWidth(getWidth());
 
-        if(isFilled())
-            rectangle.setFill(Paint.valueOf(getColor()));
-        else
-            rectangle.setStroke(Paint.valueOf(getColor()));
+        setShapeStyle(rectangle);
 
         return rectangle;
     }

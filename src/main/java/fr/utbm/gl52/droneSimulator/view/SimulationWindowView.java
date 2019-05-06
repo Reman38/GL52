@@ -1,11 +1,13 @@
 package fr.utbm.gl52.droneSimulator.view;
 
+import fr.utbm.gl52.droneSimulator.model.Area;
 import fr.utbm.gl52.droneSimulator.model.Drone;
+import fr.utbm.gl52.droneSimulator.model.Parcel;
 import fr.utbm.gl52.droneSimulator.model.Simulation;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 import java.io.IOException;
 
@@ -21,16 +23,31 @@ public class SimulationWindowView {
         root = loader.getRoot();
         Pane test = (Pane) root.lookup("#simulationPane");
 
-        Simulation simulation = new Simulation();
-        simulation.start();
+        startModel();
 
-        GraphicElement.setCoefficient(10f);
+        GraphicElement.setCoefficient(0.065f);
+
+        Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
+        test.getChildren().add(mainAreaGraphicElementShape);
+
+        for (Area area: Simulation.getAreas()) {
+            Shape shape = AreaGraphicElement.getShape(area);
+            test.getChildren().add(shape);
+        }
+
+        for (Parcel parcel: Simulation.getParcels()) {
+            Shape shape = ParcelGraphicElement.getShape(parcel);
+            test.getChildren().add(shape);
+        }
 
         for (Drone drone: Simulation.getDrones()) {
-            RectangleElement rectangleElement = new RectangleElement(drone);
-            Rectangle rectangle = rectangleElement.getShape();
-            test.getChildren().add(rectangle);
+            Shape shape = DroneGraphicElement.getShape(drone);
+            test.getChildren().add(shape);
         }
+    }
+    public void startModel() {
+        Simulation simulation = new Simulation();
+        simulation.start();
     }
 
     public javafx.scene.Parent getParent() {
