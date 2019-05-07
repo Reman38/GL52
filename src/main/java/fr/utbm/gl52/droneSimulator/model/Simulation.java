@@ -61,7 +61,8 @@ public class Simulation {
         popAreas();
         popParcels();
         popDrones();
-        update();
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
     }
 
     private static void popParcels() {
@@ -101,6 +102,7 @@ public class Simulation {
 
             try {
                 Thread.sleep((long) (1000 / 30 / getSpeed())); // TODO déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
+//              Thread.sleep(0, (int) (1000000000 / 30 / getSpeed()));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

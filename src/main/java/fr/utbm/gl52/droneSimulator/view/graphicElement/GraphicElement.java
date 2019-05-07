@@ -16,8 +16,8 @@ public abstract class GraphicElement implements GraphicElementInterface{
 
     public static void setCoefficient(Float _coefficient){
         try {
-            if (_coefficient <= 0)
-                throw new NotSupportedValueException("Coefficient can't be <= 0");
+            if (_coefficient < 0)
+                throw new NotSupportedValueException("Coefficient can't be < 0");
             else
                 coefficient = _coefficient;
         } catch (NotSupportedValueException e) {
