@@ -29,13 +29,9 @@ public abstract class SimulationElement implements SimulationElementInterface {
         setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
     }
 
-    public void setRandCoord(Area area) {
-        try {
-            setRandX(area);
-            setRandY(area);
-        } catch (OutOfMainAreaException e) {
-            e.printStackTrace();
-        }
+    public void setRandCoord(Area area) throws OutOfMainAreaException {
+        setRandX(area);
+        setRandY(area);
     }
 
     /* getteurs et setteurs triviaux */

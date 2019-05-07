@@ -21,7 +21,7 @@ public class Simulation {
     public Simulation() {
         time = 0;
         speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
-        droneNumber = 10;
+        droneNumber = 1;
         parcelNumber = 10;
     }
 
@@ -62,7 +62,9 @@ public class Simulation {
         popAreas();
         popParcels();
         popDrones();
-//        update();
+
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
     }
 
     private static void popParcels() {
@@ -72,7 +74,7 @@ public class Simulation {
     }
 
     private static void popAreas() {
-        for (Integer i = 0; i < 3; ++i) {
+        for (Integer i = 0; i < 1; ++i) {
             areas.add(Area.createRandomized());
         }
     }
@@ -84,13 +86,15 @@ public class Simulation {
     }
 
     public static void update() {
-        // interactions entre les entités du jeu
         while (isPlay()) {
+            // TODO ajust
             incrementTime();
 
-            // TODO refactor plutot que ce commentaire (qui a l'air faux au passage)
-            if (getTime() % 1020 == 0) // toutes les 60 secondes
-                Parcel.createRandomized();
+            // TODO refactor
+//            if (getTime() % 60 == 0){
+//                System.out.println("ok");
+//                parcels.add(Parcel.createRandomized());
+//            }
 
             for (Drone drone : drones) {
                 drone.handleParcelInteractions();
@@ -100,7 +104,7 @@ public class Simulation {
         }
 
         try {
-            Thread.sleep(17); // TODO replace with getSpeed
+            Thread.sleep(17); // 60fps // TODO replace with getSpeed, ajust
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

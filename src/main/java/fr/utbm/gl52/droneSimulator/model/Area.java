@@ -16,34 +16,37 @@ public class Area extends SimulationElement {
         try {
             setX(x);
             setY(y);
-        } catch (OutOfMainAreaException e) {
+            setWidth(width);
+            setHeight(height);
+        } catch (OutOfMainAreaException | NotSupportedValueException e) {
             e.printStackTrace();
         }
-
-        setWidth(width);
-        setHeight(height);
     }
     public static Area createRandomized() {
         Area area = new Area();
-        area.randomize();
+        try {
+            area.randomize();
+        } catch (OutOfMainAreaException | NotSupportedValueException e) {
+            e.printStackTrace();
+        }
         return area;
     }
 
-    public void randomize() {
+    public void randomize() throws OutOfMainAreaException, NotSupportedValueException {
         setRandCoord(Simulation.getMainArea());
         setRandSize();
     }
 
-    private void setRandSize() {
+    private void setRandSize() throws OutOfMainAreaException, NotSupportedValueException {
         setRandWidth();
         setRandHeight();
     }
 
-    private void setRandWidth() {
+    private void setRandWidth() throws OutOfMainAreaException, NotSupportedValueException {
         Float randomPossibleWidth = RandomHelper.getRandFloat(0f, Simulation.getMainArea().getWidth() - getX());
         setWidth(randomPossibleWidth);
     }
-    private void setRandHeight() {
+    private void setRandHeight() throws OutOfMainAreaException, NotSupportedValueException {
         Float randomPossibleHeight = RandomHelper.getRandFloat(0f, Simulation.getMainArea().getHeight() - getY());
         setHeight(randomPossibleHeight);
     }
@@ -56,38 +59,22 @@ public class Area extends SimulationElement {
         return height;
     }
 
-    public void setWidth(Float w) {
-        try {
-            if (w <= 0)
-                throw new NotSupportedValueException("width can't be <= 0");
-            if (Simulation.getMainArea().isInAreaXBoundary(getX() + w))
-                throw new OutOfMainAreaException("x + width out of mainArea boundary: " + (getX() + w));
-            else
-                width = w;
-        } catch (OutOfMainAreaException | NotSupportedValueException e) {
-            e.printStackTrace();
-//            w = Simulation.getMainArea().getWidth() - getX();
-//            setHeight(w);
-        }
+    public void setWidth(Float w) throws NotSupportedValueException, OutOfMainAreaException{
+        if (w <= 0)
+            throw new NotSupportedValueException("width can't be <= 0");
+        if (Simulation.getMainArea().isInAreaXBoundary(getX() + w))
+            throw new OutOfMainAreaException("x + width out of mainArea boundary: " + (getX() + w));
+        else
+            width = w;
     }
 
-    public void setHeight(Float h) {
-        try {
-            if (h <= 0)
-                throw new NotSupportedValueException("height can't be <= 0");
-            if (Simulation.getMainArea().isInAreaYBoundary(getY() + h))
-                throw new OutOfMainAreaException("y + height out of mainArea boundary: " + (getY() + h));
-            else
-                height = h;
-        } catch (OutOfMainAreaException | NotSupportedValueException e) {
-            e.printStackTrace();
-
-            System.out.println("sh "+ getY());
-            System.out.println("sh "+ h);
-            System.out.println("sh "+ (getY() + h));
-//            h = Simulation.getMainArea().getHeight() - getY();
-//            setHeight(h);
-        }
+    public void setHeight(Float h) throws NotSupportedValueException, OutOfMainAreaException{
+        if (h <= 0)
+            throw new NotSupportedValueException("height can't be <= 0");
+        if (Simulation.getMainArea().isInAreaYBoundary(getY() + h))
+            throw new OutOfMainAreaException("y + height out of mainArea boundary: " + (getY() + h));
+        else
+            height = h;
     }
 
     public Boolean isInAreaXBoundary(Float x) {

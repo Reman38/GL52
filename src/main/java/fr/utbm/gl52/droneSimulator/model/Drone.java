@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 5f;
-    static final private Integer visibleDistance = 10000;
+    static final private Float speed = 18f; // 41 mph, 65 kmh, 18ms
+    static final private Integer visibleDistance = 100000;
 
     // attributs
     private Boolean isBusy;
@@ -29,6 +29,19 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     */
 
     Memory memory;
+
+//    public void test() {
+// TODO remove
+//        int dx = 1;
+//        int dy = 1;
+//
+//        if (getX() < Simulation.getMainArea().getX() || getX() > Simulation.getMainArea().getWidth()) {
+//            dx = dx*-1;
+//        }
+//        if (getY() < Simulation.getMainArea().getY() || getY() > Simulation.getMainArea().getHeight()) {
+//            dy = dy*-1;
+//        }
+//    }
 
     public class Memory {
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
@@ -68,11 +81,15 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
     public static Drone createRandomizedDrone() {
         Drone drone = new Drone();
-        drone.randomize();
+        try {
+            drone.randomize();
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
         return drone;
     }
 
-    public void randomize() {
+    public void randomize() throws OutOfMainAreaException {
         setRandCoord();
     }
 
@@ -184,7 +201,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         setRotation(RandomHelper.getRandFloat(0f, (float) (2 * Math.PI)));
     }
 
-    public void setRandCoord() {
+    public void setRandCoord() throws OutOfMainAreaException {
         setRandCoord(Simulation.getMainArea());
     }
 

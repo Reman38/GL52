@@ -1,5 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+
 import java.util.Date;
 
 public class Parcel extends CenteredAndSquaredSimulationElement {
@@ -19,9 +21,11 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
 
     public void randomize() {
         setRandWeight();
-
-        // après le setRandWeight car set la size pour la vue ; sinon contrainte de zone non prise en compte
-        setRandCoord(Simulation.getMainArea());
+        try {
+            setRandCoord(Simulation.getMainArea()); // après setWeight car size nécessaire pour le controle de contrainte de mainArea
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setRandWeight() {
