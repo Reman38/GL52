@@ -81,8 +81,7 @@ public class SimulationWindowView {
     }
     public void startModel() {
         new Simulation();
-        Thread simulationThread = new Thread(Simulation::start);
-        simulationThread.start();
+        Simulation.start();
     }
 
     public javafx.scene.Parent getParent() {

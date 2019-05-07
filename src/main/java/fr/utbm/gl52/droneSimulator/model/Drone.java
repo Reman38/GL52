@@ -89,13 +89,11 @@ public class Drone extends CenteredAndSquaredSimulationElement {
             setX(newX);
             setY(newY);
         } catch (OutOfMainAreaException e) {
-//            e.printStackTrace();
-
             if (newX < Simulation.getMainArea().getX() || newX > Simulation.getMainArea().getWidth()) {
-                rotation += MathHelper.getPi()/2;
+                rotation += MathHelper.getPi()/3;
             }
             if (newY < Simulation.getMainArea().getY() || newY > Simulation.getMainArea().getHeight()) {
-                rotation += MathHelper.getPi()/2;
+                rotation += MathHelper.getPi()/3;
             }
 
             move();
