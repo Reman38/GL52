@@ -20,59 +20,69 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class SimulationWindowView {
-    private Parent root;
+    private final Parent root;
 
     public SimulationWindowView() throws IOException {
+        startModel();
+
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/SimulationWindow.fxml")
+            getClass().getResource("/fxml/SimulationWindow.fxml")
         );
         loader.load();
 
         root = loader.getRoot();
-        Pane test = (Pane) root.lookup("#simulationPane");
+        Pane pane = (Pane) root.lookup("#simulationPane");
 
-        startModel();
-
+        startView(pane);
+    }
+    public void startView(Pane pane) {
         GraphicElement.setCoefficient(0.065f);
 
-        Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
-        test.getChildren().add(mainAreaGraphicElementShape);
+        displayMainArea(pane);
+        displayAreas(pane);
+        displayParcels(pane);
 
-        for (Area area : Simulation.getAreas()) {
-            Shape shape = AreaGraphicElement.getShape(area);
-            test.getChildren().add(shape);
-        }
+        // for (Drone drone : Simulation.getDrones()) {
+        Drone drone = Simulation.getDrones().get(0);
+        DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
+        Rectangle rectangle = droneGraphicElement.getShape();
+        pane.getChildren().add(rectangle);
+        // }
 
+        // TODO make it work
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(Animation.INDEFINITE);
+
+        KeyFrame moveDrone = new KeyFrame(Duration.seconds(1f/30f), new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent event) {
+                rectangle.setX(droneGraphicElement.getX());
+                rectangle.setY(droneGraphicElement.getY());
+            }
+        });
+
+        timeline.getKeyFrames().add(moveDrone);
+        timeline.play();
+    }
+    public void displayParcels(Pane pane) {
         for (Parcel parcel : Simulation.getParcels()) {
             Shape shape = ParcelGraphicElement.getShape(parcel);
-            test.getChildren().add(shape);
+            pane.getChildren().add(shape);
         }
-
-        for (Drone drone : Simulation.getDrones()) {
-            Rectangle rectangle = DroneGraphicElement.getShape(drone);
-            test.getChildren().add(rectangle);
-
-            Timeline timeline = new Timeline();
-            timeline.setCycleCount(Animation.INDEFINITE);
-
-//            KeyFrame moveBall = new KeyFrame(Duration.seconds(1f/60f), new EventHandler<ActionEvent>() {
-            KeyFrame moveBall = new KeyFrame(Duration.seconds(1f/10f), new EventHandler<ActionEvent>() {
-                public void handle(ActionEvent event) {
-                    rectangle.setX(rectangle.getX());
-                    rectangle.setY(rectangle.getY());
-//                    rectangle.setX(rectangle.getX()+1);
-//                    rectangle.setY(rectangle.getY()+1);
-                }
-            });
-
-            timeline.getKeyFrames().add(moveBall);
-            timeline.play();
+    }
+    public void displayAreas(Pane pane) {
+        for (Area area : Simulation.getAreas()) {
+            Shape shape = AreaGraphicElement.getShape(area);
+            pane.getChildren().add(shape);
         }
-
+    }
+    public void displayMainArea(Pane pane) {
+        Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
+        pane.getChildren().add(mainAreaGraphicElementShape);
     }
     public void startModel() {
-        Simulation simulation = new Simulation();
-        simulation.start();
+        new Simulation();
+        Thread simulationThread = new Thread(Simulation::start);
+        simulationThread.start();
     }
 
     public javafx.scene.Parent getParent() {

@@ -20,14 +20,13 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        speed = 17f; // assez petit pour un déplacement qui semble naturel (contigu et non sacadé)
+        setSpeed(10f); // pour voir les éléments se déplacer
         droneNumber = 1;
         parcelNumber = 10;
     }
 
     public static void setSpeed(Float f) {
-        if (speed >= 1)
-            speed = f;
+        speed = f; // TODO ajouter controle et exception
     }
 
     public static void addNumberToSpeed(Float nb) {
@@ -57,14 +56,12 @@ public class Simulation {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
-    public void start() {
+    public static void start() {
         initMainArea();
         popAreas();
         popParcels();
         popDrones();
-
-        Thread simulationThread = new Thread(Simulation::update);
-        simulationThread.start();
+        update();
     }
 
     private static void popParcels() {
@@ -101,12 +98,12 @@ public class Simulation {
                 drone.handleDroneInteractions();
                 drone.move();
             }
-        }
 
-        try {
-            Thread.sleep(1000); // TODO replace with getSpeed : déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            try {
+                Thread.sleep((long) (1000 / 30 / getSpeed())); // TODO déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
