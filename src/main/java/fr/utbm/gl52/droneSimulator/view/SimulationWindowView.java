@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
@@ -48,19 +49,19 @@ public class SimulationWindowView {
         }
 
         for (Drone drone : Simulation.getDrones()) {
-            Shape shape = DroneGraphicElement.getShape(drone);
-            test.getChildren().add(shape);
+            Rectangle rectangle = DroneGraphicElement.getShape(drone);
+            test.getChildren().add(rectangle);
 
             Timeline timeline = new Timeline();
             timeline.setCycleCount(Animation.INDEFINITE);
 
-            KeyFrame moveBall = new KeyFrame(Duration.seconds(.5), new EventHandler<ActionEvent>() {
+//            KeyFrame moveBall = new KeyFrame(Duration.seconds(1f/60f), new EventHandler<ActionEvent>() {
+            KeyFrame moveBall = new KeyFrame(Duration.seconds(1f/10f), new EventHandler<ActionEvent>() {
                 public void handle(ActionEvent event) {
-                    System.out.println(drone.getX());
-                    System.out.println(drone.getY());
-
-                    shape.setTranslateX(shape.getTranslateX() + drone.getSpeed());
-                    shape.setTranslateY(shape.getTranslateY() + drone.getSpeed());
+                    rectangle.setX(rectangle.getX());
+                    rectangle.setY(rectangle.getY());
+//                    rectangle.setX(rectangle.getX()+1);
+//                    rectangle.setY(rectangle.getY()+1);
                 }
             });
 

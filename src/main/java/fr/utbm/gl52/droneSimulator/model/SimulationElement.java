@@ -5,15 +5,15 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 public abstract class SimulationElement implements SimulationElementInterface {
     protected Float[] coord = new Float[2];
 
-    public SimulationElement(){
+    public SimulationElement() {
     }
 
     public static Area getArea(double x, double y) {
         Area areaReturn = null;
         for (Area area : Simulation.getAreas()) {
             if (
-                x >= area.getX() && x < area.getX() + area.getWidth() &&
-                y >= area.getY() && y < area.getY() + area.getHeight()
+                    x >= area.getX() && x < area.getX() + area.getWidth() &&
+                            y >= area.getY() && y < area.getY() + area.getHeight()
             ) {
                 areaReturn = area;
             }
@@ -22,11 +22,13 @@ public abstract class SimulationElement implements SimulationElementInterface {
     }
 
     protected void setRandX(Area area) throws OutOfMainAreaException {
-        setX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
+//        setX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
+        setX(area.getWidth()/2);
     }
 
     protected void setRandY(Area area) throws OutOfMainAreaException {
-        setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
+//        setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
+        setY(area.getHeight()/2);
     }
 
     public void setRandCoord(Area area) throws OutOfMainAreaException {
@@ -49,14 +51,14 @@ public abstract class SimulationElement implements SimulationElementInterface {
 
     public void setX(Float x) throws OutOfMainAreaException {
         if (Simulation.getMainArea().isInAreaXBoundary(x))
-            throw new OutOfMainAreaException("x out of mainArea boundary");
+            throw new OutOfMainAreaException("x out of mainArea boundary : " + x);
         else
             coord[0] = x;
     }
 
     public void setY(Float y) throws OutOfMainAreaException {
         if (Simulation.getMainArea().isInAreaYBoundary(y))
-            throw new OutOfMainAreaException("y out of mainArea boundary");
+            throw new OutOfMainAreaException("y out of mainArea boundary : " + y);
         else
             coord[1] = y;
     }
