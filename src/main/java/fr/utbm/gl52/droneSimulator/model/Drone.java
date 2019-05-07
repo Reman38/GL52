@@ -7,7 +7,7 @@ import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 18f; // 41 mph, 65 kmh, 18ms
+    static final private Float speed = 18f/30f; // 41 mph, 65 kmh, 18ms
     static final private Integer visibleDistance = 100000;
 
     // attributs
@@ -15,8 +15,6 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     private Boolean isLoaded;
     private Float charge;
     private Float rotation; // TODO degres ou radian ?
-    private int directionX = 1;
-    private int directionY = 1;
 
     // TODO prise de décision par rapport aux paquets
     /*
@@ -80,30 +78,28 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
     public void randomize() throws OutOfMainAreaException {
         setRandCoord();
+        setRandRotation();
     }
 
     public void move() {
-//        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
-//        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
-//        Float newX = getX() + (getSpeed() * directionX);
-//        Float newY = getY() + (getSpeed() * directionY);
-//
-//        try {
-//            setX(newX);
-//            setY(newY);
-//        } catch (OutOfMainAreaException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (getX() < Simulation.getMainArea().getX() || getX() > Simulation.getMainArea().getWidth()) {
-//            directionX = directionX*-1;
-//        }
-//        if (getY() < Simulation.getMainArea().getY() || getY() > Simulation.getMainArea().getHeight()) {
-//            directionY = directionY*-1;
-//        }
+        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
+        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
 
-        coord[0] = getX();
-        coord[1] = getY();
+        try {
+            setX(newX);
+            setY(newY);
+        } catch (OutOfMainAreaException e) {
+//            e.printStackTrace();
+
+            if (newX < Simulation.getMainArea().getX() || newX > Simulation.getMainArea().getWidth()) {
+                rotation += MathHelper.getPi()/2;
+            }
+            if (newY < Simulation.getMainArea().getY() || newY > Simulation.getMainArea().getHeight()) {
+                rotation += MathHelper.getPi()/2;
+            }
+
+            move();
+        }
     }
 
     public void goTo(SimulationElement se) {

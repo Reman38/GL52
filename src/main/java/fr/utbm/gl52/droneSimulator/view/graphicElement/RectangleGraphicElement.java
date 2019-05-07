@@ -9,10 +9,6 @@ import javafx.scene.shape.Shape;
 public abstract class RectangleGraphicElement extends GraphicElement{
     public RectangleGraphicElement(SimulationElement se) {
         super(se);
-
-        setCoord(se.getCoord());
-        setWidth(se.getWidth());
-        setHeight(se.getHeight());
     }
 
     public Shape setShapeStyle(Shape shape) {
