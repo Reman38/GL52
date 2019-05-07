@@ -15,6 +15,8 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     private Boolean isLoaded;
     private Float charge;
     private Float rotation; // TODO degres ou radian ?
+    private int directionX = 1;
+    private int directionY = 1;
 
     // TODO prise de décision par rapport aux paquets
     /*
@@ -29,19 +31,6 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     */
 
     Memory memory;
-
-//    public void test() {
-// TODO remove
-//        int dx = 1;
-//        int dy = 1;
-//
-//        if (getX() < Simulation.getMainArea().getX() || getX() > Simulation.getMainArea().getWidth()) {
-//            dx = dx*-1;
-//        }
-//        if (getY() < Simulation.getMainArea().getY() || getY() > Simulation.getMainArea().getHeight()) {
-//            dy = dy*-1;
-//        }
-//    }
 
     public class Memory {
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
@@ -94,15 +83,27 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     }
 
     public void move() {
-        Float newX = getX() + (speed * (float) Math.cos(rotation));
-        Float newY = getY() + (speed * (float) Math.sin(-rotation));
+//        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
+//        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
+//        Float newX = getX() + (getSpeed() * directionX);
+//        Float newY = getY() + (getSpeed() * directionY);
+//
+//        try {
+//            setX(newX);
+//            setY(newY);
+//        } catch (OutOfMainAreaException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (getX() < Simulation.getMainArea().getX() || getX() > Simulation.getMainArea().getWidth()) {
+//            directionX = directionX*-1;
+//        }
+//        if (getY() < Simulation.getMainArea().getY() || getY() > Simulation.getMainArea().getHeight()) {
+//            directionY = directionY*-1;
+//        }
 
-        try {
-            setX(newX);
-            setY(newY);
-        } catch (OutOfMainAreaException e) {
-            e.printStackTrace();
-        }
+        coord[0] = getX();
+        coord[1] = getY();
     }
 
     public void goTo(SimulationElement se) {

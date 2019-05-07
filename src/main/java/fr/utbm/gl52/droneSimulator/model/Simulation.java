@@ -104,7 +104,7 @@ public class Simulation {
         }
 
         try {
-            Thread.sleep(17); // 60fps // TODO replace with getSpeed, ajust
+            Thread.sleep(1000); // TODO replace with getSpeed : déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
