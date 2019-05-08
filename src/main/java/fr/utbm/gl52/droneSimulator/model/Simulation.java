@@ -14,6 +14,8 @@ public class Simulation {
     private static Float speed;
     private static Integer parcelNumber;
     private static Integer droneNumber;
+    private static Float[] droneWeightCapacity = new Float[2];
+    private static Integer[] droneBatteryCapacity = new Integer[2];
 
     private static final Float mainAreaWidth = 16000f;
     private static final Float mainAreaHeight = 9000f;
@@ -23,6 +25,10 @@ public class Simulation {
         setSpeed(10f); // pour voir les éléments se déplacer
         droneNumber = 1;
         parcelNumber = 10;
+        droneWeightCapacity[0] = 0.1f;
+        droneWeightCapacity[1] = 20f;
+        droneBatteryCapacity[0] = 5;
+        droneBatteryCapacity[1] = 55;
     }
 
     public static void setSpeed(Float f) {
@@ -158,5 +164,12 @@ public class Simulation {
     }
     public static void setParcels(ArrayList<Parcel> parcels) {
         parcels = parcels;
+    }
+    public static Float[] getDroneWeightCapacity() {
+        return droneWeightCapacity;
+    }
+
+    public static Integer[] getDroneBatteryCapacity() {
+        return droneBatteryCapacity;
     }
 }
