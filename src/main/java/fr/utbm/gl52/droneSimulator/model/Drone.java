@@ -3,6 +3,7 @@ package fr.utbm.gl52.droneSimulator.model;
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
@@ -13,10 +14,11 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     // attributs
     private Boolean isBusy;
     private Boolean isLoaded;
-    private Float charge;
+    private Integer batteryCapacity;
     private Float rotation; // TODO degres ou radian ?
+    private Float weightCapacity;
 
-    // TODO prise de décision par rapport aux paquets
+// TODO prise de décision par rapport aux paquets
     /*
     if (isTransportable(parcel)) {
         goTo(parcel);
@@ -60,7 +62,8 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
         isBusy = false;
         isLoaded = false;
-        charge = 100f;
+        batteryCapacity = Simulation.getDroneBatteryCapacity()[1];
+        weightCapacity = Simulation.getDroneWeightCapacity()[0];
         rotation = 0f;
 
         memory = new Memory();
@@ -213,16 +216,21 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         return visibleDistance;
     }
 
-    public Float getCharge() {
-        return charge;
+    public Integer getBatteryCapacity() {
+        return batteryCapacity;
     }
 
     public void setLoaded(Boolean b) {
         isLoaded = b;
     }
 
-    public void setCharge(Float f) {
-        charge = f;
+    public void setBatteryCapacity(Integer i) {
+        if(i < Simulation.getDroneBatteryCapacity()[0] || i > Simulation.getDroneBatteryCapacity()[1]){
+            throw new IllegalArgumentException("battery capacity must be between " + Simulation.getDroneBatteryCapacity()[0] + " and " + Simulation.getDroneBatteryCapacity()[1] + " (" + i + " given)");
+        } else {
+            this.batteryCapacity = i;
+
+        }
     }
 
     public void setBusy(Boolean b) {
@@ -237,14 +245,29 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         return rotation;
     }
 
+    public Float getWeightCapacity() {
+        return weightCapacity;
+    }
+
+    public void setWeightCapacity(Float weightCapacity) {
+        if(weightCapacity < Simulation.getDroneWeightCapacity()[0] || weightCapacity > Simulation.getDroneWeightCapacity()[1]){
+            throw new IllegalArgumentException("weigh capacity must be between " + Simulation.getDroneWeightCapacity()[0] + " and " + Simulation.getDroneWeightCapacity()[1] + " (" + weightCapacity + " given)");
+        } else {
+            this.weightCapacity = weightCapacity;
+
+        }
+    }
+
+    @Override
     public String toString() {
-        String s =
-                super.toString() +
-                        "isBusy: " + (isBusy() ? "busy" : "free") +
-                        "isLoaded: " + (isLoaded() ? "loaded" : "empty") +
-                        "chargeBattery: " + getCharge() + "%" +
-                        "rotate: " + getRotation() +
-                        System.getProperty("line.separator");
-        return s;
+        return "Drone{" +
+                "isBusy=" + isBusy +
+                ", isLoaded=" + isLoaded +
+                ", batteryCapacity=" + batteryCapacity +
+                ", rotation=" + rotation +
+                ", weightCapacity=" + weightCapacity +
+                ", memory=" + memory +
+                ", coord=" + Arrays.toString(coord) +
+                '}';
     }
 }
