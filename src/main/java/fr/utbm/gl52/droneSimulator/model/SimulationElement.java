@@ -41,7 +41,7 @@ public abstract class SimulationElement implements SimulationElementInterface {
         return coord;
     }
 
-    public void setCoord(Float x, Float y){
+    public void setCoord(Float x, Float y) throws OutOfMainAreaException{
         setX(x);
         setY(y);
     }

@@ -7,7 +7,6 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Slider;
@@ -18,33 +17,15 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.calculateModelCoordinate;
+import static fr.utbm.gl52.droneSimulator.view.ParameterWindowView.getDroneGraphicElements;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.*;
 
 public class ParameterWindowController{
 
+    //TODO: Penser à reset to les autres flags en cas de nouveau click sur un bouton
     private Boolean isDronePlacement = false;
-
-    /*@FXML private AnchorPane ap;
-    Parent root = ap.getParent();
-
-    Slider droneWeightCapacity = (Slider)  root.lookup("#droneWeightCapacity");
-    Slider droneBatteryCapacity = (Slider) root.lookup("#droneBatteryCapacity");*/
-
-   /* @FXML
-    public void onWeightCapacityDraged(ActionEvent ae){
-        Node source = (Node) ae.getSource();
-        Parent root = source.getParent();
-        Slider droneWeightCapacity = (Slider)  root.lookup("#droneWeightCapacity");
-        Text maxWeightCapacity = (Text) root.lookup("#maxWeightCapacity");
-        DecimalFormat df = new DecimalFormat("###.#");
-        df.setRoundingMode(RoundingMode.DOWN);
-        maxWeightCapacity.setText(df.format(droneWeightCapacity.getValue()) + "kg");
-    }
-
-    @FXML
-    public void onWeightDragDone(){
-        //droneWeightCapacity.set
-    }*/
+    private Boolean isDroneRemoving = false;
+    private static final Float selectRadius = 10f;
 
    @FXML
    public void addDroneAction(ActionEvent ae){
@@ -56,11 +37,22 @@ public class ParameterWindowController{
    }
 
    @FXML
+   public void removeDroneAction(ActionEvent ae){
+       Node source = (Node) ae.getSource();
+       Parent root = source.getScene().getRoot();
+       Pane pane = (Pane) root.lookup("#visualSettingPane");
+       useCrossHairCursorOn(pane);
+       isDroneRemoving = true;
+   }
+
+   @FXML
     public void onVisualPaneClicked(MouseEvent event){
        if(ControllerHelper.isLeftClick(event)) {
+           Parent root = ControllerHelper.getRootWith(event);
            if(isDronePlacement){
-               Parent root = ControllerHelper.getRootWith(event);
                createDroneElement(event, root);
+           } else if(isDroneRemoving){
+                removeDroneElement(event, root);
            }
        }
    }
@@ -82,10 +74,38 @@ public class ParameterWindowController{
             //System.out.println(drone.toString());
             useDefaultCursorOn(pane);
             isDronePlacement = false;
-            addElementTo(pane, DroneGraphicElement.getShape(drone));
+            DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
+            getDroneGraphicElements().add(droneGraphicElement);
+            addElementTo(pane, droneGraphicElement.getShape());
         } catch (OutOfMainAreaException e) {
             e.printStackTrace();
         }
+    }
+
+    private void removeDroneElement(MouseEvent event, Parent root){
+        DroneGraphicElement droneGraphic = getDroneInRadius((float) event.getX(), (float) event.getY());
+        if(droneGraphic != null) {
+            Drone drone = (Drone) droneGraphic.getSimulationElement();
+            Simulation.getDrones().remove(drone);
+            Pane pane = (Pane) root.lookup("#visualSettingPane");
+            pane.getChildren().remove(droneGraphic.getShape());
+            getDroneGraphicElements().remove(droneGraphic);
+            isDroneRemoving = false;
+            useDefaultCursorOn(pane);
+        }
+    }
+
+    private DroneGraphicElement getDroneInRadius(float x, float y) {
+       for (DroneGraphicElement drone: getDroneGraphicElements()){
+            if(isInRadius(drone.getX(), x) && isInRadius(drone.getY(), y)){
+                return drone;
+            }
+       }
+       return null;
+    }
+
+    private Boolean isInRadius(Float x, float x1) {
+       return (x >= x1 - selectRadius && x <= x1 + selectRadius);
     }
 
     @FXML
@@ -94,7 +114,7 @@ public class ParameterWindowController{
             System.out.println("run simulation");
             try {
                 SimulationWindowView simulationWindowView = new SimulationWindowView();
-                ControllerHelper.createWindow(event, simulationWindowView.getParent());
+                createWindow(event, simulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
             }
