@@ -69,13 +69,13 @@
                         <Insets left="3.0" right="3.0" />
                      </padding>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="BASELINE_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Charging Station" />
-                        <Button mnemonicParsing="false" text="Add" textAlignment="CENTER" />
-                        <Button mnemonicParsing="false" text="Remove" />
+                        <Button mnemonicParsing="false" onAction="#addChargingStationAction" text="Add" textAlignment="CENTER" />
+                        <Button mnemonicParsing="false" onAction="#removeChargingStationAction" text="Remove" />
                      </children></VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="BASELINE_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Parcel" />
                         <Button fx:id="addParcelButton" minWidth="-Infinity" mnemonicParsing="false" text="Add" textAlignment="CENTER" />
