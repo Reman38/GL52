@@ -8,6 +8,8 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createWindow;
+
 public class StartPageController extends ControllerHelper {
 
     @FXML

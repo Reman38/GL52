@@ -14,16 +14,6 @@ import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement.get
 
 public class ControllerHelper {
 
-    protected static void createWindow(MouseEvent event, Parent parent) {
-        Scene scene = new Scene(parent);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Drone Simulator");
-        stage.setMaximized(true);
-        stage.show();
-        ((Node)(event.getSource())).getScene().getWindow().hide();
-    }
-
     protected static Parent getRootWith(Event e){
         Node source = (Node) e.getSource();
         return source.getScene().getRoot();

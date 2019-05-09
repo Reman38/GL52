@@ -64,11 +64,11 @@ public class Simulation {
 
     public static void start() {
         initMainArea();
-        popAreas();
-        popParcels();
-        popDrones();
-        Thread simulationThread = new Thread(Simulation::update);
-        simulationThread.start();
+        //popAreas();
+        //popParcels();
+        //popDrones();
+        //Thread simulationThread = new Thread(Simulation::update);
+        //simulationThread.start();
     }
 
     private static void popParcels() {

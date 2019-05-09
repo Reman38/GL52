@@ -1,6 +1,7 @@
 package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.Simulation;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.MainAreaGraphicElement;
 import javafx.fxml.FXMLLoader;
@@ -11,11 +12,14 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.addElementTo;
 
 public class ParameterWindowView {
     private Parent root;
+    private static List<DroneGraphicElement> droneGraphicElements = new ArrayList<>();
 
     public ParameterWindowView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
@@ -78,5 +82,9 @@ public class ParameterWindowView {
 
     public javafx.scene.Parent getParent(){
         return root;
+    }
+
+    public static List<DroneGraphicElement> getDroneGraphicElements() {
+        return droneGraphicElements;
     }
 }

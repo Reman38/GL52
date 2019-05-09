@@ -7,6 +7,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
 public abstract class RectangleGraphicElement extends GraphicElement{
+
+    private Rectangle rectangle = null;
+
     public RectangleGraphicElement(SimulationElement se) {
         super(se);
     }
@@ -23,6 +26,14 @@ public abstract class RectangleGraphicElement extends GraphicElement{
     }
 
     public Rectangle getShape() {
+        if(rectangle == null){
+            rectangle = createShape();
+        }
+
+        return rectangle;
+    }
+
+    private Rectangle createShape(){
         Rectangle rectangle = new Rectangle();
         rectangle.setX(getX());
         rectangle.setY(getY());

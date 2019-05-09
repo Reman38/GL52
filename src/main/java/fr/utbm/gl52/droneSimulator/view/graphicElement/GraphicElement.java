@@ -51,6 +51,10 @@ public abstract class GraphicElement implements GraphicElementInterface{
         return simulationElement.getY() * getCoefficient();
     }
 
+    public SimulationElement getSimulationElement() {
+        return simulationElement;
+    }
+
     public String getColor() {
         return color;
     }
