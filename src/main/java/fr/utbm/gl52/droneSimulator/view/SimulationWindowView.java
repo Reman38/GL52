@@ -1,9 +1,6 @@
 package fr.utbm.gl52.droneSimulator.view;
 
-import fr.utbm.gl52.droneSimulator.model.Area;
-import fr.utbm.gl52.droneSimulator.model.Drone;
-import fr.utbm.gl52.droneSimulator.model.Parcel;
-import fr.utbm.gl52.droneSimulator.model.Simulation;
+import fr.utbm.gl52.droneSimulator.model.*;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -41,6 +38,7 @@ public class SimulationWindowView {
         displayMainArea(pane);
         displayAreas(pane);
         displayParcels(pane);
+        displayChargingStation(pane);
 
         // for (Drone drone : Simulation.getDrones()) {
         Drone drone = Simulation.getDrones().get(0);
@@ -69,6 +67,15 @@ public class SimulationWindowView {
             pane.getChildren().add(shape);
         }
     }
+
+    public void displayChargingStation(Pane pane) {
+        for (ChargingStation chargingStation : Simulation.getChargingStations()) {
+            ChargingStationGraphicElement chargingStationGraphicElement = new ChargingStationGraphicElement(chargingStation);
+            Shape shape = chargingStationGraphicElement.getShape();
+            pane.getChildren().add(shape);
+        }
+    }
+
     public void displayAreas(Pane pane) {
         for (Area area : Simulation.getAreas()) {
             Shape shape = AreaGraphicElement.getShape(area);

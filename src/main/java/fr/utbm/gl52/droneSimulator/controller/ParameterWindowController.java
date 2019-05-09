@@ -1,9 +1,11 @@
 package fr.utbm.gl52.droneSimulator.controller;
 
 
+import fr.utbm.gl52.droneSimulator.model.ChargingStation;
 import fr.utbm.gl52.droneSimulator.model.Drone;
 import fr.utbm.gl52.droneSimulator.model.Simulation;
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,14 +19,16 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.calculateModelCoordinate;
+import static fr.utbm.gl52.droneSimulator.view.ParameterWindowView.getChargingStationGraphicElements;
 import static fr.utbm.gl52.droneSimulator.view.ParameterWindowView.getDroneGraphicElements;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.*;
 
 public class ParameterWindowController{
-
-    //TODO: Penser à reset to les autres flags en cas de nouveau click sur un bouton
+    
     private Boolean isDronePlacement = false;
     private Boolean isDroneRemoving = false;
+    private Boolean isChargingStationPlacement = false;
+    private Boolean isChargingStationRemoving = false;
     private static final Float selectRadius = 10f;
 
    @FXML
@@ -33,6 +37,7 @@ public class ParameterWindowController{
        Parent root = source.getScene().getRoot();
        Pane pane = (Pane) root.lookup("#visualSettingPane");
        useCrossHairCursorOn(pane);
+       resetFlags();
        isDronePlacement = true;
    }
 
@@ -42,7 +47,28 @@ public class ParameterWindowController{
        Parent root = source.getScene().getRoot();
        Pane pane = (Pane) root.lookup("#visualSettingPane");
        useCrossHairCursorOn(pane);
+       resetFlags();
        isDroneRemoving = true;
+   }
+
+   @FXML
+   public void addChargingStationAction(ActionEvent ae){
+       Node source = (Node) ae.getSource();
+       Parent root = source.getScene().getRoot();
+       Pane pane = (Pane) root.lookup("#visualSettingPane");
+       useCrossHairCursorOn(pane);
+       resetFlags();
+       isChargingStationPlacement = true;
+   }
+
+   @FXML
+   public void removeChargingStationAction(ActionEvent ae){
+       Node source = (Node) ae.getSource();
+       Parent root = source.getScene().getRoot();
+       Pane pane = (Pane) root.lookup("#visualSettingPane");
+       useCrossHairCursorOn(pane);
+       resetFlags();
+       isChargingStationRemoving = true;
    }
 
    @FXML
@@ -53,9 +79,27 @@ public class ParameterWindowController{
                createDroneElement(event, root);
            } else if(isDroneRemoving){
                 removeDroneElement(event, root);
+           } else if(isChargingStationPlacement){
+               createChargingStationElement(event, root);
+           } else if (isChargingStationRemoving){
+               removeChargingStationElement(event, root);
            }
        }
    }
+
+    @FXML
+    public void launchSimulationWithCustomParameters(MouseEvent event){
+        if(ControllerHelper.isLeftClick(event)) {
+            System.out.println("run simulation");
+            try {
+                SimulationWindowView simulationWindowView = new SimulationWindowView();
+                createWindow(event, simulationWindowView.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     private void createDroneElement(MouseEvent event, Parent root) {
         Slider droneWeightCapacity = (Slider)  root.lookup("#droneWeightCapacity");
@@ -95,7 +139,7 @@ public class ParameterWindowController{
         }
     }
 
-    private DroneGraphicElement getDroneInRadius(float x, float y) {
+    private DroneGraphicElement getDroneInRadius(Float x, Float y) {
        for (DroneGraphicElement drone: getDroneGraphicElements()){
             if(isInRadius(drone.getX(), x) && isInRadius(drone.getY(), y)){
                 return drone;
@@ -104,22 +148,56 @@ public class ParameterWindowController{
        return null;
     }
 
-    private Boolean isInRadius(Float x, float x1) {
-       return (x >= x1 - selectRadius && x <= x1 + selectRadius);
+    private void createChargingStationElement(MouseEvent event, Parent root) {
+        Pane pane = (Pane) root.lookup("#visualSettingPane");
+        ChargingStation chargingStation = new ChargingStation();
+        addChargingStationElement(event, pane, chargingStation);
     }
 
-    @FXML
-    public void launchSimulationWithCustomParameters(MouseEvent event){
-        if(ControllerHelper.isLeftClick(event)) {
-            System.out.println("run simulation");
-            try {
-                SimulationWindowView simulationWindowView = new SimulationWindowView();
-                createWindow(event, simulationWindowView.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+    private void addChargingStationElement(MouseEvent event, Pane pane, ChargingStation chargingStation) {
+        try {
+            chargingStation.setCoord(calculateModelCoordinate((float) event.getX()) , calculateModelCoordinate((float) event.getY()));
+            Simulation.getChargingStations().add(chargingStation);
+            useDefaultCursorOn(pane);
+            isChargingStationPlacement = false;
+            ChargingStationGraphicElement chargingStationGraphicElement = new ChargingStationGraphicElement(chargingStation);
+            getChargingStationGraphicElements().add(chargingStationGraphicElement);
+            addElementTo(pane, chargingStationGraphicElement.getShape());
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
         }
     }
 
+    private void removeChargingStationElement(MouseEvent event, Parent root) {
+        ChargingStationGraphicElement chargingStationGraphic = getChargingStationInRadius((float) event.getX(), (float) event.getY());
+        if(chargingStationGraphic != null) {
+            ChargingStation chargingStation = (ChargingStation) chargingStationGraphic.getSimulationElement();
+            Simulation.getChargingStations().remove(chargingStation);
+            Pane pane = (Pane) root.lookup("#visualSettingPane");
+            pane.getChildren().remove(chargingStationGraphic.getShape());
+            getChargingStationGraphicElements().remove(chargingStationGraphic);
+            isChargingStationRemoving = false;
+            useDefaultCursorOn(pane);
+        }
+    }
+
+    private ChargingStationGraphicElement getChargingStationInRadius(Float x, Float y) {
+        for (ChargingStationGraphicElement chargingStation: getChargingStationGraphicElements()){
+            if(isInRadius(chargingStation.getX(), x) && isInRadius(chargingStation.getY(), y)){
+                return chargingStation;
+            }
+        }
+        return null;
+    }
+
+    private Boolean isInRadius(Float x, Float x1) {
+       return (x >= x1 - selectRadius && x <= x1 + selectRadius);
+    }
+
+    private void resetFlags(){
+        isDronePlacement = false;
+        isDroneRemoving = false;
+        isChargingStationPlacement = false;
+        isChargingStationRemoving = false;
+    }
 }

@@ -1,11 +1,13 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Simulation {
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
     private static ArrayList<Area> areas = new ArrayList<>();
+    private static List<ChargingStation> chargingStations = new ArrayList<>();
     private static MainArea mainArea;
 
     private static Boolean play = true;
@@ -14,6 +16,7 @@ public class Simulation {
     private static Float speed;
     private static Integer parcelNumber;
     private static Integer droneNumber;
+    private static  Integer chargingStation;
     private static Float[] droneWeightCapacity = new Float[2];
     private static Integer[] droneBatteryCapacity = new Integer[2];
 
@@ -25,6 +28,7 @@ public class Simulation {
         setSpeed(10f); // pour voir les éléments se déplacer
         droneNumber = 1;
         parcelNumber = 10;
+        chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5;
@@ -67,6 +71,7 @@ public class Simulation {
         //popAreas();
         //popParcels();
         //popDrones();
+        //popChargingStations();
         //Thread simulationThread = new Thread(Simulation::update);
         //simulationThread.start();
     }
@@ -86,6 +91,12 @@ public class Simulation {
     private static void popDrones() {
         for (Integer i = 0; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone());
+        }
+    }
+
+    private static void popChargingStations(){
+        for (Integer i = 0; i < getChargingStationNumber(); ++i) {
+            chargingStations.add(ChargingStation.createRandomizedChargingStations());
         }
     }
 
@@ -165,6 +176,19 @@ public class Simulation {
     public static void setParcels(ArrayList<Parcel> parcels) {
         parcels = parcels;
     }
+
+    public static List<ChargingStation> getChargingStations() {
+        return chargingStations;
+    }
+
+    public static Integer getChargingStationNumber() {
+        return chargingStation;
+    }
+
+    public static void setChargingStationNumber(Integer chargingStation) {
+        Simulation.chargingStation = chargingStation;
+    }
+
     public static Float[] getDroneWeightCapacity() {
         return droneWeightCapacity;
     }
