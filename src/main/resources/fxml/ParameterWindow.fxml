@@ -75,15 +75,54 @@
                         <Button mnemonicParsing="false" onAction="#addChargingStationAction" text="Add" textAlignment="CENTER" />
                         <Button mnemonicParsing="false" onAction="#removeChargingStationAction" text="Remove" />
                      </children></VBox>
-                  <VBox alignment="BASELINE_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <!--<VBox alignment="BASELINE_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Parcel" />
                         <Button fx:id="addParcelButton" minWidth="-Infinity" mnemonicParsing="false" text="Add" textAlignment="CENTER" />
                         <Button mnemonicParsing="false" text="Remove" />
-                     </children></VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     </children></VBox>-->
+                  <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                      <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#launchSimulationWithCustomParameters" text="Run Simulation" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="simulation duration:">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                        <HBox alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT">
+                           <children>
+                              <Slider fx:id="simulationDurationSlider" />
+                              <Text fx:id="SimulationDurationText" layoutX="10.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="min">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of iterations:">
+                           <font>
+                              <Font size="12.0" />
+                           </font>
+                        </Text>
+                        <HBox alignment="TOP_CENTER" prefWidth="200.0">
+                           <children>
+                              <Slider fx:id="iterationSlider" />
+                              <Text fx:id="iterationNumber" layoutX="10.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </HBox>
+                        <Button mnemonicParsing="false" onMouseClicked="#launchSimulationWithCustomParameters" text="Run Simulation">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin></Button>
                      </children>
                   </VBox>
                </children>

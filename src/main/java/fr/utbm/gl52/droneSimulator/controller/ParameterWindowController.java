@@ -5,8 +5,10 @@ import fr.utbm.gl52.droneSimulator.model.ChargingStation;
 import fr.utbm.gl52.droneSimulator.model.Drone;
 import fr.utbm.gl52.droneSimulator.model.Simulation;
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.view.ErrorPopupView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -91,14 +93,44 @@ public class ParameterWindowController{
     public void launchSimulationWithCustomParameters(MouseEvent event){
         if(ControllerHelper.isLeftClick(event)) {
             System.out.println("run simulation");
-            try {
-                SimulationWindowView simulationWindowView = new SimulationWindowView();
-                createWindow(event, simulationWindowView.getParent());
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(isAtLeastOneDroneInstanciated()){
+                ConfigureTimeSimulationParameters(event);
+                LaunchSimulationWindow(event);
+            } else {
+                throwZeroDroneErrorPopup();
             }
-
         }
+    }
+
+    private void throwZeroDroneErrorPopup() {
+        try {
+            ErrorPopupView errorPopupView = new ErrorPopupView("You must add at least one drone!");
+            createErrorPopup(errorPopupView.getParent());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void LaunchSimulationWindow(MouseEvent event) {
+        try {
+            SimulationWindowView simulationWindowView = new SimulationWindowView();
+            createWindow(event, simulationWindowView.getParent());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void ConfigureTimeSimulationParameters(MouseEvent event) {
+        Parent root = ControllerHelper.getRootWith(event);
+        Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
+        Slider simulationDurationSlider = (Slider)  root.lookup("#simulationDurationSlider");
+        Double simulationDuration = simulationDurationSlider.getValue();
+        Double iterationNumber =  IterationSlider.getValue();
+        Simulation.setTimeSimulationParameters(simulationDuration.intValue(), iterationNumber.intValue());
+    }
+
+    private boolean isAtLeastOneDroneInstanciated() {
+        return Simulation.getDrones().size() > 0;
     }
 
     private void createDroneElement(MouseEvent event, Parent root) {
