@@ -19,6 +19,11 @@ public class Simulation {
     private static  Integer chargingStation;
     private static Float[] droneWeightCapacity = new Float[2];
     private static Integer[] droneBatteryCapacity = new Integer[2];
+    private static Integer[] simulationDurationRange = new Integer[2];
+    private static Integer[] numberOfSimulationIterationRange = new Integer[2];
+    private static Integer simulationDuration = simulationDurationRange[0];
+    private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
+
 
     private static final Float mainAreaWidth = 16000f;
     private static final Float mainAreaHeight = 9000f;
@@ -33,6 +38,10 @@ public class Simulation {
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5;
         droneBatteryCapacity[1] = 55;
+        simulationDurationRange[0] = 20;
+        simulationDurationRange[1] = 120;
+        numberOfSimulationIterationRange[0] = 1;
+        numberOfSimulationIterationRange[1] = 10;
     }
 
     public static void setSpeed(Float f) {
@@ -126,6 +135,11 @@ public class Simulation {
         }
     }
 
+    public static void setTimeSimulationParameters(Integer simulationDuration, Integer numberOfSimulationIteration){
+        Simulation.simulationDuration = simulationDuration;
+        Simulation.numberOfSimulationIteration = numberOfSimulationIteration;
+    }
+
     private static void incrementTime() {
         setTime(getTime() + 1);
     }
@@ -176,24 +190,25 @@ public class Simulation {
     public static void setParcels(ArrayList<Parcel> parcels) {
         parcels = parcels;
     }
-
     public static List<ChargingStation> getChargingStations() {
         return chargingStations;
     }
-
     public static Integer getChargingStationNumber() {
         return chargingStation;
     }
-
     public static void setChargingStationNumber(Integer chargingStation) {
         Simulation.chargingStation = chargingStation;
     }
-
     public static Float[] getDroneWeightCapacity() {
         return droneWeightCapacity;
     }
-
     public static Integer[] getDroneBatteryCapacity() {
         return droneBatteryCapacity;
+    }
+    public static Integer[] getSimulationDurationRange() {
+        return simulationDurationRange;
+    }
+    public static Integer[] getNumberOfSimulationIterationRange() {
+        return numberOfSimulationIterationRange;
     }
 }

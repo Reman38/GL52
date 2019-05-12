@@ -40,7 +40,11 @@ public class ParameterWindowView {
 
         createDroneBatterySlider();
 
-        simulation.start();
+        createSimulationDurationSlider();
+
+        createIterationNumberslider();
+
+        Simulation.start();
 
         GraphicElement.setCoefficient(0.065f);
 
@@ -79,6 +83,40 @@ public class ParameterWindowView {
     private void refreshDroneWeight(Slider droneWeightCapacity, Text weightCapacity) {
         droneWeightCapacity.valueProperty().addListener((observable, oldValue, newValue) -> {
             weightCapacity.setText(String.format("%.2f", newValue) + "kg");
+        });
+    }
+
+    private void createSimulationDurationSlider() {
+        Slider simulationDurationSlider = (Slider)  root.lookup("#simulationDurationSlider");
+        Text simulationDuration = (Text) root.lookup("#SimulationDurationText");
+        simulationDuration.setText(Simulation.getSimulationDurationRange()[0].toString() + " min");
+        simulationDurationSlider.setMin(Simulation.getSimulationDurationRange()[0]);
+        simulationDurationSlider.setMax(Simulation.getSimulationDurationRange()[1]);
+        simulationDurationSlider.setShowTickLabels(true);
+
+        refreshSimulationDuration(simulationDurationSlider, simulationDuration);
+    }
+
+    private void refreshSimulationDuration(Slider simulationDurationSlider, Text simulationDuration) {
+        simulationDurationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            simulationDuration.setText(String.format("%d", newValue.intValue()) + " min");
+        });
+    }
+
+    private void createIterationNumberslider() {
+        Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
+        Text IterationNumber = (Text) root.lookup("#iterationNumber");
+        IterationNumber.setText(Simulation.getNumberOfSimulationIterationRange()[0].toString());
+        IterationSlider.setMin(Simulation.getNumberOfSimulationIterationRange()[0]);
+        IterationSlider.setMax(Simulation.getNumberOfSimulationIterationRange()[1]);
+        IterationSlider.setShowTickLabels(true);
+
+        refreshIterationNumber(IterationSlider, IterationNumber);
+    }
+
+    private void refreshIterationNumber(Slider IterationSlider, Text iterationNumber) {
+        IterationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            iterationNumber.setText(String.format("%d", newValue.intValue()));
         });
     }
 
