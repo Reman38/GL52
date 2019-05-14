@@ -1,7 +1,9 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Simulation {
     private static ArrayList<Drone> drones = new ArrayList<>();
@@ -17,12 +19,14 @@ public class Simulation {
     private static Integer parcelNumber;
     private static Integer droneNumber;
     private static  Integer chargingStation;
+    private static Float competitionDifficulty;
     private static Float[] droneWeightCapacity = new Float[2];
     private static Integer[] droneBatteryCapacity = new Integer[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
     private static Integer simulationDuration = simulationDurationRange[0];
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
+    private static Map<String, Float> competitionDifficultyLevels = new HashMap<>();
 
 
     private static final Float mainAreaWidth = 16000f;
@@ -42,6 +46,13 @@ public class Simulation {
         simulationDurationRange[1] = 120;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
+        setCompetitionDifficultyLevels();
+    }
+
+    private void setCompetitionDifficultyLevels() {
+        competitionDifficultyLevels.put("soft", .025f);
+        competitionDifficultyLevels.put("medium", 0.50f);
+        competitionDifficultyLevels.put("hard", 0.75f);
     }
 
     public static void setSpeed(Float f) {
@@ -140,6 +151,13 @@ public class Simulation {
         Simulation.numberOfSimulationIteration = numberOfSimulationIteration;
     }
 
+    public static void setCompetitionDifficulty(String difficulty){
+        competitionDifficulty = competitionDifficultyLevels.get(difficulty);
+        if(competitionDifficulty == null){
+            throw new IllegalArgumentException(difficulty + " is not defined");
+        }
+    }
+
     private static void incrementTime() {
         setTime(getTime() + 1);
     }
@@ -210,5 +228,8 @@ public class Simulation {
     }
     public static Integer[] getNumberOfSimulationIterationRange() {
         return numberOfSimulationIterationRange;
+    }
+    public static Map<String, Float> getCompetitionDifficultyLevels() {
+        return competitionDifficultyLevels;
     }
 }
