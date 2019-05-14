@@ -7,6 +7,7 @@ import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.MainAreaGraphicElement;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
@@ -15,7 +16,9 @@ import javafx.scene.text.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import static fr.utbm.gl52.droneSimulator.model.Simulation.getCompetitionDifficultyLevels;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.addElementTo;
 
 public class ParameterWindowView {
@@ -43,6 +46,8 @@ public class ParameterWindowView {
         createSimulationDurationSlider();
 
         createIterationNumberslider();
+
+        createCompetitionDropDown();
 
         Simulation.start();
 
@@ -118,6 +123,13 @@ public class ParameterWindowView {
         IterationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             iterationNumber.setText(String.format("%d", newValue.intValue()));
         });
+    }
+
+    private void createCompetitionDropDown(){
+        ComboBox competitionLevels = (ComboBox) root.lookup("#competitionLevelComboBox");
+
+        for(Map.Entry<String, Float> difficulty: getCompetitionDifficultyLevels().entrySet())
+        competitionLevels.getItems().add(difficulty.getKey());
     }
 
     public javafx.scene.Parent getParent(){
