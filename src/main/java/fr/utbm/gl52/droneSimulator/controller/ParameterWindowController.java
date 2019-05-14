@@ -8,11 +8,11 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.ErrorPopupView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
@@ -21,6 +21,8 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.calculateModelCoordinate;
+import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isLeftClick;
+import static fr.utbm.gl52.droneSimulator.model.Simulation.setCompetitionDifficulty;
 import static fr.utbm.gl52.droneSimulator.view.ParameterWindowView.getChargingStationGraphicElements;
 import static fr.utbm.gl52.droneSimulator.view.ParameterWindowView.getDroneGraphicElements;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.*;
@@ -75,7 +77,7 @@ public class ParameterWindowController{
 
    @FXML
     public void onVisualPaneClicked(MouseEvent event){
-       if(ControllerHelper.isLeftClick(event)) {
+       if(isLeftClick(event)) {
            Parent root = ControllerHelper.getRootWith(event);
            if(isDronePlacement){
                createDroneElement(event, root);
@@ -90,25 +92,37 @@ public class ParameterWindowController{
    }
 
     @FXML
-    public void launchSimulationWithCustomParameters(MouseEvent event){
-        if(ControllerHelper.isLeftClick(event)) {
+    public void launchSimulationWithCustomParameters(MouseEvent event) throws IOException {
+        if(isLeftClick(event)) {
             System.out.println("run simulation");
             if(isAtLeastOneDroneInstanciated()){
-                ConfigureTimeSimulationParameters(event);
-                LaunchSimulationWindow(event);
+                TryToConfigureSimulationParameters(event);
             } else {
                 throwZeroDroneErrorPopup();
             }
         }
     }
 
+    private void TryToConfigureSimulationParameters(MouseEvent event) throws IOException {
+        try {
+            ConfigureSimulationParameters(event);
+            LaunchSimulationWindow(event);
+        } catch(IllegalArgumentException e){
+            throwErrorPopup("You must choose a valid competition difficulty");
+        }
+    }
+
     private void throwZeroDroneErrorPopup() {
         try {
-            ErrorPopupView errorPopupView = new ErrorPopupView("You must add at least one drone!");
-            createErrorPopup(errorPopupView.getParent());
+            throwErrorPopup("You must add at least one drone!");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void throwErrorPopup(String errorMsg) throws IOException {
+        ErrorPopupView errorPopupView = new ErrorPopupView(errorMsg);
+        createErrorPopup(errorPopupView.getParent());
     }
 
     private void LaunchSimulationWindow(MouseEvent event) {
@@ -120,13 +134,23 @@ public class ParameterWindowController{
         }
     }
 
-    private void ConfigureTimeSimulationParameters(MouseEvent event) {
+    private void ConfigureSimulationParameters(MouseEvent event) throws IllegalArgumentException {
         Parent root = ControllerHelper.getRootWith(event);
+        ConfigureTimeSimulationParameters(root);
+        ConfigureCompetitionDifficultyParameter(root);
+    }
+
+    private void ConfigureCompetitionDifficultyParameter(Parent root) throws IllegalArgumentException {
+        ComboBox<String> competitionLevels = (ComboBox<String>) root.lookup("#competitionLevelComboBox");
+        setCompetitionDifficulty(competitionLevels.getValue());
+    }
+
+    private void ConfigureTimeSimulationParameters(Parent root) {
         Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
         Slider simulationDurationSlider = (Slider)  root.lookup("#simulationDurationSlider");
-        Double simulationDuration = simulationDurationSlider.getValue();
-        Double iterationNumber =  IterationSlider.getValue();
-        Simulation.setTimeSimulationParameters(simulationDuration.intValue(), iterationNumber.intValue());
+        double simulationDuration = simulationDurationSlider.getValue();
+        double iterationNumber =  IterationSlider.getValue();
+        Simulation.setTimeSimulationParameters((int) simulationDuration, (int) iterationNumber);
     }
 
     private boolean isAtLeastOneDroneInstanciated() {
