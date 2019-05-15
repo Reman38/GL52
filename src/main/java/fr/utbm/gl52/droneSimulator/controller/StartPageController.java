@@ -1,5 +1,6 @@
 package fr.utbm.gl52.droneSimulator.controller;
 
+import fr.utbm.gl52.droneSimulator.model.Simulation;
 import fr.utbm.gl52.droneSimulator.view.ParameterWindowView;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import javafx.fxml.FXML;
@@ -17,7 +18,7 @@ public class StartPageController extends ControllerHelper {
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             System.out.println("click default");
             try {
-                SimulationWindowView simulationWindowView = new SimulationWindowView();
+                SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.DEFAULT);
                 createWindow(event, simulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -29,7 +30,12 @@ public class StartPageController extends ControllerHelper {
     @FXML
     public void launchSimulationWithRandomParameters(MouseEvent event){
         if(event.getButton().equals(MouseButton.PRIMARY)) {
-            System.out.println("click random");
+            try {
+                SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.RANDOM);
+                createWindow(event, simulationWindowView.getParent());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

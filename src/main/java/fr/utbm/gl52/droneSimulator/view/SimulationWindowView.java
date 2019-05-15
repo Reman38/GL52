@@ -19,8 +19,8 @@ import java.io.IOException;
 public class SimulationWindowView {
     private final Parent root;
 
-    public SimulationWindowView() throws IOException {
-        startModel();
+    public SimulationWindowView(String simulationMode) throws IOException {
+        startModel(simulationMode);
 
         FXMLLoader loader = new FXMLLoader(
             getClass().getResource("/fxml/SimulationWindow.fxml")
@@ -86,9 +86,18 @@ public class SimulationWindowView {
         Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
         pane.getChildren().add(mainAreaGraphicElementShape);
     }
-    public void startModel() {
+    public void startModel(String simulationMode) {
         new Simulation();
-        Simulation.start();
+        if(simulationMode.equals(Simulation.DEFAULT)){
+            Simulation.startDefault();
+        } else if(simulationMode.equals(Simulation.RANDOM)){
+            Simulation.startRandom();
+
+        } else if(simulationMode.equals(Simulation.CUSTOM)){
+            Simulation.startCustom();
+        } else {
+            throw new IllegalArgumentException("the mode '" + simulationMode + "' doesn't exist");
+        }
     }
 
     public javafx.scene.Parent getParent() {

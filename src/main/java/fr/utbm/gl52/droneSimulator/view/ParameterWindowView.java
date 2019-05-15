@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static fr.utbm.gl52.droneSimulator.model.Simulation.getCompetitionDifficultyLevels;
+import static fr.utbm.gl52.droneSimulator.model.Simulation.initMainArea;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.addElementTo;
 
 public class ParameterWindowView {
@@ -49,7 +50,7 @@ public class ParameterWindowView {
 
         createCompetitionDropDown();
 
-        Simulation.start();
+        initMainArea();
 
         GraphicElement.setCoefficient(0.065f);
 
