@@ -9,7 +9,7 @@ import javafx.stage.Window;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.getRootWith;
 
-public class errorPopupController {
+public class ErrorPopupController {
 
     @FXML
     public void closeErrorPopupAction(ActionEvent event){
