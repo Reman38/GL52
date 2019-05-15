@@ -29,8 +29,8 @@ public class Simulation {
     private static Map<String, Float> competitionDifficultyLevels = new HashMap<>();
 
 
-    private static final Float mainAreaWidth = 16000f;
-    private static final Float mainAreaHeight = 9000f;
+    private static final Float mainAreaWidth = 1600f;
+    private static final Float mainAreaHeight = 900f;
 
     public static final String DEFAULT = "DEFAULT";
     public static final String RANDOM = "RANDOM";
@@ -111,7 +111,8 @@ public class Simulation {
     }
 
     public static void startCustom() {
-        initMainArea();
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
     }
 
     private static void popParcels() {

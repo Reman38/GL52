@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 18f/30f; // 41 mph, 65 kmh, 18ms
+    static final private Float speed = 18f/30f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
 
     // attributs

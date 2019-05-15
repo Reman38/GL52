@@ -2,17 +2,10 @@ package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.*;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -33,34 +26,31 @@ public class SimulationWindowView {
         startView(pane);
     }
     public void startView(Pane pane) {
-        GraphicElement.setCoefficient(0.065f);
+        GraphicElement.setModelViewCoefficient(0.65f);
+        CenteredAndErgonomicGraphicElement.setZoomCoefficient(20f);
 
         displayMainArea(pane);
         displayAreas(pane);
         displayParcels(pane);
         displayChargingStation(pane);
+        displayDrones(pane);
 
         // for (Drone drone : Simulation.getDrones()) {
-        Drone drone = Simulation.getDrones().get(0);
+        /*Drone drone = Simulation.getDrones().get(0);
         DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
         Rectangle rectangle = droneGraphicElement.getShape();
-        pane.getChildren().add(rectangle);
+        pane.getChildren().add(rectangle);*/
         // }
-
-        // TODO make it work
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Animation.INDEFINITE);
-
-        KeyFrame moveDrone = new KeyFrame(Duration.seconds(1f/30f), new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent event) {
-                rectangle.setX(droneGraphicElement.getX());
-                rectangle.setY(droneGraphicElement.getY());
-            }
-        });
-
-        timeline.getKeyFrames().add(moveDrone);
-        timeline.play();
     }
+
+    public void displayDrones(Pane pane) {
+        for (Drone drone : Simulation.getDrones()) {
+            DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
+            Shape shape = droneGraphicElement.getShape();
+            pane.getChildren().add(shape);
+        }
+    }
+
     public void displayParcels(Pane pane) {
         for (Parcel parcel : Simulation.getParcels()) {
             Shape shape = ParcelGraphicElement.getShape(parcel);

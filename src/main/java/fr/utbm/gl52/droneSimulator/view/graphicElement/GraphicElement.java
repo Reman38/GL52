@@ -8,18 +8,18 @@ public abstract class GraphicElement implements GraphicElementInterface{
     private Boolean isFilled;
     private SimulationElement simulationElement;
 
-    private static Float coefficient;
+    private static Float modelViewCoefficient;
 
     public GraphicElement(SimulationElement se) {
         simulationElement = se;
     }
 
-    public static void setCoefficient(Float _coefficient){
+    public static void setModelViewCoefficient(Float _coefficient){
         try {
             if (_coefficient < 0)
                 throw new NotSupportedValueException("Coefficient can't be < 0");
             else
-                coefficient = _coefficient;
+                modelViewCoefficient = _coefficient;
         } catch (NotSupportedValueException e) {
             e.printStackTrace();
         }
@@ -35,20 +35,20 @@ public abstract class GraphicElement implements GraphicElementInterface{
     public Boolean isFilled() {
         return isFilled;
     }
-    public static Float getCoefficient() {
-        return coefficient;
+    public static Float getModelViewCoefficient() {
+        return modelViewCoefficient;
     }
     public Float getHeight() {
-        return simulationElement.getHeight() * getCoefficient();
+        return simulationElement.getHeight() * getModelViewCoefficient();
     }
     public Float getWidth() {
-        return simulationElement.getWidth() * getCoefficient();
+        return simulationElement.getWidth() * getModelViewCoefficient();
     }
     public Float getX() {
-        return simulationElement.getX() * getCoefficient();
+        return simulationElement.getX() * getModelViewCoefficient();
     }
     public Float getY() {
-        return simulationElement.getY() * getCoefficient();
+        return simulationElement.getY() * getModelViewCoefficient();
     }
 
     public SimulationElement getSimulationElement() {
