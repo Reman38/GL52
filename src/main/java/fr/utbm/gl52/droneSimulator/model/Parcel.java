@@ -21,11 +21,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
 
     public void randomize() {
         setRandWeight();
-        try {
             setRandCoord(Simulation.getMainArea()); // après setWeight car size nécessaire pour le controle de contrainte de mainArea
-        } catch (OutOfMainAreaException e) {
-            e.printStackTrace();
-        }
     }
 
     public void setRandWeight() {

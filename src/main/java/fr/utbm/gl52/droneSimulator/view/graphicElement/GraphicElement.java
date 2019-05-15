@@ -4,44 +4,25 @@ import fr.utbm.gl52.droneSimulator.model.exception.NotSupportedValueException;
 import fr.utbm.gl52.droneSimulator.model.SimulationElement;
 
 public abstract class GraphicElement implements GraphicElementInterface{
-    private Float[] coord = new Float[2];
-    public Float width;
-    public Float height;
     private String color;
     private Boolean isFilled;
+    private SimulationElement simulationElement;
 
     private static Float coefficient;
 
     public GraphicElement(SimulationElement se) {
-    }
-
-    public void setX(Float x) {
-        coord[0] = x;
-    }
-
-    public void setY(Float y) {
-        coord[1] = y;
+        simulationElement = se;
     }
 
     public static void setCoefficient(Float _coefficient){
         try {
-            if (_coefficient <= 0)
-                throw new NotSupportedValueException("Coefficient can't be <= 0");
+            if (_coefficient < 0)
+                throw new NotSupportedValueException("Coefficient can't be < 0");
             else
                 coefficient = _coefficient;
         } catch (NotSupportedValueException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setCoord(Float[] _coord) {
-        coord = _coord;
-    }
-    public void setWidth(Float _width) {
-        width = _width;
-    }
-    public void setHeight(Float _height) {
-        height = _height;
     }
 
     public void setColor(String s) {
@@ -58,16 +39,20 @@ public abstract class GraphicElement implements GraphicElementInterface{
         return coefficient;
     }
     public Float getHeight() {
-        return height * getCoefficient();
+        return simulationElement.getHeight() * getCoefficient();
     }
     public Float getWidth() {
-        return width * getCoefficient();
+        return simulationElement.getWidth() * getCoefficient();
     }
     public Float getX() {
-        return coord[0] * getCoefficient();
+        return simulationElement.getX() * getCoefficient();
     }
     public Float getY() {
-        return coord[1] * getCoefficient();
+        return simulationElement.getY() * getCoefficient();
+    }
+
+    public SimulationElement getSimulationElement() {
+        return simulationElement;
     }
 
     public String getColor() {
