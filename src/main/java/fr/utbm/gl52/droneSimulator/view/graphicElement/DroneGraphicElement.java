@@ -22,8 +22,6 @@ public class DroneGraphicElement extends CenteredAndErgonomicGraphicElement {
             public void handle(ActionEvent event) {
                 getShape().setX(getX());
                 getShape().setY(getY());
-                getGraphicalId().setX(getXId());
-                getGraphicalId().setY(getYId());
             }
         });
 

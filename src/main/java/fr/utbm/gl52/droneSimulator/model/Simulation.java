@@ -29,8 +29,12 @@ public class Simulation {
     private static Map<String, Float> competitionDifficultyLevels = new HashMap<>();
 
 
-    private static final Float mainAreaWidth = 16000f;
-    private static final Float mainAreaHeight = 9000f;
+    private static final Float mainAreaWidth = 1600f;
+    private static final Float mainAreaHeight = 900f;
+
+    public static final String DEFAULT = "DEFAULT";
+    public static final String RANDOM = "RANDOM";
+    public static final String CUSTOM = "CUSTOM";
 
     public Simulation() {
         time = 0;
@@ -82,18 +86,33 @@ public class Simulation {
         drones.clear();
     }
 
-    private static void initMainArea() {
+    public static void initMainArea() {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
-    public static void start() {
+    public static void startDefault() {
         initMainArea();
-        //popAreas();
-        //popParcels();
-        //popDrones();
-        //popChargingStations();
-        //Thread simulationThread = new Thread(Simulation::update);
-        //simulationThread.start();
+        popAreas();
+        popParcels();
+        popDrones();
+        popChargingStations();
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
+    }
+
+    public static void startRandom() {
+        initMainArea();
+        popAreas();
+        popParcels();
+        popDrones();
+        popChargingStations();
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
+    }
+
+    public static void startCustom() {
+        Thread simulationThread = new Thread(Simulation::update);
+        simulationThread.start();
     }
 
     private static void popParcels() {
