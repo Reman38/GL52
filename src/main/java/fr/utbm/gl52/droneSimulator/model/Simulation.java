@@ -1,11 +1,16 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import java.security.Timestamp;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Simulation {
+    public static final long secondsInAMinute = 60L;
+    public static final long millisecondsInASecond = 1000L;
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
     private static ArrayList<Area> areas = new ArrayList<>();
@@ -15,7 +20,7 @@ public class Simulation {
     private static Boolean play = true;
 
     private static Integer time;
-    private static Float speed;
+    private static Float simulationSpeed;
     private static Integer parcelNumber;
     private static Integer droneNumber;
     private static  Integer chargingStation;
@@ -24,7 +29,7 @@ public class Simulation {
     private static Integer[] droneBatteryCapacity = new Integer[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
-    private static Integer simulationDuration = simulationDurationRange[0];
+    private static Integer simulationDuration = 240;
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
     private static Map<String, Float> competitionDifficultyLevels = new HashMap<>();
 
@@ -36,9 +41,21 @@ public class Simulation {
     public static final String RANDOM = "RANDOM";
     public static final String CUSTOM = "CUSTOM";
 
+    private static Long t1 = System.nanoTime();
+    private static Long t2 = System.nanoTime();
+    private static Long deltaTSimStep = 0L;
+
+    private static final Integer imagesPerSecond = 30;
+    private static final Float maxThreadSleepAcceleration = 30f;
+
+    private static Long lauchSimTime = Instant.now().toEpochMilli();
+    private static Long currentTime = Instant.now().toEpochMilli();
+
+    private static Thread simulationThread = new Thread(Simulation::update);
+
     public Simulation() {
         time = 0;
-        setSpeed(10f); // pour voir les éléments se déplacer
+        setSimulationSpeed(10f); // pour voir les éléments se déplacer
         droneNumber = 1;
         parcelNumber = 10;
         chargingStation = 5;
@@ -46,8 +63,8 @@ public class Simulation {
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5;
         droneBatteryCapacity[1] = 55;
-        simulationDurationRange[0] = 20;
-        simulationDurationRange[1] = 120;
+        simulationDurationRange[0] = 240;
+        simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
         setCompetitionDifficultyLevels();
@@ -59,16 +76,16 @@ public class Simulation {
         competitionDifficultyLevels.put("hard", 0.75f);
     }
 
-    public static void setSpeed(Float f) {
-        speed = f; // TODO ajouter controle et exception
+    public static void setSimulationSpeed(Float f) {
+        simulationSpeed = f; // TODO ajouter controle et exception
     }
 
     public static void addNumberToSpeed(Float nb) {
-        setSpeed(getSpeed() + nb);
+        setSimulationSpeed(getSimulationSpeed() + nb);
     }
 
     public static void addPercentageToSpeed(Float nb) {
-        setSpeed(getSpeed() * (1 + nb));
+        setSimulationSpeed(getSimulationSpeed() * (1 + nb));
     }
 
 
@@ -96,7 +113,6 @@ public class Simulation {
         popParcels();
         popDrones();
         popChargingStations();
-        Thread simulationThread = new Thread(Simulation::update);
         simulationThread.start();
     }
 
@@ -106,12 +122,17 @@ public class Simulation {
         popParcels();
         popDrones();
         popChargingStations();
-        Thread simulationThread = new Thread(Simulation::update);
         simulationThread.start();
     }
 
+    public static void stop(){
+        setPlay(false);
+        if(simulationThread != null && simulationThread.isAlive()){
+            simulationThread.stop();
+        }
+    }
+
     public static void startCustom() {
-        Thread simulationThread = new Thread(Simulation::update);
         simulationThread.start();
     }
 
@@ -141,27 +162,70 @@ public class Simulation {
 
     public static void update() {
         while (isPlay()) {
+            t1 = System.nanoTime();
             // TODO ajust
             incrementTime();
+            handleDrones();
+            manageThreadSleepAccordingToSimAcceleration();
+            t2 = System.nanoTime();
+            manageDronesSpeedCoefAccordingtoSimAcceleration();
+            updatePlayStatusAccordingToDuration();
+        }
+    }
 
-            // TODO refactor
-//            if (getTime() % 60 == 0){
-//                System.out.println("ok");
-//                parcels.add(Parcel.createRandomized());
-//            }
 
-            for (Drone drone : drones) {
-                drone.handleParcelInteractions();
-                drone.handleDroneInteractions();
-                drone.move();
+    /*public static void update() {
+        while (isPlay()) {
+            t1 = System.nanoTime();
+            // TODO ajust
+            incrementTime();
+            handleDrones();
+            manageThreadSleepAccordingToSimAcceleration();
+            t2 = System.nanoTime();
+            manageDronesSpeedCoefAccordingtoSimAcceleration();
+            updatePlayStatusAccordingToDuration();
+        }
+    }*/
+
+    private static void manageDronesSpeedCoefAccordingtoSimAcceleration() {
+        if(simulationSpeed > maxThreadSleepAcceleration) {
+            float additiveCoef = simulationSpeed / maxThreadSleepAcceleration;
+            deltaTSimStep = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
+        } else {
+            deltaTSimStep = StrictMath.abs(t2 - t1);
+        }
+    }
+
+    private static Long returnDeltaTSecAccordingToSimAcceleration() {
+        long deltaT;
+        if(simulationSpeed > maxThreadSleepAcceleration) {
+            float additiveCoef = simulationSpeed / maxThreadSleepAcceleration;
+            deltaT = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
+        } else {
+            deltaT = StrictMath.abs(t2 - t1);
+        }
+
+        return deltaT;
+    }
+
+    private static void manageThreadSleepAccordingToSimAcceleration() {
+        try {
+            if(simulationSpeed > maxThreadSleepAcceleration) {
+                Thread.sleep((long) (1000 / imagesPerSecond / maxThreadSleepAcceleration));
+            } else {
+                Thread.sleep((long) (1000 / imagesPerSecond / simulationSpeed));
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            e.printStackTrace();
+        }
+    }
 
-            try {
-                Thread.sleep((long) (1000 / 30 / getSpeed())); // TODO déplacer le drone en fonction du temps écoulé depuis le dernier rafraichissement du modèle
-//              Thread.sleep(0, (int) (1000000000 / 30 / getSpeed()));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    private static void handleDrones() {
+        for (Drone drone : drones) {
+            drone.handleParcelInteractions();
+            drone.handleDroneInteractions();
+            drone.move(deltaTSimStep);
         }
     }
 
@@ -177,6 +241,13 @@ public class Simulation {
         }
     }
 
+    private static void updatePlayStatusAccordingToDuration(){
+        currentTime = Instant.now().toEpochMilli();
+        long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
+        long elapsedTime = (long)(StrictMath.abs(currentTime - lauchSimTime)*simulationSpeed);
+        play = elapsedTime <= simulationDurationInMilli;
+    }
+
     private static void incrementTime() {
         setTime(getTime() + 1);
     }
@@ -185,8 +256,8 @@ public class Simulation {
     public static Boolean isPlay() {
         return play;
     }
-    public static Float getSpeed() {
-        return speed;
+    public static Float getSimulationSpeed() {
+        return simulationSpeed;
     }
     public static Integer getTime() {
         return time;
@@ -250,5 +321,13 @@ public class Simulation {
     }
     public static Map<String, Float> getCompetitionDifficultyLevels() {
         return competitionDifficultyLevels;
+    }
+
+    public static Long getT1() {
+        return t1;
+    }
+
+    public static Long getT2() {
+        return t2;
     }
 }

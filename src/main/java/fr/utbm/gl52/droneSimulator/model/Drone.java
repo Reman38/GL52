@@ -8,8 +8,9 @@ import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 18f/30f; // 41 mph, 65 km/h, 18m/s
+    static final private Float speed = 18f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
+    public static final long nanosecondsInASecond = (long) StrictMath.pow(10, 9);
 
     // attributs
     private Boolean isBusy;
@@ -84,23 +85,65 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         setRandRotation();
     }
 
-    public void move() {
-        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
-        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
+    public void move(long deltaT) {
+        //System.out.println("deltaT "+ deltaT);
+        deltaT = avoidNullDeltaT(deltaT);
 
+        float deltaTSec = convertNanosecondsToSeconds(deltaT);
+        //System.out.println("deltaTSec "+ deltaTSec);
+
+        Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
+        Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
+
+        //printDroneSpeedForDebug(deltaTSec, newX, newY);
+
+        tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
+
+        //System.out.println("newX " + newX + " newY " + newY);
+    }
+
+    private void tryToMoveDroneWithinBoundaries(long deltaT, Float newX, Float newY) {
         try {
-            setX(newX);
-            setY(newY);
+            setCoord(newX, newY);
         } catch (OutOfMainAreaException e) {
-            if (newX < Simulation.getMainArea().getX() || newX > Simulation.getMainArea().getWidth()) {
+            if (isNewXOutOfBoundaries(newX)) {
                 rotation += MathHelper.getPi()/3;
             }
-            if (newY < Simulation.getMainArea().getY() || newY > Simulation.getMainArea().getHeight()) {
+            if (isNewYOutOfMainArea(newY)) {
                 rotation += MathHelper.getPi()/3;
             }
 
-            move();
+            move(deltaT);
         }
+    }
+
+    private boolean isNewYOutOfMainArea(Float newY) {
+        return isValueOutOfRange(newY, Simulation.getMainArea().getY(), Simulation.getMainArea().getHeight());
+    }
+
+    private boolean isValueOutOfRange(Float newPt, Float min, Float max) {
+        return newPt < min || newPt > max;
+    }
+
+    private boolean isNewXOutOfBoundaries(Float newX) {
+        return isValueOutOfRange(newX, Simulation.getMainArea().getX(), Simulation.getMainArea().getWidth());
+    }
+
+    private float convertNanosecondsToSeconds(long deltaT) {
+        return (float)(deltaT) / nanosecondsInASecond;
+    }
+
+    private long avoidNullDeltaT(long deltaT) {
+        if(deltaT == 0L){
+            deltaT = nanosecondsInASecond;
+        }
+        return deltaT;
+    }
+
+    private void printDroneSpeedForDebug(float deltaTsec, Float newX, Float newY) {
+        float dist = (float) StrictMath.sqrt((StrictMath.pow(StrictMath.abs(newX - getX()), 2) + StrictMath.pow(StrictMath.abs(newY - getY()), 2)));
+        System.out.println("dist "+ dist);
+        System.out.println("Drone speed " + dist/deltaTsec);
     }
 
     public void goTo(SimulationElement se) {
@@ -250,7 +293,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     }
 
     public void setWeightCapacity(Float weightCapacity) {
-        if(weightCapacity < Simulation.getDroneWeightCapacity()[0] || weightCapacity > Simulation.getDroneWeightCapacity()[1]){
+        if(isValueOutOfRange(weightCapacity, Simulation.getDroneWeightCapacity()[0], Simulation.getDroneWeightCapacity()[1])){
             throw new IllegalArgumentException("weigh capacity must be between " + Simulation.getDroneWeightCapacity()[0] + " and " + Simulation.getDroneWeightCapacity()[1] + " (" + weightCapacity + " given)");
         } else {
             this.weightCapacity = weightCapacity;
