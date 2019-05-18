@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimulationWindow;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createWindow;
 
 public class StartPageController extends ControllerHelper {
@@ -19,7 +20,7 @@ public class StartPageController extends ControllerHelper {
             System.out.println("click default");
             try {
                 SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.DEFAULT);
-                createWindow(event, simulationWindowView.getParent());
+                createSimulationWindow(event, simulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -32,7 +33,7 @@ public class StartPageController extends ControllerHelper {
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             try {
                 SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.RANDOM);
-                createWindow(event, simulationWindowView.getParent());
+                createSimulationWindow(event, simulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
             }
