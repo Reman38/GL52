@@ -32,6 +32,7 @@ public class GraphicHelper {
         stage.setScene(scene);
         stage.setTitle("Drone Simulator");
         stage.setMaximized(true);
+        ((Node)(event.getSource())).getScene().getWindow().hide();
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {

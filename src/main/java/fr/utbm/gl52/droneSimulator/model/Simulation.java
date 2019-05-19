@@ -12,6 +12,7 @@ public class Simulation {
     public static final long secondsInAMinute = 60L;
     public static final long millisecondsInASecond = 1000L;
     private static ArrayList<Drone> drones = new ArrayList<>();
+    private static ArrayList<Thread> droneThreads = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
     private static ArrayList<Area> areas = new ArrayList<>();
     private static List<ChargingStation> chargingStations = new ArrayList<>();
@@ -113,7 +114,7 @@ public class Simulation {
         popParcels();
         popDrones();
         popChargingStations();
-        simulationThread.start();
+        globalStart();
     }
 
     public static void startRandom() {
@@ -122,18 +123,32 @@ public class Simulation {
         popParcels();
         popDrones();
         popChargingStations();
+        globalStart();
+    }
+
+    public static void startCustom() {
+        popParcels();
+        globalStart();
+    }
+
+    public static void globalStart(){
         simulationThread.start();
+        for(Drone drone: drones){
+            Thread droneThread = new Thread(drone);
+            droneThreads.add(droneThread);
+            droneThread.start();
+        }
     }
 
     public static void stop(){
         setPlay(false);
+        for(Thread droneThread: droneThreads){
+            droneThread.interrupt();
+        }
+
         if(simulationThread != null && simulationThread.isAlive()){
             simulationThread.stop();
         }
-    }
-
-    public static void startCustom() {
-        simulationThread.start();
     }
 
     private static void popParcels() {
@@ -223,8 +238,8 @@ public class Simulation {
 
     private static void handleDrones() {
         for (Drone drone : drones) {
-            drone.handleParcelInteractions();
-            drone.handleDroneInteractions();
+            //drone.handleParcelInteractions();
+            //drone.handleDroneInteractions();
             drone.move(deltaTSimStep);
         }
     }

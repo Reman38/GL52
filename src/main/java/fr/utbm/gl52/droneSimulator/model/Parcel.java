@@ -11,6 +11,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
 
     public Parcel() {
         super(.5f);
+        popTime = new Date();
     }
 
     public static Parcel createRandomized() {

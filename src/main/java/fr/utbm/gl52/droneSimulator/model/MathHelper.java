@@ -57,4 +57,16 @@ public abstract class MathHelper {
 
         return MathHelper.simplifyAngle(angle);
     }
+
+    public static Float computeVectorNorm(SimulationElement simulationElement, SimulationElement simulationElement1){
+
+        return computeVectorNorm(simulationElement.getX(), simulationElement1.getX(), simulationElement.getY(), simulationElement1.getY());
+    }
+
+    public static Float computeVectorNorm(Float x, Float x1, Float y, Float y1){
+
+        float x2 = (float) StrictMath.pow(StrictMath.abs(x - x1), 2);
+        float y2 = (float) StrictMath.pow(StrictMath.abs(y - y1), 2);
+        return (float) StrictMath.sqrt(x2 + y2);
+    }
 }
