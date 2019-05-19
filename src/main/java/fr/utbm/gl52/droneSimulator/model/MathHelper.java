@@ -22,16 +22,24 @@ public abstract class MathHelper {
     }
 
     private static double distanceXCalcul(SimulationElement se1, SimulationElement se2) {
-        return Math.abs(se1.getX() - se2.getX());
+        return computeDistance(se1.getX(), se2.getX());
     }
 
     private static double distanceYCalcul(SimulationElement se1, SimulationElement se2) {
-        return Math.abs(se1.getY() - se2.getY());
+        return computeDistance(se1.getY(), se2.getY());
+    }
+
+    private static double computeDistance(Float d, Float d1){
+        return StrictMath.abs(d - d1);
     }
 
     public static Float calculAngleWith(SimulationElement se1, SimulationElement se2) {
-        Float YmaY = se1.getY() - se2.getY();
-        Float XmaX = se1.getX() - se2.getX();
+        return calculAngleWith(se1.getX(), se2.getX(), se1.getY(), se2.getY());
+    }
+
+    public static Float calculAngleWith(Float x, Float x1, Float y, Float y1) {
+        Float YmaY = y - y1;
+        Float XmaX = x - x1;
 
         Float angle;
         if (XmaX == 0) {
@@ -45,7 +53,7 @@ public abstract class MathHelper {
             else
                 angle = MathHelper.getPi();
         } else {
-            angle = (float) Math.atan(distanceYCalcul(se1, se2) / distanceXCalcul(se1, se2));
+            angle = (float) Math.atan(computeDistance(y, y1) / computeDistance(x, x1));
 
             if (XmaX < 0 && YmaY < 0)
                 angle = -angle;

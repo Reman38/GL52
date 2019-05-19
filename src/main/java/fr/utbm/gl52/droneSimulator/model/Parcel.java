@@ -8,6 +8,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     private Date popTime;
     private Float weight;
     private Date timeDeliveryGoal;
+    private Float[] destCoord = new Float[2];
 
     public Parcel() {
         super(.5f);
@@ -27,10 +28,31 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         } catch (OutOfMainAreaException e) {
             e.printStackTrace();
         }
+
+        try {
+            setRandDestCoord(Simulation.getMainArea()); // après setWeight car size nécessaire pour le controle de contrainte de mainArea
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setRandWeight() {
         setWeight(RandomHelper.getRandFloat(0f, 20f));
+    }
+
+    protected void setRandDestX(Area area) throws OutOfMainAreaException {
+//        setX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
+        setDestX(area.getWidth()/2);
+    }
+
+    protected void setRandDestY(Area area) throws OutOfMainAreaException {
+//        setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
+        setDestY(area.getHeight()/2);
+    }
+
+    public void setRandDestCoord(Area area) throws OutOfMainAreaException {
+        setRandDestX(area);
+        setRandDestY(area);
     }
 
     /* getteurs et setteurs triviaux */
@@ -52,5 +74,23 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
                 super.toString() +
                         "weight: " + getWeight() + System.getProperty("line.separator");
         return s;
+    }
+
+    public Float[] getDestCoord() {
+        return destCoord;
+    }
+
+    public void setDestX(float x) throws OutOfMainAreaException {
+        if (Simulation.getMainArea().isInAreaYBoundary(x))
+            throw new OutOfMainAreaException("y out of mainArea boundary : " + x);
+        else
+            destCoord[0] = x;
+    }
+
+    public void setDestY(float y) throws OutOfMainAreaException {
+        if (Simulation.getMainArea().isInAreaYBoundary(y))
+            throw new OutOfMainAreaException("y out of mainArea boundary : " + y);
+        else
+            destCoord[1] = y;
     }
 }
