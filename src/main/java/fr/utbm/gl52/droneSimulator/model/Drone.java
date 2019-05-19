@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-public class Drone extends CenteredAndSquaredSimulationElement {
+import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
+
+public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
     // constantes
     static final private Float speed = 18f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
@@ -18,6 +20,8 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     private Integer batteryCapacity;
     private Float rotation; // TODO degres ou radian ?
     private Float weightCapacity;
+    private Memory.ParcelRecord targetParcel = null;
+    private Float[] geographicalTarget = new Float[2];
 
 // TODO prise de décision par rapport aux paquets
     /*
@@ -31,7 +35,99 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     }
     */
 
-    Memory memory;
+    private Memory memory;
+
+    @Override
+    public void run() {
+        while (!Thread.currentThread().isInterrupted()) {
+            parcelMemoryUpdate();
+            System.out.println(memory.toString());
+            if(!isBusy){
+                targetParcel = getCloserParcel();
+                geographicalTarget = targetParcel.getCoord();
+                isBusy = true;
+            } else {
+                if(!isLoaded){
+                    if(!isParcelInMemory(targetParcel)){
+                        targetParcel = null;
+                        geographicalTarget = null;
+                        isBusy = false;
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    private Memory.ParcelRecord getCloserParcel() {
+        float min = computeVectorNorm(getX(), memory.parcelRecords.get(0).getCoord()[0], getY(), memory.parcelRecords.get(0).getCoord()[1]);
+        Memory.ParcelRecord minParcelRecord = memory.parcelRecords.get(1);
+
+        for(Memory.ParcelRecord parcel: memory.parcelRecords){
+            float value = computeVectorNorm(getX(), parcel.getCoord()[0], getY(), parcel.getCoord()[1]);
+            if(value < min){
+                min = value;
+                minParcelRecord = parcel;
+            }
+        }
+
+        return minParcelRecord;
+    }
+
+    private void parcelMemoryUpdate() {
+        for(Parcel parcel: Simulation.getParcels()){
+            if (detect(parcel)) {
+                if(!isParcelInMemory(parcel)){
+                    memory.add(parcel);
+                }
+            }
+        }
+        for(Memory.ParcelRecord parcelRecord: memory.parcelRecords){
+            if(!isParcelStillAvailable(parcelRecord)){
+                memory.remove(parcelRecord);
+            }
+        }
+    }
+
+    private boolean isParcelInMemory(Parcel parcel) {
+        Memory.ParcelRecord parcelRecord = memory.createParcelRecord(parcel);
+        return isParcelInMemory(parcelRecord);
+    }
+
+    private boolean isParcelInMemory(Memory.ParcelRecord parcel) {
+        boolean res = false;
+        for(Memory.ParcelRecord parcelRecord: memory.parcelRecords){
+            res = isSameCoord(parcel.getCoord(), parcelRecord.getCoord());
+            if(res){
+                res = parcel.getPopTime().equals(parcelRecord.getPopTime());
+                if(res){
+                    parcelRecord.setLastDetectedDateTime(new Date());
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isParcelStillAvailable(Memory.ParcelRecord parcelRecord) {
+        boolean res = false;
+        for(Parcel parcel: Simulation.getParcels()){
+            res = isSameCoord(parcel.getCoord(), parcelRecord.getCoord());
+            if(res){
+                res = parcel.getPopTime().equals(parcelRecord.getPopTime());
+                if(res){
+                    parcelRecord.setLastDetectedDateTime(new Date());
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    private boolean isSameCoord(Float[] coord, Float[] coord1) {
+        return (coord[0].equals(coord1[0])) && (coord[1].equals(coord1[1]));
+    }
 
     public class Memory {
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
@@ -46,15 +142,47 @@ public class Drone extends CenteredAndSquaredSimulationElement {
                 popTime = p.getPopTime();
                 lastDetectedDateTime = new Date();
             }
+
+            public Float[] getCoord(){
+                return coord;
+            }
+
+            public Date getPopTime(){
+                return popTime;
+            }
+
+            public void setLastDetectedDateTime(Date lastDetectedDateTime){
+                this.lastDetectedDateTime = lastDetectedDateTime;
+            }
+
+            @Override
+            public String toString() {
+                return "ParcelRecord{" +
+                        "coord=" + Arrays.toString(coord) +
+                        ", lastDetectedDateTime=" + lastDetectedDateTime +
+                        ", popTime=" + popTime +
+                        '}';
+            }
         }
 
         public void add(Parcel p) {
             // TODO if not already in the list
-            parcelRecords.add(new ParcelRecord(p));
+            parcelRecords.add(createParcelRecord(p));
         }
 
-        public void remove() {
-            // TODO remove detectedParcel if not detected when flying near it
+        public ParcelRecord createParcelRecord(Parcel parcel){
+            return new ParcelRecord(parcel);
+        }
+
+        public void remove(ParcelRecord parcelRecord) {
+            parcelRecords.remove(parcelRecord);
+        }
+
+        @Override
+        public String toString() {
+            return "Memory{" +
+                    "parcelRecords=" + parcelRecords +
+                    '}';
         }
     }
 
@@ -141,7 +269,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
     }
 
     private void printDroneSpeedForDebug(float deltaTsec, Float newX, Float newY) {
-        float dist = (float) StrictMath.sqrt((StrictMath.pow(StrictMath.abs(newX - getX()), 2) + StrictMath.pow(StrictMath.abs(newY - getY()), 2)));
+        float dist = computeVectorNorm(getX(), newX, getY(), newY);
         System.out.println("dist "+ dist);
         System.out.println("Drone speed " + dist/deltaTsec);
     }
