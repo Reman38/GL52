@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
@@ -13,12 +14,13 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     static final private Float speed = 18f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
     public static final long nanosecondsInASecond = (long) StrictMath.pow(10, 9);
+    public static final float RADIUS = 8f;
 
     // attributs
     private Boolean isBusy;
     private Boolean isLoaded;
     private Integer batteryCapacity;
-    private Float rotation; // TODO degres ou radian ?
+    private Float rotation = 0f; // TODO degres ou radian ?
     private Float weightCapacity;
     private Memory.ParcelRecord targetParcel = null;
     private Float[] geographicalTarget = new Float[2];
@@ -41,28 +43,53 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             parcelMemoryUpdate();
-            System.out.println(memory.toString());
+            //System.out.println(memory.toString());
+            if(geographicalTarget[0] != null && geographicalTarget[1] != null){
+                rotation = calculAngleWith(getX(), geographicalTarget[0], getY(), geographicalTarget[1]);
+            }
             if(!isBusy){
                 targetParcel = getCloserParcel();
                 geographicalTarget = targetParcel.getCoord();
                 isBusy = true;
             } else {
-                if(!isLoaded){
-                    if(!isParcelInMemory(targetParcel)){
+                if(!isLoaded) {
+                    if (!isParcelInMemory(targetParcel)) {
                         targetParcel = null;
                         geographicalTarget = null;
                         isBusy = false;
+                    } else {
+                        if(isInRadius(geographicalTarget, RADIUS)){
+                            System.out.println("Parcel loaded");
+                            isLoaded = true;
+                            geographicalTarget = targetParcel.getDestCoord();
+                        }
+                    }
+                } else {
+                    if(isInRadius(geographicalTarget, RADIUS)) {
+                        isLoaded = false;
+                        isBusy = false;
+                        geographicalTarget = null;
+                        Thread.currentThread().interrupt();
                     }
                 }
             }
+            move(nanosecondsInASecond);
+            try {
+                Thread.sleep(1000 / 30);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
+    }
 
+    private boolean isInRadius(Float[] geographicalTarget, Float radius) {
+        return !(isValueOutOfRange(getX(), geographicalTarget[0] - radius, geographicalTarget[0] + radius) || isValueOutOfRange(getY(), geographicalTarget[1] - radius, geographicalTarget[1] + radius));
     }
 
 
     private Memory.ParcelRecord getCloserParcel() {
         float min = computeVectorNorm(getX(), memory.parcelRecords.get(0).getCoord()[0], getY(), memory.parcelRecords.get(0).getCoord()[1]);
-        Memory.ParcelRecord minParcelRecord = memory.parcelRecords.get(1);
+        Memory.ParcelRecord minParcelRecord = memory.parcelRecords.get(0);
 
         for(Memory.ParcelRecord parcel: memory.parcelRecords){
             float value = computeVectorNorm(getX(), parcel.getCoord()[0], getY(), parcel.getCoord()[1]);
@@ -133,12 +160,14 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
 
         public class ParcelRecord {
-            private Float[] coord = new Float[2];;
+            private Float[] coord = new Float[2];
+            private Float[] destCoord = new Float[2];
             private Date lastDetectedDateTime;
             private Date popTime;
 
             public ParcelRecord(Parcel p) {
                 coord = p.getCoord();
+                destCoord = p.getDestCoord();
                 popTime = p.getPopTime();
                 lastDetectedDateTime = new Date();
             }
@@ -149,6 +178,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
             public Date getPopTime(){
                 return popTime;
+            }
+
+            public Float[] getDestCoord() {
+                return destCoord;
             }
 
             public void setLastDetectedDateTime(Date lastDetectedDateTime){
@@ -193,7 +226,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         isLoaded = false;
         batteryCapacity = Simulation.getDroneBatteryCapacity()[1];
         weightCapacity = Simulation.getDroneWeightCapacity()[0];
-        rotation = 0f;
 
         memory = new Memory();
     }
@@ -226,6 +258,31 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
         tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
+
+        //System.out.println("newX " + newX + " newY " + newY);
+    }
+
+    public void moveTo(long deltaT, Float[] coord) {
+        //System.out.println("deltaT "+ deltaT);
+        deltaT = avoidNullDeltaT(deltaT);
+
+        float deltaTSec = convertNanosecondsToSeconds(deltaT);
+        //System.out.println("deltaTSec "+ deltaTSec);
+
+        if(isInRadius(coord, 1f)) {
+
+            Float newX = coord[0] / (getSpeed() * deltaTSec);
+            Float newY = coord[1] / (getSpeed() * deltaTSec);
+
+            try {
+                setCoord(newX, newY);
+            } catch (OutOfMainAreaException e) {
+                //moveTo(deltaT, coord);
+            }
+        }
+
+
+        //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
         //System.out.println("newX " + newX + " newY " + newY);
     }

@@ -1,7 +1,5 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-import java.security.Timestamp;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +56,7 @@ public class Simulation {
         time = 0;
         setSimulationSpeed(10f); // pour voir les éléments se déplacer
         droneNumber = 1;
-        parcelNumber = 10;
+        parcelNumber = 1;
         chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
         droneWeightCapacity[1] = 20f;
@@ -132,7 +130,7 @@ public class Simulation {
     }
 
     public static void globalStart(){
-        simulationThread.start();
+        //simulationThread.start();
         for(Drone drone: drones){
             Thread droneThread = new Thread(drone);
             droneThreads.add(droneThread);
@@ -240,7 +238,7 @@ public class Simulation {
         for (Drone drone : drones) {
             //drone.handleParcelInteractions();
             //drone.handleDroneInteractions();
-            drone.move(deltaTSimStep);
+            //drone.move(deltaTSimStep);
         }
     }
 
