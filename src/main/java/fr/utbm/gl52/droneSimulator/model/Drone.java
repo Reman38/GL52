@@ -1,11 +1,14 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
 
@@ -61,6 +64,12 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                         if(isInRadius(geographicalTarget, RADIUS)){
                             System.out.println("Parcel loaded");
                             isLoaded = true;
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    SimulationWindowView.removeParcelAtCoord(targetParcel.getCoord());
+                                }
+                            });
                             geographicalTarget = targetParcel.getDestCoord();
                         }
                     }
@@ -150,10 +159,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             }
         }
         return res;
-    }
-
-    private boolean isSameCoord(Float[] coord, Float[] coord1) {
-        return (coord[0].equals(coord1[0])) && (coord[1].equals(coord1[1]));
     }
 
     public class Memory {
