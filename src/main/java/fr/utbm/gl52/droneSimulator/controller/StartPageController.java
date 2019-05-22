@@ -19,8 +19,8 @@ public class StartPageController extends ControllerHelper {
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             System.out.println("click default");
             try {
-                SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.DEFAULT);
-                createSimulationWindow(event, simulationWindowView.getParent());
+                SimulationWindowView.init(Simulation.DEFAULT);
+                createSimulationWindow(event, SimulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -32,8 +32,8 @@ public class StartPageController extends ControllerHelper {
     public void launchSimulationWithRandomParameters(MouseEvent event){
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             try {
-                SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.RANDOM);
-                createSimulationWindow(event, simulationWindowView.getParent());
+                SimulationWindowView.init(Simulation.RANDOM);
+                createSimulationWindow(event, SimulationWindowView.getParent());
             } catch (IOException e) {
                 e.printStackTrace();
             }

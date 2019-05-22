@@ -127,8 +127,8 @@ public class ParameterWindowController{
 
     private void LaunchSimulationWindow(MouseEvent event) {
         try {
-            SimulationWindowView simulationWindowView = new SimulationWindowView(Simulation.CUSTOM);
-            createSimulationWindow(event, simulationWindowView.getParent());
+            SimulationWindowView.init(Simulation.CUSTOM);
+            createSimulationWindow(event, SimulationWindowView.getParent());
         } catch (IOException e) {
             e.printStackTrace();
         }

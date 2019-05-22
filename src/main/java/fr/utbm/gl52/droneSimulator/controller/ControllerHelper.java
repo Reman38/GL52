@@ -32,4 +32,8 @@ public class ControllerHelper {
     protected static Float calculateModelCoordinate(Float x){
         return x / getModelViewCoefficient();
     }
+
+    public static boolean isSameCoord(Float[] coord, Float[] coord1) {
+        return (coord[0].equals(coord1[0])) && (coord[1].equals(coord1[1]));
+    }
 }

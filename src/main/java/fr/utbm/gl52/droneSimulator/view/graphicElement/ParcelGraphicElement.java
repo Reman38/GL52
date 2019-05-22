@@ -10,9 +10,4 @@ public class ParcelGraphicElement extends CenteredAndErgonomicGraphicElement {
         setColor("green");
         isFilled(false);
     }
-
-    public static Rectangle getShape(SimulationElement se) {
-        ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(se);
-        return parcelGraphicElement.getShape();
-    }
 }

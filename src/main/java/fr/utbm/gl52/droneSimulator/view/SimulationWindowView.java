@@ -8,15 +8,22 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 
 import java.io.IOException;
+import java.util.*;
+
+import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
 
 public class SimulationWindowView {
-    private final Parent root;
 
-    public SimulationWindowView(String simulationMode) throws IOException {
+    private static Parent root;
+
+    private static List<ParcelGraphicElement> parcelGraphicElements = new ArrayList<>();
+
+    public static void init(String simulationMode) throws IOException{
+
         startModel(simulationMode);
 
         FXMLLoader loader = new FXMLLoader(
-            getClass().getResource("/fxml/SimulationWindow.fxml")
+                SimulationWindowView.class.getResource("/fxml/SimulationWindow.fxml")
         );
         loader.load();
 
@@ -25,7 +32,8 @@ public class SimulationWindowView {
 
         startView(pane);
     }
-    public void startView(Pane pane) {
+
+    public static void startView(Pane pane) {
         GraphicElement.setModelViewCoefficient(0.65f);
         CenteredAndErgonomicGraphicElement.setZoomCoefficient(20f);
 
@@ -43,7 +51,7 @@ public class SimulationWindowView {
         // }
     }
 
-    public void displayDrones(Pane pane) {
+    public static void displayDrones(Pane pane) {
         for (Drone drone : Simulation.getDrones()) {
             DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
             Shape shape = droneGraphicElement.getShape();
@@ -51,14 +59,16 @@ public class SimulationWindowView {
         }
     }
 
-    public void displayParcels(Pane pane) {
+    public static void displayParcels(Pane pane) {
         for (Parcel parcel : Simulation.getParcels()) {
-            Shape shape = ParcelGraphicElement.getShape(parcel);
+            ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(parcel);
+            parcelGraphicElements.add(parcelGraphicElement);
+            Shape shape = parcelGraphicElement.getShape();
             pane.getChildren().add(shape);
         }
     }
 
-    public void displayChargingStation(Pane pane) {
+    public static void displayChargingStation(Pane pane) {
         for (ChargingStation chargingStation : Simulation.getChargingStations()) {
             ChargingStationGraphicElement chargingStationGraphicElement = new ChargingStationGraphicElement(chargingStation);
             Shape shape = chargingStationGraphicElement.getShape();
@@ -66,17 +76,17 @@ public class SimulationWindowView {
         }
     }
 
-    public void displayAreas(Pane pane) {
+    public static void displayAreas(Pane pane) {
         for (Area area : Simulation.getAreas()) {
             Shape shape = AreaGraphicElement.getShape(area);
             pane.getChildren().add(shape);
         }
     }
-    public void displayMainArea(Pane pane) {
+    public static void displayMainArea(Pane pane) {
         Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
         pane.getChildren().add(mainAreaGraphicElementShape);
     }
-    public void startModel(String simulationMode) {
+    public static void startModel(String simulationMode) {
         new Simulation();
         if(simulationMode.equals(Simulation.DEFAULT)){
             Simulation.startDefault();
@@ -90,7 +100,44 @@ public class SimulationWindowView {
         }
     }
 
-    public javafx.scene.Parent getParent() {
+    public static void removeParcelAtCoord(Float[] coord) {
+        ParcelGraphicElement parcelToRemove;
+
+        parcelToRemove = findParcelWith(coord);
+
+        removeParcelGraphicIfExists(parcelToRemove);
+    }
+
+    private static void removeParcelGraphicIfExists(ParcelGraphicElement parcelToRemove) {
+        if(parcelToRemove != null) {
+            Pane pane = (Pane) root.lookup("#simulationPane");
+            parcelGraphicElements.remove(parcelToRemove);
+            pane.getChildren().remove(parcelToRemove.getShape());
+        }
+    }
+
+    private static ParcelGraphicElement findParcelWith(Float[] coord) {
+        ParcelGraphicElement parcelToRemove = null;
+        ParcelGraphicElement parcelGraphicElement;
+        SimulationElement parcel;
+        Iterator<ParcelGraphicElement> iterator = parcelGraphicElements.iterator();
+
+        while(iterator.hasNext() && parcelToRemove == null){
+            parcelGraphicElement = iterator.next();
+            parcel = parcelGraphicElement.getSimulationElement();
+
+            if(isSameCoord(coord, new Float[] {parcel.getX(), parcel.getY()})){
+                parcelToRemove = parcelGraphicElement;
+            }
+        }
+        return parcelToRemove;
+    }
+
+    public static javafx.scene.Parent getParent() {
         return root;
+    }
+
+    public static List<ParcelGraphicElement> getParcelGraphicElements() {
+        return parcelGraphicElements;
     }
 }
