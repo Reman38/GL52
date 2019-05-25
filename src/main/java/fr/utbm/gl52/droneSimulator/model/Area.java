@@ -101,9 +101,9 @@ public class Area extends SimulationElement {
     public Boolean isInAreaBoundary(SimulationElement se) {
         return
                 isInAreaXBoundary(se.getX() - getWidth() / 2) &&
-                        isInAreaXBoundary(se.getX() + getWidth() / 2) &&
-                        isInAreaYBoundary(se.getY() - getHeight() / 2) &&
-                        isInAreaYBoundary(se.getY() + getHeight() / 2)
+                isInAreaXBoundary(se.getX() + getWidth() / 2) &&
+                isInAreaYBoundary(se.getY() - getHeight() / 2) &&
+                isInAreaYBoundary(se.getY() + getHeight() / 2)
                 ;
     }
 

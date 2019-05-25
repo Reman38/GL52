@@ -1,16 +1,15 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
-import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import javafx.application.Platform;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.*;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
+import static fr.utbm.gl52.droneSimulator.model.Parcel.loadParcelAtCoord;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.removeParcelGraphicAtCoord;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
     // constantes
@@ -47,38 +46,42 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         while (!Thread.currentThread().isInterrupted()) {
             parcelMemoryUpdate();
             //System.out.println(memory.toString());
-            if(geographicalTarget[0] != null && geographicalTarget[1] != null){
+            if(!areCoordNull(geographicalTarget)){
                 rotation = calculAngleWith(getX(), geographicalTarget[0], getY(), geographicalTarget[1]);
             }
             if(!isBusy){
                 targetParcel = getCloserParcel();
-                geographicalTarget = targetParcel.getCoord();
+                if(targetParcel != null) {
+                    geographicalTarget = targetParcel.getCoord();
+                }
                 isBusy = true;
             } else {
                 if(!isLoaded) {
-                    if (!isParcelInMemory(targetParcel)) {
+                    if (targetParcel != null && !isParcelInMemory(targetParcel)) {
                         targetParcel = null;
                         geographicalTarget = null;
                         isBusy = false;
-                    } else {
+                    } else if (!areCoordNull(geographicalTarget)){
                         if(isInRadius(geographicalTarget, RADIUS)){
                             System.out.println("Parcel loaded");
                             isLoaded = true;
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    SimulationWindowView.removeParcelAtCoord(targetParcel.getCoord());
-                                }
-                            });
+
+                            loadParcelAtCoord(targetParcel.getCoord(), this);
                             geographicalTarget = targetParcel.getDestCoord();
                         }
                     }
-                } else {
+                } else if (!areCoordNull(geographicalTarget)) {
                     if(isInRadius(geographicalTarget, RADIUS)) {
+                        System.out.println("Parcel delivered");
                         isLoaded = false;
                         isBusy = false;
                         geographicalTarget = null;
-                        Thread.currentThread().interrupt();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        // Thread.currentThread().interrupt();
                     }
                 }
             }
@@ -91,23 +94,29 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         }
     }
 
+    private boolean areCoordNull(Float[] coord) {
+        return coord == null || coord[0] == null || coord[1] == null;
+    }
+
     private boolean isInRadius(Float[] geographicalTarget, Float radius) {
         return !(isValueOutOfRange(getX(), geographicalTarget[0] - radius, geographicalTarget[0] + radius) || isValueOutOfRange(getY(), geographicalTarget[1] - radius, geographicalTarget[1] + radius));
     }
 
 
     private Memory.ParcelRecord getCloserParcel() {
-        float min = computeVectorNorm(getX(), memory.parcelRecords.get(0).getCoord()[0], getY(), memory.parcelRecords.get(0).getCoord()[1]);
-        Memory.ParcelRecord minParcelRecord = memory.parcelRecords.get(0);
+        Memory.ParcelRecord minParcelRecord = null;
+        if(memory.parcelRecords.size() > 0) {
+            float min = computeVectorNorm(getX(), memory.parcelRecords.get(0).getCoord()[0], getY(), memory.parcelRecords.get(0).getCoord()[1]);
+            minParcelRecord = memory.parcelRecords.get(0);
 
-        for(Memory.ParcelRecord parcel: memory.parcelRecords){
-            float value = computeVectorNorm(getX(), parcel.getCoord()[0], getY(), parcel.getCoord()[1]);
-            if(value < min){
-                min = value;
-                minParcelRecord = parcel;
+            for (Memory.ParcelRecord parcel : memory.parcelRecords) {
+                float value = computeVectorNorm(getX(), parcel.getCoord()[0], getY(), parcel.getCoord()[1]);
+                if (value < min) {
+                    min = value;
+                    minParcelRecord = parcel;
+                }
             }
         }
-
         return minParcelRecord;
     }
 
@@ -119,9 +128,13 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 }
             }
         }
-        for(Memory.ParcelRecord parcelRecord: memory.parcelRecords){
+
+        Iterator<Memory.ParcelRecord> iterator = memory.parcelRecords.iterator();
+
+        while (iterator.hasNext()){
+            Memory.ParcelRecord parcelRecord = iterator.next();
             if(!isParcelStillAvailable(parcelRecord)){
-                memory.remove(parcelRecord);
+                iterator.remove();
             }
         }
     }
@@ -149,12 +162,14 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private boolean isParcelStillAvailable(Memory.ParcelRecord parcelRecord) {
         boolean res = false;
         for(Parcel parcel: Simulation.getParcels()){
-            res = isSameCoord(parcel.getCoord(), parcelRecord.getCoord());
-            if(res){
-                res = parcel.getPopTime().equals(parcelRecord.getPopTime());
-                if(res){
-                    parcelRecord.setLastDetectedDateTime(new Date());
-                    break;
+            if(!parcel.isInJourney()) {
+                res = isSameCoord(parcel.getCoord(), parcelRecord.getCoord());
+                if (res) {
+                    res = parcel.getPopTime().equals(parcelRecord.getPopTime());
+                    if (res) {
+                        parcelRecord.setLastDetectedDateTime(new Date());
+                        break;
+                    }
                 }
             }
         }

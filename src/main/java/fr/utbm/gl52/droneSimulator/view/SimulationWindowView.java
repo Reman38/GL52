@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.findParcelGraphicWithParcelCoord;
 
 public class SimulationWindowView {
 
@@ -125,37 +126,12 @@ public class SimulationWindowView {
         }
     }
 
-    public static void removeParcelAtCoord(Float[] coord) {
-        ParcelGraphicElement parcelToRemove;
-
-        parcelToRemove = findParcelWith(coord);
-
-        removeParcelGraphicIfExists(parcelToRemove);
-    }
-
-    private static void removeParcelGraphicIfExists(ParcelGraphicElement parcelToRemove) {
+    public static void removeParcelGraphicIfExists(ParcelGraphicElement parcelToRemove) {
         if(parcelToRemove != null) {
             Pane pane = (Pane) root.lookup("#simulationPane");
             parcelGraphicElements.remove(parcelToRemove);
             pane.getChildren().remove(parcelToRemove.getShape());
         }
-    }
-
-    private static ParcelGraphicElement findParcelWith(Float[] coord) {
-        ParcelGraphicElement parcelToRemove = null;
-        ParcelGraphicElement parcelGraphicElement;
-        SimulationElement parcel;
-        Iterator<ParcelGraphicElement> iterator = parcelGraphicElements.iterator();
-
-        while(iterator.hasNext() && parcelToRemove == null){
-            parcelGraphicElement = iterator.next();
-            parcel = parcelGraphicElement.getSimulationElement();
-
-            if(isSameCoord(coord, new Float[] {parcel.getX(), parcel.getY()})){
-                parcelToRemove = parcelGraphicElement;
-            }
-        }
-        return parcelToRemove;
     }
 
     public static javafx.scene.Parent getParent() {
