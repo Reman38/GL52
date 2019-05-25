@@ -4,6 +4,9 @@ import fr.utbm.gl52.droneSimulator.model.*;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 
@@ -17,6 +20,8 @@ public class SimulationWindowView {
     private static Parent root;
 
     private static List<ParcelGraphicElement> parcelGraphicElements = new ArrayList<>();
+
+    private static Map<Drone, TextArea> consoleMap = new HashMap<>();
 
     public static void init(String simulationMode) throws IOException{
 
@@ -41,7 +46,7 @@ public class SimulationWindowView {
         displayAreas(pane);
         displayParcels(pane);
         displayChargingStation(pane);
-        displayDrones(pane);
+        displayDronesAndAssociatedTabs(pane);
 
         // for (Drone drone : Simulation.getDrones()) {
         /*Drone drone = Simulation.getDrones().get(0);
@@ -51,12 +56,32 @@ public class SimulationWindowView {
         // }
     }
 
-    public static void displayDrones(Pane pane) {
+    public static void displayDronesAndAssociatedTabs(Pane pane) {
+        int i = 1;
         for (Drone drone : Simulation.getDrones()) {
-            DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
-            Shape shape = droneGraphicElement.getShape();
-            pane.getChildren().add(shape);
+            displayDrone(pane, drone);
+            displayDroneLogTab(i, drone);
+            i++;
         }
+    }
+
+    private static void displayDrone(Pane pane, Drone drone) {
+        DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
+        Shape shape = droneGraphicElement.getShape();
+        pane.getChildren().add(shape);
+    }
+
+    private static void displayDroneLogTab(int i, Drone drone) {
+        TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");;
+        TextArea text;
+        Tab tab;
+        text = new TextArea();
+        text.setText("test");
+        consoleMap.put(drone, text);
+        tab = new Tab();
+        tab.setContent(text);
+        tab.setText("Drone " + i);
+        tabPaneLog.getTabs().add(tab);
     }
 
     public static void displayParcels(Pane pane) {
