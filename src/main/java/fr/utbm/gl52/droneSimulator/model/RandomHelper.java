@@ -31,13 +31,12 @@ public abstract class RandomHelper {
     }
 
     public static Float getRandFloat(Float min, Float max) {
-        Float nb = 0f;
-        try {
-            nb = min + (max - min) * (ThreadLocalRandom.current().nextFloat());
-        } catch (Exception e) {
-        }
-
-        return nb;
+        if (min >= max)
+            throw new IllegalArgumentException("max must be greater than min");
+        float result = ThreadLocalRandom.current().nextFloat() * (max - min) + min;
+        if (result >= max) // correct for rounding
+            result = Float.intBitsToFloat(Float.floatToIntBits(max) - 1);
+        return result;
     }
 
     public static String getRandValueOf(String[] ts) {

@@ -1,14 +1,21 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
+import javafx.application.Platform;
 
 import java.util.Date;
+
+import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.removeParcelGraphicIfExists;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.findParcelGraphicWithParcelCoord;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.removeParcelGraphicAtCoord;
 
 public class Parcel extends CenteredAndSquaredSimulationElement {
     private Date popTime;
     private Float weight;
     private Date timeDeliveryGoal;
     private Float[] destCoord = new Float[2];
+    private boolean isInJourney = false;
 
     public Parcel() {
         super(.5f);
@@ -36,18 +43,35 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         }
     }
 
+    public static void loadParcelAtCoord(Float[] coord, Drone drone){
+        ParcelGraphicElement parcelToRemove;
+
+        parcelToRemove = findParcelGraphicWithParcelCoord(coord);
+        Parcel parcel = (Parcel) parcelToRemove.getSimulationElement();
+        synchronized (drone) {
+            parcel.setInJourney(true);
+        }
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                removeParcelGraphicIfExists(parcelToRemove);
+            }
+        });
+    }
+
     public void setRandWeight() {
         setWeight(RandomHelper.getRandFloat(0f, 20f));
     }
 
     protected void setRandDestX(Area area) throws OutOfMainAreaException {
-//        setX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
-        setDestX(area.getWidth()/2);
+        setDestX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
+//        setDestX(area.getWidth()/2);
     }
 
     protected void setRandDestY(Area area) throws OutOfMainAreaException {
-//        setY(RandomHelper.getRandFloat(area.getY(), (area.getY() + area.getHeight())));
-        setDestY(area.getHeight()/2);
+        setDestY(RandomHelper.getRandFloat(area.getY(), (area.getY()+ area.getHeight())));
+//        setDestY(area.getHeight()/2);
     }
 
     public void setRandDestCoord(Area area) throws OutOfMainAreaException {
@@ -92,5 +116,13 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
             throw new OutOfMainAreaException("y out of mainArea boundary : " + y);
         else
             destCoord[1] = y;
+    }
+
+    public boolean isInJourney() {
+        return isInJourney;
+    }
+
+    public void setInJourney(boolean inJourney) {
+        isInJourney = inJourney;
     }
 }
