@@ -54,8 +54,8 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(10f); // pour voir les éléments se déplacer
-        droneNumber = 1;
+        setSimulationSpeed(1f); // pour voir les éléments se déplacer
+        droneNumber = 3;
         parcelNumber = 1;
         chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
