@@ -78,11 +78,11 @@ public class Area extends SimulationElement {
     }
 
     public Boolean isInAreaXBoundary(Float x) {
-        return x < getX() || x > getX() + getWidth();
+        return (x < getX() )|| (x > (getX() + getWidth()));
     }
 
     public Boolean isInAreaYBoundary(Float y) {
-        return y < getY() || y > getY() + getHeight();
+        return (y < getY()) || (y > (getY() + getHeight()));
     }
 
     public Boolean isInAreaBoundary(SimulationElement se) {
