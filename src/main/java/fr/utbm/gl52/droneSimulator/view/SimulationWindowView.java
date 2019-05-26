@@ -13,9 +13,6 @@ import javafx.scene.shape.Shape;
 import java.io.IOException;
 import java.util.*;
 
-import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
-import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.findParcelGraphicWithParcelCoord;
-
 public class SimulationWindowView {
 
     private static Parent root;
@@ -77,9 +74,10 @@ public class SimulationWindowView {
         TextArea text;
         Tab tab;
         text = new TextArea();
-        text.setText("test");
+        text.setEditable(false);
         consoleMap.put(drone, text);
         tab = new Tab();
+        tab.setClosable(false);
         tab.setContent(text);
         tab.setText("Drone " + i);
         tabPaneLog.getTabs().add(tab);
@@ -123,6 +121,20 @@ public class SimulationWindowView {
             Simulation.startCustom();
         } else {
             throw new IllegalArgumentException("the mode '" + simulationMode + "' doesn't exist");
+        }
+    }
+
+    public static void logDroneEventInTab(Drone drone, String event){
+        TextArea text = consoleMap.get(drone);
+
+        if(drone == null){
+            throw new IllegalArgumentException("This drone does not exist");
+        } else {
+            String content = text.getText();
+
+            content = (content == null) ? "" : content + event + "\n";
+
+            text.setText(content);
         }
     }
 

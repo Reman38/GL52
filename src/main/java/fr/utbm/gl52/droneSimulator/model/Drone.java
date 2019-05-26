@@ -9,6 +9,7 @@ import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoor
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
 import static fr.utbm.gl52.droneSimulator.model.Parcel.loadParcelAtCoord;
+import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.logDroneEventInTab;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.removeParcelGraphicAtCoord;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
@@ -16,7 +17,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     static final private Float speed = 18f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
     public static final long nanosecondsInASecond = (long) StrictMath.pow(10, 9);
-    public static final float RADIUS = 8f;
+    public static final float RADIUS = 10f;
 
     // attributs
     private Boolean isBusy;
@@ -64,6 +65,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                     } else if (!areCoordNull(geographicalTarget)){
                         if(isInRadius(geographicalTarget, RADIUS)){
                             System.out.println("Parcel loaded");
+                            logDroneEventInTab(this, "Parcel Loaded");
                             isLoaded = true;
 
                             loadParcelAtCoord(targetParcel.getCoord(), this);
@@ -73,6 +75,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 } else if (!areCoordNull(geographicalTarget)) {
                     if(isInRadius(geographicalTarget, RADIUS)) {
                         System.out.println("Parcel delivered");
+                        logDroneEventInTab(this, "Parcel Delivered");
                         isLoaded = false;
                         isBusy = false;
                         geographicalTarget = null;

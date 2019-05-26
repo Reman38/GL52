@@ -65,13 +65,15 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     }
 
     protected void setRandDestX(Area area) throws OutOfMainAreaException {
-        setDestX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
+//        setDestX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
 //        setDestX(area.getWidth()/2);
+        setDestX(RandomHelper.getRandFloat(area.getX() + getWidth() / 2, (area.getX() + area.getWidth()) - getWidth() / 2));
     }
 
     protected void setRandDestY(Area area) throws OutOfMainAreaException {
-        setDestY(RandomHelper.getRandFloat(area.getY(), (area.getY()+ area.getHeight())));
+//        setDestY(RandomHelper.getRandFloat(area.getY(), (area.getY()+ area.getHeight())));
 //        setDestY(area.getHeight()/2);
+        setDestY(RandomHelper.getRandFloat(area.getY() + getHeight() / 2, (area.getY() + area.getHeight()) - getHeight() / 2));
     }
 
     public void setRandDestCoord(Area area) throws OutOfMainAreaException {
@@ -105,8 +107,8 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     }
 
     public void setDestX(float x) throws OutOfMainAreaException {
-        if (Simulation.getMainArea().isInAreaYBoundary(x))
-            throw new OutOfMainAreaException("y out of mainArea boundary : " + x);
+        if (Simulation.getMainArea().isInAreaXBoundary(x))
+            throw new OutOfMainAreaException("x out of mainArea boundary : " + x);
         else
             destCoord[0] = x;
     }

@@ -131,6 +131,11 @@ public class Simulation {
 
     public static void globalStart(){
         //simulationThread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         for(Drone drone: drones){
             Thread droneThread = new Thread(drone);
             droneThreads.add(droneThread);
