@@ -21,6 +21,8 @@ public class SimulationWindowView {
 
     private static Map<Drone, TextArea> consoleMap = new HashMap<>();
 
+    private static Boolean isViewFullyLoaded = false;
+
     public static void init(String simulationMode) throws IOException{
 
         startModel(simulationMode);
@@ -34,6 +36,8 @@ public class SimulationWindowView {
         Pane pane = (Pane) root.lookup("#simulationPane");
 
         startView(pane);
+
+        isViewFullyLoaded = true;
     }
 
     public static void startView(Pane pane) {
@@ -152,5 +156,9 @@ public class SimulationWindowView {
 
     public static List<ParcelGraphicElement> getParcelGraphicElements() {
         return parcelGraphicElements;
+    }
+
+    public static Boolean isViewFullyLoaded() {
+        return isViewFullyLoaded;
     }
 }
