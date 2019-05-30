@@ -45,12 +45,13 @@ public class Simulation {
 
     private static Long lauchSimTime = Instant.now().toEpochMilli();
     private static Long currentTime = Instant.now().toEpochMilli();
+    private static Long elapsedTime = 0L;
 
     private static Thread simulationThread = new Thread(Simulation::manageSimulationStop);
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(24f);
+        setSimulationSpeed(1f);
         droneNumber = 5;
         parcelNumber = 25;
         chargingStation = 5;
@@ -144,7 +145,7 @@ public class Simulation {
 
     private static void popParcels() {
         for (Integer i = 0; i < getParcelNumber(); ++i) {
-            parcels.add(Parcel.createRandomized());
+            parcels.add(Parcel.createRandomized(i));
         }
     }
 
@@ -156,13 +157,13 @@ public class Simulation {
 
     private static void popDrones() {
         for (Integer i = 0; i < getDroneNumber(); ++i) {
-            drones.add(Drone.createRandomizedDrone());
+            drones.add(Drone.createRandomizedDrone(i));
         }
     }
 
     private static void popChargingStations(){
         for (Integer i = 0; i < getChargingStationNumber(); ++i) {
-            chargingStations.add(ChargingStation.createRandomizedChargingStations());
+            chargingStations.add(ChargingStation.createRandomizedChargingStations(i));
         }
     }
 
@@ -194,7 +195,7 @@ public class Simulation {
     private static void updatePlayStatusAccordingToDuration(){
         currentTime = Instant.now().toEpochMilli();
         long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
-        long elapsedTime = (long)(StrictMath.abs(currentTime - lauchSimTime)*simulationSpeed);
+        elapsedTime = (long)(StrictMath.abs(currentTime - lauchSimTime)*simulationSpeed);
         //System.out.println("time elapsed " + elapsedTime/60000);
         play = elapsedTime <= simulationDurationInMilli;
     }
@@ -280,5 +281,13 @@ public class Simulation {
 
     public static Integer getImagesPerSecond() {
         return imagesPerSecond;
+    }
+
+    public static Long getCurrentTime() {
+        return currentTime;
+    }
+
+    public static Long getElapsedTime() {
+        return elapsedTime;
     }
 }

@@ -4,9 +4,11 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 
 public class CenteredAndSquaredSimulationElement extends SimulationElement{
     private Float size;
+    private Integer id;
 
-    public CenteredAndSquaredSimulationElement(Float _size){
+    public CenteredAndSquaredSimulationElement(Integer _id, Float _size){
         size = _size;
+        id = _id;
     }
 
     public Float getSize() {
@@ -27,5 +29,9 @@ public class CenteredAndSquaredSimulationElement extends SimulationElement{
 
     protected void setRandY(Area area) throws OutOfMainAreaException {
         setY(RandomHelper.getRandFloat(area.getY() + getHeight() / 2, (area.getY() + area.getHeight()) - getHeight() / 2));
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

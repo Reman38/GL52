@@ -50,47 +50,29 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
         waitForViewToLoad();
 
+        droneRoutine();
+    }
+
+    private void droneRoutine() {
         while (!Thread.currentThread().isInterrupted()) {
             t1 = System.nanoTime();
             parcelMemoryUpdate();
             //System.out.println(memory.toString());
-            if(!areCoordNull(geographicalTarget)){
-                rotation = calculAngleWith(getX(), geographicalTarget[0], getY(), geographicalTarget[1]);
-            }
+            manageRotation();
             if(!isBusy){
-                targetParcel = getCloserParcel();
-                if(targetParcel != null) {
-                    geographicalTarget = targetParcel.getCoord();
-                }
-                isBusy = true;
+                selectParcel();
             } else {
                 if(!isLoaded) {
-                    if (targetParcel != null && !isParcelInMemory(targetParcel)) {
-                        targetParcel = null;
-                        geographicalTarget = null;
-                        isBusy = false;
+                    if (isTargetParcelUnavailable()) {
+                        resetTargetParcel();
                     } else if (!areCoordNull(geographicalTarget)){
                         if(isInRadius(geographicalTarget, RADIUS)){
-                            System.out.println("Parcel loaded");
-                            logDroneEventInTab(this, "Parcel Loaded");
-                            isLoaded = true;
-
-                            loadParcelAtCoord(targetParcel.getCoord(), this);
-                            geographicalTarget = targetParcel.getDestCoord();
+                            loadParcel();
                         }
                     }
                 } else if (!areCoordNull(geographicalTarget)) {
                     if(isInRadius(geographicalTarget, RADIUS)) {
-                        System.out.println("Parcel delivered");
-                        logDroneEventInTab(this, "Parcel Delivered");
-                        isLoaded = false;
-                        isBusy = false;
-                        geographicalTarget = null;
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
+                        deliverParcel();
                     }
                 }
             }
@@ -98,6 +80,51 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             manageThreadSleepAccordingToSimAcceleration();
             t2 = System.nanoTime();
             manageDronesSpeedCoefAccordingtoSimAcceleration();
+        }
+    }
+
+    private void manageRotation() {
+        if(!areCoordNull(geographicalTarget)){
+            rotation = calculAngleWith(getX(), geographicalTarget[0], getY(), geographicalTarget[1]);
+        }
+    }
+
+    private void deliverParcel() {
+        Message.deliverParcel(this, targetParcel.id);
+        isLoaded = false;
+        isBusy = false;
+        geographicalTarget = null;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void loadParcel() {
+        Message.loadParcel(this, targetParcel.id);
+        isLoaded = true;
+
+        loadParcelAtCoord(targetParcel.getCoord(), this);
+        geographicalTarget = targetParcel.getDestCoord();
+    }
+
+    private void resetTargetParcel() {
+        targetParcel = null;
+        geographicalTarget = null;
+        isBusy = false;
+    }
+
+    private boolean isTargetParcelUnavailable() {
+        return targetParcel != null && !isParcelInMemory(targetParcel);
+    }
+
+    private void selectParcel() {
+        targetParcel = getCloserParcel();
+        if(targetParcel != null) {
+            geographicalTarget = targetParcel.getCoord();
+            isBusy = true;
+            Message.chooseClosestParcel(this, targetParcel.id);
         }
     }
 
@@ -223,12 +250,14 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
 
         public class ParcelRecord {
+            private Integer id;
             private Float[] coord = new Float[2];
             private Float[] destCoord = new Float[2];
             private Date lastDetectedDateTime;
             private Date popTime;
 
             public ParcelRecord(Parcel p) {
+                id = p.getId();
                 coord = p.getCoord();
                 destCoord = p.getDestCoord();
                 popTime = p.getPopTime();
@@ -249,6 +278,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
             public void setLastDetectedDateTime(Date lastDetectedDateTime){
                 this.lastDetectedDateTime = lastDetectedDateTime;
+            }
+
+            public Integer getId() {
+                return id;
             }
 
             @Override
@@ -282,8 +315,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         }
     }
 
-    public Drone() {
-        super(.8f);
+    public Drone(Integer id) {
+        super(id, .8f);
 
         isBusy = false;
         isLoaded = false;
@@ -293,8 +326,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         memory = new Memory();
     }
 
-    public static Drone createRandomizedDrone() {
-        Drone drone = new Drone();
+    public static Drone createRandomizedDrone(Integer id) {
+        Drone drone = new Drone(id);
         try {
             drone.randomize();
         } catch (OutOfMainAreaException e) {
