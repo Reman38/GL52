@@ -46,11 +46,11 @@ public class Simulation {
     private static Long lauchSimTime = Instant.now().toEpochMilli();
     private static Long currentTime = Instant.now().toEpochMilli();
 
-//    private static Thread simulationThread = new Thread(Simulation::update);
+    private static Thread simulationThread = new Thread(Simulation::manageSimulationStop);
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(1f);
+        setSimulationSpeed(24f);
         droneNumber = 5;
         parcelNumber = 25;
         chargingStation = 5;
@@ -126,6 +126,7 @@ public class Simulation {
     }
 
     public static void globalStart(){
+        simulationThread.start();
         for(Drone drone: drones){
             Thread droneThread = new Thread(drone);
             droneThreads.add(droneThread);
@@ -138,10 +139,7 @@ public class Simulation {
         for(Thread droneThread: droneThreads){
             droneThread.interrupt();
         }
-
-       /* if(simulationThread != null && simulationThread.isAlive()){
-            simulationThread.stop();
-        }*/
+        simulationThread.interrupt();
     }
 
     private static void popParcels() {
@@ -168,39 +166,17 @@ public class Simulation {
         }
     }
 
-    /*public static void update() {
-        while (isPlay()) {
-            t1 = System.nanoTime();
-            // TODO ajust
-            incrementTime();
-            handleDrones();
-            manageThreadSleepAccordingToSimAcceleration();
-            t2 = System.nanoTime();
-            manageDronesSpeedCoefAccordingtoSimAcceleration();
+    public static void manageSimulationStop(){
+        while (isPlay()){
             updatePlayStatusAccordingToDuration();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
-    }*/
-
-
-    /*public static void update() {
-        while (isPlay()) {
-            t1 = System.nanoTime();
-            // TODO ajust
-            incrementTime();
-            handleDrones();
-            manageThreadSleepAccordingToSimAcceleration();
-            t2 = System.nanoTime();
-            manageDronesSpeedCoefAccordingtoSimAcceleration();
-            updatePlayStatusAccordingToDuration();
-        }
-    }*/
-
-    private static void handleDrones() {
-        for (Drone drone : drones) {
-            //drone.handleParcelInteractions();
-            //drone.handleDroneInteractions();
-            //drone.move(deltaTSimStep);
-        }
+        System.out.println("Time elapsed");
+        stop();
     }
 
     public static void setTimeSimulationParameters(Integer simulationDuration, Integer numberOfSimulationIteration){
@@ -219,6 +195,7 @@ public class Simulation {
         currentTime = Instant.now().toEpochMilli();
         long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
         long elapsedTime = (long)(StrictMath.abs(currentTime - lauchSimTime)*simulationSpeed);
+        //System.out.println("time elapsed " + elapsedTime/60000);
         play = elapsedTime <= simulationDurationInMilli;
     }
 
