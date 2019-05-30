@@ -1,7 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
-import javafx.application.Platform;
+import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 
 import java.util.*;
 
@@ -10,7 +10,6 @@ import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
 import static fr.utbm.gl52.droneSimulator.model.Parcel.loadParcelAtCoord;
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.logDroneEventInTab;
-import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.removeParcelGraphicAtCoord;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
     // constantes
@@ -28,6 +27,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private Memory.ParcelRecord targetParcel = null;
     private Float[] geographicalTarget = new Float[2];
 
+    private static Long t1 = System.nanoTime();
+    private static Long t2 = System.nanoTime();
+    private static Long deltaTSimStep = 0L;
+
 // TODO prise de décision par rapport aux paquets
     /*
     if (isTransportable(parcel)) {
@@ -44,7 +47,11 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
     @Override
     public void run() {
+
+        waitForViewToLoad();
+
         while (!Thread.currentThread().isInterrupted()) {
+            t1 = System.nanoTime();
             parcelMemoryUpdate();
             //System.out.println(memory.toString());
             if(!areCoordNull(geographicalTarget)){
@@ -82,15 +89,22 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
-                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
                         }
-                        // Thread.currentThread().interrupt();
                     }
                 }
             }
             move(nanosecondsInASecond);
+            manageThreadSleepAccordingToSimAcceleration();
+            t2 = System.nanoTime();
+            manageDronesSpeedCoefAccordingtoSimAcceleration();
+        }
+    }
+
+    private void waitForViewToLoad() {
+        while(!SimulationWindowView.isViewFullyLoaded()){
             try {
-                Thread.sleep(1000 / 30);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -132,14 +146,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             }
         }
 
-        Iterator<Memory.ParcelRecord> iterator = memory.parcelRecords.iterator();
-
-        while (iterator.hasNext()){
-            Memory.ParcelRecord parcelRecord = iterator.next();
-            if(!isParcelStillAvailable(parcelRecord)){
-                iterator.remove();
-            }
-        }
+        memory.parcelRecords.removeIf(parcelRecord -> !isParcelStillAvailable(parcelRecord));
     }
 
     private boolean isParcelInMemory(Parcel parcel) {
@@ -177,6 +184,39 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             }
         }
         return res;
+    }
+
+    private static void manageDronesSpeedCoefAccordingtoSimAcceleration() {
+        if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
+            float additiveCoef = Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
+            deltaTSimStep = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
+        } else {
+            deltaTSimStep = StrictMath.abs(t2 - t1);
+        }
+    }
+
+    private static Long returnDeltaTSecAccordingToSimAcceleration() {
+        long deltaT;
+        if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
+            float additiveCoef = Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
+            deltaT = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
+        } else {
+            deltaT = StrictMath.abs(t2 - t1);
+        }
+
+        return deltaT;
+    }
+
+    private static void manageThreadSleepAccordingToSimAcceleration() {
+        try {
+            if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
+                Thread.sleep((long) (1000 / Simulation.getImagesPerSecond() / Simulation.getMaxThreadSleepAcceleration()));
+            } else {
+                Thread.sleep((long) (1000 / Simulation.getImagesPerSecond() / Simulation.getSimulationSpeed()));
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public class Memory {

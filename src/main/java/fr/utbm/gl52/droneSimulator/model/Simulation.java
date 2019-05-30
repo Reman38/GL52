@@ -40,22 +40,18 @@ public class Simulation {
     public static final String RANDOM = "RANDOM";
     public static final String CUSTOM = "CUSTOM";
 
-    private static Long t1 = System.nanoTime();
-    private static Long t2 = System.nanoTime();
-    private static Long deltaTSimStep = 0L;
-
     private static final Integer imagesPerSecond = 30;
     private static final Float maxThreadSleepAcceleration = 30f;
 
     private static Long lauchSimTime = Instant.now().toEpochMilli();
     private static Long currentTime = Instant.now().toEpochMilli();
 
-    private static Thread simulationThread = new Thread(Simulation::update);
+//    private static Thread simulationThread = new Thread(Simulation::update);
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(1f); // pour voir les éléments se déplacer
-        droneNumber = 2;
+        setSimulationSpeed(1f);
+        droneNumber = 5;
         parcelNumber = 25;
         chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
@@ -130,12 +126,6 @@ public class Simulation {
     }
 
     public static void globalStart(){
-        //simulationThread.start();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         for(Drone drone: drones){
             Thread droneThread = new Thread(drone);
             droneThreads.add(droneThread);
@@ -149,9 +139,9 @@ public class Simulation {
             droneThread.interrupt();
         }
 
-        if(simulationThread != null && simulationThread.isAlive()){
+       /* if(simulationThread != null && simulationThread.isAlive()){
             simulationThread.stop();
-        }
+        }*/
     }
 
     private static void popParcels() {
@@ -178,7 +168,7 @@ public class Simulation {
         }
     }
 
-    public static void update() {
+    /*public static void update() {
         while (isPlay()) {
             t1 = System.nanoTime();
             // TODO ajust
@@ -189,7 +179,7 @@ public class Simulation {
             manageDronesSpeedCoefAccordingtoSimAcceleration();
             updatePlayStatusAccordingToDuration();
         }
-    }
+    }*/
 
 
     /*public static void update() {
@@ -204,40 +194,6 @@ public class Simulation {
             updatePlayStatusAccordingToDuration();
         }
     }*/
-
-    private static void manageDronesSpeedCoefAccordingtoSimAcceleration() {
-        if(simulationSpeed > maxThreadSleepAcceleration) {
-            float additiveCoef = simulationSpeed / maxThreadSleepAcceleration;
-            deltaTSimStep = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
-        } else {
-            deltaTSimStep = StrictMath.abs(t2 - t1);
-        }
-    }
-
-    private static Long returnDeltaTSecAccordingToSimAcceleration() {
-        long deltaT;
-        if(simulationSpeed > maxThreadSleepAcceleration) {
-            float additiveCoef = simulationSpeed / maxThreadSleepAcceleration;
-            deltaT = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
-        } else {
-            deltaT = StrictMath.abs(t2 - t1);
-        }
-
-        return deltaT;
-    }
-
-    private static void manageThreadSleepAccordingToSimAcceleration() {
-        try {
-            if(simulationSpeed > maxThreadSleepAcceleration) {
-                Thread.sleep((long) (1000 / imagesPerSecond / maxThreadSleepAcceleration));
-            } else {
-                Thread.sleep((long) (1000 / imagesPerSecond / simulationSpeed));
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            e.printStackTrace();
-        }
-    }
 
     private static void handleDrones() {
         for (Drone drone : drones) {
@@ -341,11 +297,11 @@ public class Simulation {
         return competitionDifficultyLevels;
     }
 
-    public static Long getT1() {
-        return t1;
+    public static Float getMaxThreadSleepAcceleration() {
+        return maxThreadSleepAcceleration;
     }
 
-    public static Long getT2() {
-        return t2;
+    public static Integer getImagesPerSecond() {
+        return imagesPerSecond;
     }
 }
