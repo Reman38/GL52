@@ -34,6 +34,8 @@ public class ParameterWindowController{
     private Boolean isChargingStationPlacement = false;
     private Boolean isChargingStationRemoving = false;
     private static final Float selectRadius = 10f;
+    private Integer droneIdIncrement = 0;
+    private Integer chargingStationIdIncrement = 0;
 
    @FXML
    public void addDroneAction(ActionEvent ae){
@@ -161,7 +163,7 @@ public class ParameterWindowController{
         Slider droneWeightCapacity = (Slider)  root.lookup("#droneWeightCapacity");
         Slider droneBatteryCapacity = (Slider) root.lookup("#droneBatteryCapacity");
         Pane pane = (Pane) root.lookup("#visualSettingPane");
-        Drone drone = new Drone();
+        Drone drone = new Drone(droneIdIncrement++);
         drone.setWeightCapacity((float) droneWeightCapacity.getValue());
         drone.setBatteryCapacity((int) droneBatteryCapacity.getValue());
         addDroneElement(event, pane, drone);
@@ -206,7 +208,7 @@ public class ParameterWindowController{
 
     private void createChargingStationElement(MouseEvent event, Parent root) {
         Pane pane = (Pane) root.lookup("#visualSettingPane");
-        ChargingStation chargingStation = new ChargingStation();
+        ChargingStation chargingStation = new ChargingStation(chargingStationIdIncrement++);
         addChargingStationElement(event, pane, chargingStation);
     }
 

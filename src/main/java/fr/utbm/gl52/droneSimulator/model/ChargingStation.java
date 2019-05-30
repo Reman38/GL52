@@ -14,14 +14,14 @@ public class ChargingStation extends CenteredAndSquaredSimulationElement {
     // attributs
     private Boolean isBusy;
 
-    public ChargingStation() {
-        super(1f);
+    public ChargingStation(Integer id) {
+        super(id,1f);
 
         isBusy = false;
     }
 
-    public static ChargingStation createRandomizedChargingStations() {
-        ChargingStation chargingStation = new ChargingStation();
+    public static ChargingStation createRandomizedChargingStations(Integer id) {
+        ChargingStation chargingStation = new ChargingStation(id);
         try {
             chargingStation.randomize();
         } catch (OutOfMainAreaException e) {

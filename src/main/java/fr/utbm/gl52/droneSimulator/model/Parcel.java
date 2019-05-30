@@ -11,19 +11,20 @@ import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicEleme
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement.removeParcelGraphicAtCoord;
 
 public class Parcel extends CenteredAndSquaredSimulationElement {
+
     private Date popTime;
     private Float weight;
     private Date timeDeliveryGoal;
     private Float[] destCoord = new Float[2];
     private boolean isInJourney = false;
 
-    public Parcel() {
-        super(.5f);
+    public Parcel(Integer id) {
+        super(id, .5f);
         popTime = new Date();
     }
 
-    public static Parcel createRandomized() {
-        Parcel parcel = new Parcel();
+    public static Parcel createRandomized(Integer id) {
+        Parcel parcel = new Parcel(id);
         parcel.randomize();
         return parcel;
     }
