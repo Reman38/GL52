@@ -8,6 +8,7 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.ErrorPopupView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -124,7 +125,7 @@ public class ParameterWindowController{
 
     private void throwErrorPopup(String errorMsg) throws IOException {
         ErrorPopupView errorPopupView = new ErrorPopupView(errorMsg);
-        createErrorPopup(errorPopupView.getParent());
+        createPopup(errorPopupView.getParent(), ERROR_TITLE);
     }
 
     private void LaunchSimulationWindow(MouseEvent event) {

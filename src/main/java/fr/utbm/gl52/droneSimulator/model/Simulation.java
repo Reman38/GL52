@@ -9,6 +9,8 @@ import java.util.Map;
 public class Simulation {
     public static final long secondsInAMinute = 60L;
     public static final long millisecondsInASecond = 1000L;
+    private static final Integer DEFAULT_DURATION = 240;
+
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Thread> droneThreads = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
@@ -178,6 +180,10 @@ public class Simulation {
         }
         System.out.println("Time elapsed");
         stop();
+    }
+
+    public static void setTimeSimulationParameters(Integer numberOfSimulationIteration){
+        setTimeSimulationParameters(Simulation.DEFAULT_DURATION, numberOfSimulationIteration);
     }
 
     public static void setTimeSimulationParameters(Integer simulationDuration, Integer numberOfSimulationIteration){
