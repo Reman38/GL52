@@ -9,6 +9,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.util.*;
@@ -59,21 +60,21 @@ public class SimulationWindowView {
     }
 
     public static void displayDronesAndAssociatedTabs(Pane pane) {
-        int i = 1;
         for (Drone drone : Simulation.getDrones()) {
             displayDrone(pane, drone);
-            displayDroneLogTab(i, drone);
-            i++;
+            displayDroneLogTab(drone);
         }
     }
 
     private static void displayDrone(Pane pane, Drone drone) {
         DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
         Shape shape = droneGraphicElement.getShape();
+        Text id = droneGraphicElement.getGraphicalId();
         pane.getChildren().add(shape);
+        pane.getChildren().add(id);
     }
 
-    private static void displayDroneLogTab(int i, Drone drone) {
+    private static void displayDroneLogTab(Drone drone) {
         TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");;
         TextArea text;
         Tab tab;
@@ -83,7 +84,7 @@ public class SimulationWindowView {
         tab = new Tab();
         tab.setClosable(false);
         tab.setContent(text);
-        tab.setText("Drone " + i);
+        tab.setText("Drone " + drone.getId());
         tabPaneLog.getTabs().add(tab);
     }
 
@@ -91,8 +92,10 @@ public class SimulationWindowView {
         for (Parcel parcel : Simulation.getParcels()) {
             ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(parcel);
             parcelGraphicElements.add(parcelGraphicElement);
+            Text id = parcelGraphicElement.getGraphicalId();
             Shape shape = parcelGraphicElement.getShape();
             pane.getChildren().add(shape);
+            pane.getChildren().add(id);
         }
     }
 
@@ -100,7 +103,9 @@ public class SimulationWindowView {
         for (ChargingStation chargingStation : Simulation.getChargingStations()) {
             ChargingStationGraphicElement chargingStationGraphicElement = new ChargingStationGraphicElement(chargingStation);
             Shape shape = chargingStationGraphicElement.getShape();
+            Text id = chargingStationGraphicElement.getGraphicalId();
             pane.getChildren().add(shape);
+            pane.getChildren().add(id);
         }
     }
 
@@ -147,6 +152,7 @@ public class SimulationWindowView {
             Pane pane = (Pane) root.lookup("#simulationPane");
             parcelGraphicElements.remove(parcelToRemove);
             pane.getChildren().remove(parcelToRemove.getShape());
+            pane.getChildren().remove(parcelToRemove.getGraphicalId());
         }
     }
 
