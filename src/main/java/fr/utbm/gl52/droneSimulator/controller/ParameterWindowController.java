@@ -8,7 +8,6 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.ErrorPopupView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -166,7 +165,7 @@ public class ParameterWindowController{
         Pane pane = (Pane) root.lookup("#visualSettingPane");
         Drone drone = new Drone(droneIdIncrement++);
         drone.setWeightCapacity((float) droneWeightCapacity.getValue());
-        drone.setBatteryCapacity((int) droneBatteryCapacity.getValue());
+        drone.setBatteryFullCapacity((float)droneBatteryCapacity.getValue());
         addDroneElement(event, pane, drone);
     }
 

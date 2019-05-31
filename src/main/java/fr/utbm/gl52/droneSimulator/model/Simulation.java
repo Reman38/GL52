@@ -27,7 +27,7 @@ public class Simulation {
     private static  Integer chargingStation;
     private static Float competitionDifficulty;
     private static Float[] droneWeightCapacity = new Float[2];
-    private static Integer[] droneBatteryCapacity = new Integer[2];
+    private static Float[] droneBatteryCapacity = new Float[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
     private static Integer simulationDuration = 240;
@@ -59,8 +59,8 @@ public class Simulation {
         chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
         droneWeightCapacity[1] = 20f;
-        droneBatteryCapacity[0] = 5;
-        droneBatteryCapacity[1] = 55;
+        droneBatteryCapacity[0] = 5f;
+        droneBatteryCapacity[1] = 55f;
         simulationDurationRange[0] = 240;
         simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
@@ -268,7 +268,7 @@ public class Simulation {
     public static Float[] getDroneWeightCapacity() {
         return droneWeightCapacity;
     }
-    public static Integer[] getDroneBatteryCapacity() {
+    public static Float[] getDroneBatteryCapacity() {
         return droneBatteryCapacity;
     }
     public static Integer[] getSimulationDurationRange() {

@@ -6,21 +6,20 @@ import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import java.util.*;
 
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoord;
-import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
-import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
+import static fr.utbm.gl52.droneSimulator.model.MathHelper.*;
 import static fr.utbm.gl52.droneSimulator.model.Parcel.loadParcelAtCoord;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
     // constantes
     static final private Float speed = 18f; // 41 mph, 65 km/h, 18m/s
     static final private Integer visibleDistance = 100000;
-    public static final long nanosecondsInASecond = (long) StrictMath.pow(10, 9);
     public static final float RADIUS = 10f;
 
     // attributs
     private Boolean isBusy;
     private Boolean isLoaded;
-    private Integer batteryCapacity;
+    private Float batteryFullCapacity;
+    private Float batteryCapacity;
     private Float rotation = 0f; // TODO degres ou radian ?
     private Float weightCapacity;
     private Memory.ParcelRecord targetParcel = null;
@@ -325,7 +324,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
         isBusy = false;
         isLoaded = false;
-        batteryCapacity = Simulation.getDroneBatteryCapacity()[1];
+        batteryFullCapacity = Simulation.getDroneBatteryCapacity()[1];
+        batteryCapacity = batteryFullCapacity;
         weightCapacity = Simulation.getDroneWeightCapacity()[0];
 
         memory = new Memory();
@@ -349,41 +349,18 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     public void move(long deltaT) {
         //System.out.println("deltaT "+ deltaT);
         deltaT = avoidNullDeltaT(deltaT);
+        consumeBatteryDuring(deltaT);
+        if(!isBatteryEmpty()) {
+            float deltaTSec = convertNanosecondsToSeconds(deltaT);
+            System.out.println("deltaTSec " + deltaTSec);
 
-        float deltaTSec = convertNanosecondsToSeconds(deltaT);
-        System.out.println("deltaTSec "+ deltaTSec);
+            Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
+            Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
 
-        Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
-        Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
+            printDroneSpeedForDebug(deltaTSec, newX, newY);
 
-        printDroneSpeedForDebug(deltaTSec, newX, newY);
-
-        tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
-
-        //System.out.println("newX " + newX + " newY " + newY);
-    }
-
-    public void moveTo(long deltaT, Float[] coord) {
-        //System.out.println("deltaT "+ deltaT);
-        deltaT = avoidNullDeltaT(deltaT);
-
-        float deltaTSec = convertNanosecondsToSeconds(deltaT);
-        //System.out.println("deltaTSec "+ deltaTSec);
-
-        if(isInRadius(coord, 1f)) {
-
-            Float newX = coord[0] / (getSpeed() * deltaTSec);
-            Float newY = coord[1] / (getSpeed() * deltaTSec);
-
-            try {
-                setCoord(newX, newY);
-            } catch (OutOfMainAreaException e) {
-                //moveTo(deltaT, coord);
-            }
+            tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
         }
-
-
-        //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
         //System.out.println("newX " + newX + " newY " + newY);
     }
@@ -413,10 +390,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
     private boolean isNewXOutOfBoundaries(Float newX) {
         return isValueOutOfRange(newX, Simulation.getMainArea().getX(), Simulation.getMainArea().getWidth());
-    }
-
-    private float convertNanosecondsToSeconds(long deltaT) {
-        return (float)(deltaT) / nanosecondsInASecond;
     }
 
     private long avoidNullDeltaT(long deltaT) {
@@ -508,12 +481,26 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         Simulation.removeParcel(f);
     }
 
-    public void chargeBattery() {
+    public void land() {
         // TODO
     }
 
-    public void land() {
-        // TODO
+    public void chargeBatteryDuring(Long nanoSeconds){
+        batteryCapacity += convertNanosecondsToSeconds(nanoSeconds) / 2;
+        if(batteryCapacity < batteryFullCapacity){
+            batteryCapacity = batteryFullCapacity;
+        }
+    }
+
+    public void consumeBatteryDuring(Long nanoSeconds){
+        batteryCapacity -= convertNanosecondsToMinutes(nanoSeconds);
+        if(batteryCapacity <= 0){
+            batteryCapacity = 0f;
+        }
+    }
+
+    public Boolean isBatteryEmpty(){
+        return batteryCapacity <= 0f;
     }
 
     public void setRotation(Float radian) {
@@ -546,20 +533,20 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return visibleDistance;
     }
 
-    public Integer getBatteryCapacity() {
-        return batteryCapacity;
+    public Float getBatteryFullCapacity() {
+        return batteryFullCapacity;
     }
 
     public void setLoaded(Boolean b) {
         isLoaded = b;
     }
 
-    public void setBatteryCapacity(Integer i) {
+    public void setBatteryFullCapacity(Float i) {
         if(i < Simulation.getDroneBatteryCapacity()[0] || i > Simulation.getDroneBatteryCapacity()[1]){
             throw new IllegalArgumentException("battery capacity must be between " + Simulation.getDroneBatteryCapacity()[0] + " and " + Simulation.getDroneBatteryCapacity()[1] + " (" + i + " given)");
         } else {
-            this.batteryCapacity = i;
-
+            this.batteryFullCapacity = i;
+            this.batteryCapacity = this.batteryFullCapacity;
         }
     }
 
@@ -588,12 +575,16 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         }
     }
 
+    public Float getBatteryCapacity() {
+        return batteryCapacity;
+    }
+
     @Override
     public String toString() {
         return "Drone{" +
                 "isBusy=" + isBusy +
                 ", isLoaded=" + isLoaded +
-                ", batteryCapacity=" + batteryCapacity +
+                ", batteryFullCapacity=" + batteryFullCapacity +
                 ", rotation=" + rotation +
                 ", weightCapacity=" + weightCapacity +
                 ", memory=" + memory +

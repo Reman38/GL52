@@ -1,6 +1,9 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 public abstract class MathHelper {
+
+    public static final long nanosecondsInASecond = (long) StrictMath.pow(10, 9);
+
     public static Float simplifyAngle(Float angle) {
         while (angle > 2 * getPi())
             angle -= 2 * getPi();
@@ -76,5 +79,13 @@ public abstract class MathHelper {
         float x2 = (float) StrictMath.pow(StrictMath.abs(x - x1), 2);
         float y2 = (float) StrictMath.pow(StrictMath.abs(y - y1), 2);
         return (float) StrictMath.sqrt(x2 + y2);
+    }
+
+    static float convertNanosecondsToSeconds(long deltaT) {
+        return (float)(deltaT) / nanosecondsInASecond;
+    }
+
+    static Float convertNanosecondsToMinutes(Long deltaT){
+        return convertNanosecondsToSeconds(deltaT) / 60;
     }
 }
