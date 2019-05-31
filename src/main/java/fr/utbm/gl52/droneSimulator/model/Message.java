@@ -26,7 +26,7 @@ public class Message {
     }
 
     private static void sendMessageToTab(Drone drone, String message){
-        String msg = formatsimulationDuration() + ": " + message;
+        String msg = formatsimulationDuration() + " (battery: "+ String.format("%.2f",drone.getBatteryCapacity()) + " min remaining): " + message;
         logDroneEventInTab(drone, msg);
     }
 
