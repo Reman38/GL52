@@ -8,6 +8,7 @@ import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -20,7 +21,7 @@ public class StartPageController extends ControllerHelper {
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             System.out.println("click default");
             try {
-                IterationPopupView iterationPopupView = new IterationPopupView(Simulation.DEFAULT);
+                IterationPopupView iterationPopupView = new IterationPopupView(getStage(event), Simulation.DEFAULT);
                createPopup(iterationPopupView.getParent(), GraphicHelper.ITERATION_TITLE);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -29,11 +30,15 @@ public class StartPageController extends ControllerHelper {
         }
     }
 
+    private Stage getStage(MouseEvent event) {
+        return (Stage)getRootWith(event).getScene().getWindow();
+    }
+
     @FXML
     public void launchSimulationWithRandomParameters(MouseEvent event){
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             try {
-                IterationPopupView iterationPopupView = new IterationPopupView(Simulation.RANDOM);
+                IterationPopupView iterationPopupView = new IterationPopupView(getStage(event), Simulation.RANDOM);
                 createPopup(iterationPopupView.getParent(), GraphicHelper.ITERATION_TITLE);
             } catch (IOException e) {
                 e.printStackTrace();
