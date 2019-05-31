@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Slider;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -13,8 +15,18 @@ public class IterationPopupView {
     private static String simulationMode;
 
     private static Simulation simulation = new Simulation();
+    private static Stage parentWindow;
 
     public IterationPopupView(String simulationMode) throws IOException{
+        initView(simulationMode);
+    }
+
+    public IterationPopupView(Stage parentWindow, String simulationMode) throws IOException{
+        initView(simulationMode);
+        IterationPopupView.parentWindow = parentWindow;
+    }
+
+    private void initView(String simulationMode) throws IOException {
         loadFXML();
         createIterationNumberslider();
         IterationPopupView.simulationMode = simulationMode;
@@ -56,5 +68,9 @@ public class IterationPopupView {
 
     public static Simulation getSimulation() {
         return simulation;
+    }
+
+    public static Stage getParentWindow() {
+        return parentWindow;
     }
 }

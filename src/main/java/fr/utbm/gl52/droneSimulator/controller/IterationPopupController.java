@@ -5,8 +5,10 @@ import fr.utbm.gl52.droneSimulator.view.IterationPopupView;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Slider;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -19,6 +21,8 @@ public class IterationPopupController {
     public void validate(ActionEvent event) {
         setIterationParameter(event);
         launchSimulation(event);
+        Stage parentWindow = IterationPopupView.getParentWindow();
+        parentWindow.hide();
     }
 
     private void launchSimulation(ActionEvent event) {
