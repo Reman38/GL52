@@ -9,7 +9,6 @@ import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.isSameCoor
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.calculAngleWith;
 import static fr.utbm.gl52.droneSimulator.model.MathHelper.computeVectorNorm;
 import static fr.utbm.gl52.droneSimulator.model.Parcel.loadParcelAtCoord;
-import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.logDroneEventInTab;
 
 public class Drone extends CenteredAndSquaredSimulationElement implements Runnable{
     // constantes
@@ -30,6 +29,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private static Long t1 = System.nanoTime();
     private static Long t2 = System.nanoTime();
     private static Long deltaTSimStep = 0L;
+    private static Long realDeltaT = 0L;
 
 // TODO prise de décision par rapport aux paquets
     /*
@@ -76,10 +76,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                     }
                 }
             }
-            move(nanosecondsInASecond);
             manageThreadSleepAccordingToSimAcceleration();
             t2 = System.nanoTime();
             manageDronesSpeedCoefAccordingtoSimAcceleration();
+            move(deltaTSimStep);
         }
     }
 
@@ -214,18 +214,23 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     private static void manageDronesSpeedCoefAccordingtoSimAcceleration() {
+        realDeltaT = StrictMath.abs(t2 - t1);
         if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
-            float additiveCoef = Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
-            deltaTSimStep = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
+            float additiveCoef = getAdditiveCoef();
+            deltaTSimStep = (long)(realDeltaT * additiveCoef);
         } else {
-            deltaTSimStep = StrictMath.abs(t2 - t1);
+            deltaTSimStep = realDeltaT;
         }
+    }
+
+    private static float getAdditiveCoef() {
+        return Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
     }
 
     private static Long returnDeltaTSecAccordingToSimAcceleration() {
         long deltaT;
         if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
-            float additiveCoef = Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
+            float additiveCoef = getAdditiveCoef();
             deltaT = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
         } else {
             deltaT = StrictMath.abs(t2 - t1);
@@ -346,12 +351,12 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         deltaT = avoidNullDeltaT(deltaT);
 
         float deltaTSec = convertNanosecondsToSeconds(deltaT);
-        //System.out.println("deltaTSec "+ deltaTSec);
+        System.out.println("deltaTSec "+ deltaTSec);
 
         Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
         Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
 
-        //printDroneSpeedForDebug(deltaTSec, newX, newY);
+        printDroneSpeedForDebug(deltaTSec, newX, newY);
 
         tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
 
@@ -425,6 +430,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         float dist = computeVectorNorm(getX(), newX, getY(), newY);
         System.out.println("dist "+ dist);
         System.out.println("Drone speed " + dist/deltaTsec);
+        System.out.println("real drone speed " + dist/(convertNanosecondsToSeconds(realDeltaT)));
     }
 
     public void goTo(SimulationElement se) {
