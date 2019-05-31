@@ -1,16 +1,17 @@
 package fr.utbm.gl52.droneSimulator.controller;
 
 import fr.utbm.gl52.droneSimulator.model.Simulation;
+import fr.utbm.gl52.droneSimulator.view.IterationPopupView;
 import fr.utbm.gl52.droneSimulator.view.ParameterWindowView;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
-import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimulationWindow;
-import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createWindow;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.*;
 
 public class StartPageController extends ControllerHelper {
 
@@ -19,8 +20,8 @@ public class StartPageController extends ControllerHelper {
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             System.out.println("click default");
             try {
-                SimulationWindowView.init(Simulation.DEFAULT);
-                createSimulationWindow(event, SimulationWindowView.getParent());
+                IterationPopupView iterationPopupView = new IterationPopupView(Simulation.DEFAULT);
+               createPopup(iterationPopupView.getParent(), GraphicHelper.ITERATION_TITLE);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -32,8 +33,8 @@ public class StartPageController extends ControllerHelper {
     public void launchSimulationWithRandomParameters(MouseEvent event){
         if(event.getButton().equals(MouseButton.PRIMARY)) {
             try {
-                SimulationWindowView.init(Simulation.RANDOM);
-                createSimulationWindow(event, SimulationWindowView.getParent());
+                IterationPopupView iterationPopupView = new IterationPopupView(Simulation.RANDOM);
+                createPopup(iterationPopupView.getParent(), GraphicHelper.ITERATION_TITLE);
             } catch (IOException e) {
                 e.printStackTrace();
             }

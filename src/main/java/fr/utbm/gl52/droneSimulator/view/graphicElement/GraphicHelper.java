@@ -2,6 +2,7 @@ package fr.utbm.gl52.droneSimulator.view.graphicElement;
 
 import fr.utbm.gl52.droneSimulator.model.Simulation;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -16,6 +17,9 @@ import javafx.stage.WindowEvent;
 
 public class GraphicHelper {
 
+    public static String ERROR_TITLE = "Error";
+    public static String ITERATION_TITLE = "Choose iteration number";
+
     public static void createWindow(MouseEvent event, Parent parent) {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
@@ -26,7 +30,7 @@ public class GraphicHelper {
         ((Node)(event.getSource())).getScene().getWindow().hide();
     }
 
-    public static void createSimulationWindow(MouseEvent event, Parent parent) {
+    public static void createSimulationWindow(Event event, Parent parent) {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setScene(scene);
@@ -44,16 +48,17 @@ public class GraphicHelper {
         stage.show();
     }
 
-    public static void createErrorPopup(Parent parent) {
+    public static void createPopup(Parent parent, String title) {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("Error");
+        stage.setTitle(title);
         stage.setMaximized(false);
         stage.setResizable(false);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }
+
 
     public static void useDefaultCursorOn(Pane pane){
         pane.setCursor(Cursor.DEFAULT);
