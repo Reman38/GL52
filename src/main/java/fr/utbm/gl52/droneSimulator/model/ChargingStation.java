@@ -13,6 +13,7 @@ public class ChargingStation extends CenteredAndSquaredSimulationElement {
 
     // attributs
     private Boolean isBusy;
+    private Drone reloadedDrone;
 
     public ChargingStation(Integer id) {
         super(id,1f);
@@ -34,8 +35,19 @@ public class ChargingStation extends CenteredAndSquaredSimulationElement {
         setRandCoord();
     }
 
-    public void chargeDrone() {
-        // TODO
+    public void reloadDrone(Drone drone,Long deltaT) {
+        reloadedDrone = drone;
+        reloadedDrone.chargeBatteryDuring(deltaT);
+        isBusy = true;
+    }
+
+    public void freeChargingStation(){
+        reloadedDrone = null;
+        isBusy = false;
+    }
+
+    public Boolean isCurrentDroneReloading(Drone drone){
+        return reloadedDrone == drone;
     }
 
     public void setRandCoord() throws OutOfMainAreaException {
@@ -44,10 +56,6 @@ public class ChargingStation extends CenteredAndSquaredSimulationElement {
 
     public Integer getDetectionRange() {
         return visibleDistance;
-    }
-
-    public void setBusy(Boolean b) {
-        isBusy = b;
     }
 
     public Boolean isBusy() {
