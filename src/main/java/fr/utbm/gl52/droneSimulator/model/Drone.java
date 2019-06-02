@@ -25,10 +25,15 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private Memory.ParcelRecord targetParcel = null;
     private Float[] geographicalTarget = new Float[2];
 
-    private static Long t1 = System.nanoTime();
-    private static Long t2 = System.nanoTime();
-    private static Long deltaTSimStep = 0L;
-    private static Long realDeltaT = 0L;
+    private Boolean hasStartedToCharge = false;
+    private Boolean isOutOfBattery = false;
+
+    private ChargingStation targetChargingStation = null;
+
+    private Long t1 = System.nanoTime();
+    private Long t2 = System.nanoTime();
+    private Long deltaTSimStep = 0L;
+    private Long realDeltaT = 0L;
 
 // TODO prise de décision par rapport aux paquets
     /*
@@ -43,6 +48,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     */
 
     private Memory memory;
+    private boolean isLanded = false;
 
     @Override
     public void run() {
@@ -61,25 +67,75 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             if(!isBusy){
                 selectParcel();
             } else {
-                if(!isLoaded) {
-                    if (isTargetParcelUnavailable()) {
-                        resetTargetParcel();
-                    } else if (!areCoordNull(geographicalTarget)){
-                        if(isInRadius(geographicalTarget, RADIUS)){
-                            loadParcel();
+                if (targetChargingStation == null) {
+                    if (!isLoaded) {
+                        if (isTargetParcelUnavailable()) {
+                            resetTargetParcel();
+                        } else if (!areCoordNull(geographicalTarget)) {
+                            if (isInRadius(geographicalTarget, RADIUS)) {
+                                loadParcel();
+                            }
+                        }
+                    } else if (!areCoordNull(geographicalTarget)) {
+                        if (isInRadius(geographicalTarget, RADIUS)) {
+                            deliverParcel();
                         }
                     }
-                } else if (!areCoordNull(geographicalTarget)) {
+                }
+                if (couldNotGoToNearestChargingStationAtNextStep() && targetChargingStation == null) {
+                    targetChargingStation = getCloserChargingStation();
+                    geographicalTarget = targetChargingStation.getCoord();
+                    Message.targetChargingStation(this, targetChargingStation.getId());
+                }
+                if(targetChargingStation != null){
                     if(isInRadius(geographicalTarget, RADIUS)) {
-                        deliverParcel();
+                        if (targetChargingStation.isBusy() && !targetChargingStation.isCurrentDroneReloading(this)) {
+                            land();
+                        } else {
+                            if(!hasStartedToCharge){
+                                hasStartedToCharge = true;
+                                Message.startToCharge(this);
+                            }
+
+                            System.out.println("charging");
+                            targetChargingStation.reloadDrone(this, deltaTSimStep);
+                            land();
+                            if (isBatteryFull()) {
+                                hasStartedToCharge = false;
+                                Message.endOfCharge(this);
+                                targetChargingStation.freeChargingStation();
+                                targetChargingStation = null;
+                                geographicalTarget = isLoaded ? targetParcel.getDestCoord() : targetParcel.getCoord();
+                                takeOff();
+                            }
+                        }
                     }
                 }
+                manageThreadSleepAccordingToSimAcceleration();
+                t2 = System.nanoTime();
+                manageDronesSpeedCoefAccordingtoSimAcceleration();
+                move(deltaTSimStep);
             }
-            manageThreadSleepAccordingToSimAcceleration();
-            t2 = System.nanoTime();
-            manageDronesSpeedCoefAccordingtoSimAcceleration();
-            move(deltaTSimStep);
         }
+    }
+
+    private void takeOff() {
+        isLanded = false;
+    }
+
+    private Boolean isBatteryFull() {
+        return batteryCapacity >= batteryFullCapacity;
+    }
+
+    private boolean couldNotGoToNearestChargingStationAtNextStep() {
+       ChargingStation nearestChargingStation = getCloserChargingStation();
+       Float batteryNeededToJoin = getBatteryNeededToJoin(nearestChargingStation);
+       return batteryCapacity < batteryNeededToJoin + 1;
+    }
+
+    private Float getBatteryNeededToJoin(CenteredAndSquaredSimulationElement se) {
+        Float norm = computeVectorNorm(this, se);
+        return ((norm / speed)/60);
     }
 
     private void manageRotation() {
@@ -163,6 +219,22 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return minParcelRecord;
     }
 
+    private ChargingStation getCloserChargingStation(){
+
+        ChargingStation minChargingStation = null;
+        float min = computeVectorNorm(getX(), Simulation.getChargingStations().get(0).getCoord()[0], getY(), Simulation.getChargingStations().get(0).getCoord()[1]);
+        minChargingStation = Simulation.getChargingStations().get(0);
+
+        for (ChargingStation chargingStation : Simulation.getChargingStations()) {
+            float value = computeVectorNorm(getX(), chargingStation.getCoord()[0], getY(), chargingStation.getCoord()[1]);
+            if (value < min) {
+                min = value;
+                minChargingStation = chargingStation;
+            }
+        }
+        return minChargingStation;
+    }
+
     private void parcelMemoryUpdate() {
         for(Parcel parcel: Simulation.getParcels()){
             if (detect(parcel)) {
@@ -212,7 +284,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return res;
     }
 
-    private static void manageDronesSpeedCoefAccordingtoSimAcceleration() {
+    private void manageDronesSpeedCoefAccordingtoSimAcceleration() {
         realDeltaT = StrictMath.abs(t2 - t1);
         if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
             float additiveCoef = getAdditiveCoef();
@@ -222,11 +294,11 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         }
     }
 
-    private static float getAdditiveCoef() {
+    private float getAdditiveCoef() {
         return Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
     }
 
-    private static Long returnDeltaTSecAccordingToSimAcceleration() {
+    private Long returnDeltaTSecAccordingToSimAcceleration() {
         long deltaT;
         if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
             float additiveCoef = getAdditiveCoef();
@@ -238,7 +310,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return deltaT;
     }
 
-    private static void manageThreadSleepAccordingToSimAcceleration() {
+    private void manageThreadSleepAccordingToSimAcceleration() {
         try {
             if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
                 Thread.sleep((long) (1000 / Simulation.getImagesPerSecond() / Simulation.getMaxThreadSleepAcceleration()));
@@ -348,21 +420,33 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
     public void move(long deltaT) {
         //System.out.println("deltaT "+ deltaT);
-        deltaT = avoidNullDeltaT(deltaT);
-        consumeBatteryDuring(deltaT);
-        if(!isBatteryEmpty()) {
-            float deltaTSec = convertNanosecondsToSeconds(deltaT);
-            System.out.println("deltaTSec " + deltaTSec);
+        if(!isLanded) {
+            deltaT = avoidNullDeltaT(deltaT);
+            if (!isBatteryEmpty()) {
+                float deltaTSec = convertNanosecondsToSeconds(deltaT);
+                //System.out.println("deltaTSec " + deltaTSec);
 
-            Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
-            Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
+                Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
+                Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
 
-            printDroneSpeedForDebug(deltaTSec, newX, newY);
+                /*Float norm = computeVectorNorm(getX(), newX, getY(), newY);
+                consumeBattery(norm);*/
+                consumeBatteryDuring(deltaT);
+                //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
-            tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
+                tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
+            } else {
+                printOutOfBattery();
+            }
         }
-
         //System.out.println("newX " + newX + " newY " + newY);
+    }
+
+    private void printOutOfBattery() {
+        if(!isOutOfBattery){
+            Message.outOfBattery(this);
+            isOutOfBattery = true;
+        }
     }
 
     private void tryToMoveDroneWithinBoundaries(long deltaT, Float newX, Float newY) {
@@ -402,8 +486,12 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private void printDroneSpeedForDebug(float deltaTsec, Float newX, Float newY) {
         float dist = computeVectorNorm(getX(), newX, getY(), newY);
         System.out.println("dist "+ dist);
-        System.out.println("Drone speed " + dist/deltaTsec);
+        System.out.println("Drone speed " + computeCurrentSpeed(dist,deltaTsec));
         System.out.println("real drone speed " + dist/(convertNanosecondsToSeconds(realDeltaT)));
+    }
+
+    private Float computeCurrentSpeed(Float norm, Float deltaTsec){
+        return norm/deltaTsec;
     }
 
     public void goTo(SimulationElement se) {
@@ -482,18 +570,25 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     public void land() {
-        // TODO
+        isLanded = true;
     }
 
     public void chargeBatteryDuring(Long nanoSeconds){
-        batteryCapacity += convertNanosecondsToSeconds(nanoSeconds) / 2;
-        if(batteryCapacity < batteryFullCapacity){
+        batteryCapacity += convertNanosecondsToMinutes(nanoSeconds) / 2;
+        if(batteryCapacity > batteryFullCapacity){
             batteryCapacity = batteryFullCapacity;
         }
     }
 
     public void consumeBatteryDuring(Long nanoSeconds){
         batteryCapacity -= convertNanosecondsToMinutes(nanoSeconds);
+        if(batteryCapacity <= 0){
+            batteryCapacity = 0f;
+        }
+    }
+
+    public void consumeBattery(Float norm){
+        batteryCapacity -= (norm / getSpeed())/60;
         if(batteryCapacity <= 0){
             batteryCapacity = 0f;
         }

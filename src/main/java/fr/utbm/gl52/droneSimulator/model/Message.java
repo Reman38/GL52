@@ -24,6 +24,25 @@ public class Message {
         String message = "deliver parcel " + parcelId;
         sendMessageToTab(drone, message);
     }
+    public static void targetChargingStation(Drone drone, Integer id) {
+        String message = "Target charging station " + id + " because it would not have enough battery to join it after.";
+        sendMessageToTab(drone, message);
+    }
+
+    public static void startToCharge(Drone drone) {
+        String message = "starting to charge battery";
+        sendMessageToTab(drone, message);
+    }
+
+    public static void endOfCharge(Drone drone) {
+        String message = "End of charge; resume delivery";
+        sendMessageToTab(drone, message);
+    }
+
+    public static void outOfBattery(Drone drone) {
+        String message = "Out of battery";
+        sendMessageToTab(drone, message);
+    }
 
     private static void sendMessageToTab(Drone drone, String message){
         String msg = formatsimulationDuration() + " (battery: "+ String.format("%.2f",drone.getBatteryCapacity()) + " min remaining): " + message;

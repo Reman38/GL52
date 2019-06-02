@@ -53,7 +53,7 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(2f);
+        setSimulationSpeed(1f);
         droneNumber = 1;
         parcelNumber = 25;
         chargingStation = 5;
