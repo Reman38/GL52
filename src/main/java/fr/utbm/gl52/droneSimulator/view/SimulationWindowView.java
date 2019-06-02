@@ -2,6 +2,8 @@ package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.*;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
@@ -80,6 +82,14 @@ public class SimulationWindowView {
         Tab tab;
         text = new TextArea();
         text.setEditable(false);
+        text.textProperty().addListener(new ChangeListener<Object>() {
+            @Override
+            public void changed(ObservableValue<?> observable, Object oldValue,
+                                Object newValue) {
+                text.setScrollTop(Double.MAX_VALUE); //this will scroll to the bottom
+                //use Double.MIN_VALUE to scroll to the top
+            }
+        });
         consoleMap.put(drone, text);
         tab = new Tab();
         tab.setClosable(false);
@@ -139,11 +149,12 @@ public class SimulationWindowView {
         if(drone == null){
             throw new IllegalArgumentException("This drone does not exist");
         } else {
-            String content = text.getText();
+            /*String content = text.getText();
 
             content = (content == null) ? "" : content + event + "\n";
 
-            text.setText(content);
+            text.setText(content);*/
+            text.appendText(event + "\n");
         }
     }
 
