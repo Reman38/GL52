@@ -64,59 +64,79 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             parcelMemoryUpdate();
             //System.out.println(memory.toString());
             manageRotation();
-            if(!isBusy){
-                selectParcel();
-            } else {
-                if (targetChargingStation == null) {
-                    if (!isLoaded) {
-                        if (isTargetParcelUnavailable()) {
-                            resetTargetParcel();
-                        } else if (!areCoordNull(geographicalTarget)) {
-                            if (isInRadius(geographicalTarget, RADIUS)) {
-                                loadParcel();
-                            }
-                        }
+            parcelRoutine();
+            batteryRoutine();
+            manageThreadSleepAccordingToSimAcceleration();
+            t2 = System.nanoTime();
+            manageDronesSpeedCoefAccordingtoSimAcceleration();
+            move(deltaTSimStep);
+        }
+    }
+
+    private void parcelRoutine() {
+        if(!isBusy){
+            selectParcel();
+        } else {
+            if (targetChargingStation == null) {
+                if (!isLoaded) {
+                    if (isTargetParcelUnavailable()) {
+                        resetTargetParcel();
                     } else if (!areCoordNull(geographicalTarget)) {
                         if (isInRadius(geographicalTarget, RADIUS)) {
-                            deliverParcel();
+                            loadParcel();
                         }
                     }
-                }
-                if (couldNotGoToNearestChargingStationAtNextStep() && targetChargingStation == null) {
-                    targetChargingStation = getCloserChargingStation();
-                    geographicalTarget = targetChargingStation.getCoord();
-                    Message.targetChargingStation(this, targetChargingStation.getId());
-                }
-                if(targetChargingStation != null){
-                    if(isInRadius(geographicalTarget, RADIUS)) {
-                        if (targetChargingStation.isBusy() && !targetChargingStation.isCurrentDroneReloading(this)) {
-                            land();
-                        } else {
-                            if(!hasStartedToCharge){
-                                hasStartedToCharge = true;
-                                Message.startToCharge(this);
-                            }
-
-                            System.out.println("charging");
-                            targetChargingStation.reloadDrone(this, deltaTSimStep);
-                            land();
-                            if (isBatteryFull()) {
-                                hasStartedToCharge = false;
-                                Message.endOfCharge(this);
-                                targetChargingStation.freeChargingStation();
-                                targetChargingStation = null;
-                                geographicalTarget = isLoaded ? targetParcel.getDestCoord() : targetParcel.getCoord();
-                                takeOff();
-                            }
-                        }
+                } else if (!areCoordNull(geographicalTarget)) {
+                    if (isInRadius(geographicalTarget, RADIUS)) {
+                        deliverParcel();
                     }
                 }
-                manageThreadSleepAccordingToSimAcceleration();
-                t2 = System.nanoTime();
-                manageDronesSpeedCoefAccordingtoSimAcceleration();
-                move(deltaTSimStep);
             }
         }
+    }
+
+    private void batteryRoutine() {
+        if (couldNotGoToNearestChargingStationAtNextStep() && targetChargingStation == null) {
+            targetChargingStation();
+        }
+        if(targetChargingStation != null){
+            if(isInRadius(geographicalTarget, RADIUS)) {
+                if (targetChargingStation.isBusy() && !targetChargingStation.isCurrentDroneReloading(this)) {
+                    land();
+                } else {
+                    connectToChargingStation();
+                    if (isBatteryFull()) {
+                        leaveChargingStation();
+                    }
+                }
+            }
+        }
+    }
+
+    private void leaveChargingStation() {
+        hasStartedToCharge = false;
+        Message.endOfCharge(this);
+        targetChargingStation.freeChargingStation();
+        targetChargingStation = null;
+        geographicalTarget = isLoaded ? targetParcel.getDestCoord() : targetParcel.getCoord();
+        takeOff();
+    }
+
+    private void connectToChargingStation() {
+        if(!hasStartedToCharge){
+            hasStartedToCharge = true;
+            Message.startToCharge(this);
+        }
+
+        System.out.println("charging");
+        targetChargingStation.reloadDrone(this, deltaTSimStep);
+        land();
+    }
+
+    private void targetChargingStation() {
+        targetChargingStation = getCloserChargingStation();
+        geographicalTarget = targetChargingStation.getCoord();
+        Message.targetChargingStation(this, targetChargingStation.getId());
     }
 
     private void takeOff() {
@@ -165,6 +185,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     private void resetTargetParcel() {
+        Message.parcelDisapear(this, targetParcel.id);
         targetParcel = null;
         geographicalTarget = null;
         isBusy = false;
