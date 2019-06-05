@@ -52,13 +52,6 @@ public class SimulationWindowView {
         displayParcels(pane);
         displayChargingStation(pane);
         displayDronesAndAssociatedTabs(pane);
-
-        // for (Drone drone : Simulation.getDrones()) {
-        /*Drone drone = Simulation.getDrones().get(0);
-        DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
-        Rectangle rectangle = droneGraphicElement.getShape();
-        pane.getChildren().add(rectangle);*/
-        // }
     }
 
     public static void displayDronesAndAssociatedTabs(Pane pane) {
@@ -135,7 +128,6 @@ public class SimulationWindowView {
             Simulation.startDefault();
         } else if(simulationMode.equals(Simulation.RANDOM)){
             Simulation.startRandom();
-
         } else if(simulationMode.equals(Simulation.CUSTOM)){
             Simulation.startCustom();
         } else {
@@ -149,11 +141,6 @@ public class SimulationWindowView {
         if(drone == null){
             throw new IllegalArgumentException("This drone does not exist");
         } else {
-            /*String content = text.getText();
-
-            content = (content == null) ? "" : content + event + "\n";
-
-            text.setText(content);*/
             text.appendText(event + "\n");
         }
     }
