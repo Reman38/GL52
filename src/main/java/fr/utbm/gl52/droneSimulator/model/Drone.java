@@ -68,7 +68,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             batteryRoutine();
             manageThreadSleepAccordingToSimAcceleration();
             t2 = System.nanoTime();
-            manageDronesSpeedCoefAccordingtoSimAcceleration();
+            manageDronesSpeedCoefAccordingToSimAcceleration();
             move(deltaTSimStep);
         }
     }
@@ -305,38 +305,27 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return res;
     }
 
-    private void manageDronesSpeedCoefAccordingtoSimAcceleration() {
+    /**
+     * When the cpu limit is exceeded, the simulation accelerate by increasing drone speed.
+     */
+    private void manageDronesSpeedCoefAccordingToSimAcceleration() {
         realDeltaT = StrictMath.abs(t2 - t1);
         if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
-            float additiveCoef = getAdditiveCoef();
-            deltaTSimStep = (long)(realDeltaT * additiveCoef);
+            deltaTSimStep = (long)(realDeltaT * Simulation.getSimulationSpeed());
         } else {
             deltaTSimStep = realDeltaT;
         }
     }
 
-    private float getAdditiveCoef() {
-        return Simulation.getSimulationSpeed() / Simulation.getMaxThreadSleepAcceleration();
-    }
-
-    private Long returnDeltaTSecAccordingToSimAcceleration() {
-        long deltaT;
-        if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
-            float additiveCoef = getAdditiveCoef();
-            deltaT = (long)(StrictMath.abs(t2 - t1)* additiveCoef);
-        } else {
-            deltaT = StrictMath.abs(t2 - t1);
-        }
-
-        return deltaT;
-    }
-
+    /**
+     * Increase simulation speed by reducing the thread sleep duration until the cpu limit.
+     */
     private void manageThreadSleepAccordingToSimAcceleration() {
         try {
             if(Simulation.getSimulationSpeed() > Simulation.getMaxThreadSleepAcceleration()) {
                 Thread.sleep((long) (1000 / Simulation.getImagesPerSecond() / Simulation.getMaxThreadSleepAcceleration()));
             } else {
-                Thread.sleep((long) (1000 / Simulation.getImagesPerSecond() / Simulation.getSimulationSpeed()));
+                Thread.sleep((long) (1000 / Simulation.getImagesPerSecond()));
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

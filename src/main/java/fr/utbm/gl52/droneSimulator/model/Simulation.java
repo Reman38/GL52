@@ -53,7 +53,7 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(1f);
+        setSimulationSpeed(45f);
         droneNumber = 1;
         parcelNumber = 25;
         chargingStation = 5;
@@ -198,6 +198,9 @@ public class Simulation {
         }
     }
 
+    /**
+     * Iterate the clock according to elapsed time and simulation speed.
+     */
     private static void updatePlayStatusAccordingToDuration(){
         currentTime = Instant.now().toEpochMilli();
         long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
