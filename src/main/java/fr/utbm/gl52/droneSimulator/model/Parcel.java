@@ -4,6 +4,7 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.removeParcelGraphicIfExists;
@@ -73,12 +74,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
             parcel.setInJourney(true);
         }
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                removeParcelGraphicIfExists(parcelToRemove);
-            }
-        });
+        Platform.runLater(() -> removeParcelGraphicIfExists(parcelToRemove));
     }
 
     /**
@@ -205,5 +201,16 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      */
     public void setInJourney(boolean inJourney) {
         isInJourney = inJourney;
+    }
+
+    @Override
+    public String toString() {
+        return "Parcel{" +
+                "popTime=" + popTime +
+                ", weight=" + weight +
+                ", timeDeliveryGoal=" + timeDeliveryGoal +
+                ", destCoord=" + Arrays.toString(destCoord) +
+                ", isInJourney=" + isInJourney +
+                '}';
     }
 }
