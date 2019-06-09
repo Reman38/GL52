@@ -1,16 +1,16 @@
-package fr.utbm.gl52.droneSimulator.tools;
+package fr.utbm.gl52.droneSimulator.repository.H2;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MyDriverManager {
-    private static String url = "jdbc:mysql://localhost:3306/gl52";
-    private static String user = "gl52";
-    private static String password = "gl52";
+    private static String url = "jdbc:H2://localhost:3306/lo54";
+    private static String user = "lo54";
+    private static String password = "lo54";
     private static Connection connection;
 
-    public static Connection openConnection() {
+    public static Connection getConnection() {
         if(connection == null){
             connect();
         }

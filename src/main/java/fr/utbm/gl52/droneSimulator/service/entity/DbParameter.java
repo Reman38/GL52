@@ -1,26 +1,26 @@
-package fr.utbm.gl52.droneSimulator.model.entity;
+package fr.utbm.gl52.droneSimulator.service.entity;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "PARAMETER")
-public class DBParameter {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idsimu")
+public class DbParameter {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idSimu;
 
-    @Column(name = "duration")
+    @Column
     private int duration;
 
-    @Column(name = "nbiteration")
+    @Column
     private int nbIteration;
 
-    public DBParameter(int duration, int nbIteration) {
+    public DbParameter(int duration, int nbIteration) {
         this.duration = duration;
         this.nbIteration = nbIteration;
     }
 
-    public DBParameter() {}
+    public DbParameter() {}
 
     public int getIdSimu() {
         return idSimu;

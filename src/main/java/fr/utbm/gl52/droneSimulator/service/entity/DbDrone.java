@@ -1,32 +1,32 @@
-package fr.utbm.gl52.droneSimulator.model.entity;
+package fr.utbm.gl52.droneSimulator.service.entity;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "DRONE")
-public class DBDrone {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idsimu")
+public class DbDrone {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idSimu;
 
-    @Column(name = "iditeration")
+    @Column
     private int idIteration;
 
-    @Column(name = "chargingtime")
+    @Column
     private int chargingtime;
 
-    @Column(name = "batterycapacity")
+    @Column
     private int batteryCapacity;
 
-    @Column(name = "weightcapacity")
+    @Column
     private int weightCapacity;
 
-    @Column(name = "kilometers")
+    @Column
     private int kilometers;
 
-    public DBDrone() {}
+    public DbDrone() {}
 
-    public DBDrone(int idIteration, int chargingtime, int batteryCapacity, int weightCapacity, int kilometers) {
+    public DbDrone(int idIteration, int chargingtime, int batteryCapacity, int weightCapacity, int kilometers) {
         this.idIteration = idIteration;
         this.chargingtime = chargingtime;
         this.batteryCapacity = batteryCapacity;
