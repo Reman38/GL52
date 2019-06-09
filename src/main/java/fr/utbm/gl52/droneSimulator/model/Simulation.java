@@ -22,6 +22,8 @@ public class Simulation {
 
     private static Integer time;
     private static Float simulationSpeed;
+    private static Float minSimulationSpeedAcceleration = 1f;
+    private static Float maxSimulationSpeedAcceleration = 20f;
     private static Integer parcelNumber;
     private static Integer droneNumber;
     private static  Integer chargingStation;
@@ -53,7 +55,7 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(45f);
+        setSimulationSpeed(1f);
         droneNumber = 1;
         parcelNumber = 25;
         chargingStation = 5;
@@ -107,7 +109,7 @@ public class Simulation {
 
     public static void startDefault() {
         initMainArea();
-        popAreas();
+        //popAreas();
         popParcels();
         popDrones();
         popChargingStations();
@@ -116,7 +118,7 @@ public class Simulation {
 
     public static void startRandom() {
         initMainArea();
-        popAreas();
+        //popAreas();
         popParcels();
         popDrones();
         popChargingStations();
@@ -213,12 +215,18 @@ public class Simulation {
         setTime(getTime() + 1);
     }
 
-    /* getteurs et setteurs triviaux */
+    /* trivial getters et setters */
     public static Boolean isPlay() {
         return play;
     }
     public static Float getSimulationSpeed() {
         return simulationSpeed;
+    }
+    public static Float getMinSimulationSpeedAcceleration() {
+        return minSimulationSpeedAcceleration;
+    }
+    public static Float getMaxSimulationSpeedAcceleration() {
+        return maxSimulationSpeedAcceleration;
     }
     public static Integer getTime() {
         return time;
