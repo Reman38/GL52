@@ -225,7 +225,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
      * Reset the target parcel
      */
     private void resetTargetParcel() {
-        Message.parcelDisapear(this, targetParcel.id);
+        Message.parcelDisappear(this, targetParcel.id);
         targetParcel = null;
         geographicalTarget = null;
         isBusy = false;
@@ -244,7 +244,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
      * select a target parcel
      */
     private void selectParcel() {
-        targetParcel = getClosestParcel();
+        targetParcel = getClosestLoadableParcel();
         if(targetParcel != null) {
             geographicalTarget = targetParcel.getCoords();
             isBusy = true;
@@ -287,21 +287,22 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     /**
-     * Get the closest parcel to the drone in it memory
+     * Get the closest loadable parcel to the drone in it memory
      *
      * @return a record of the closest parcel
      */
-    private Memory.ParcelRecord getClosestParcel() {
+    private Memory.ParcelRecord getClosestLoadableParcel() {
         Memory.ParcelRecord minParcelRecord = null;
         if(memory.parcelRecords.size() > 0) {
-            float min = computeVectorNorm(getX(), memory.parcelRecords.get(0).getCoords()[0], getY(), memory.parcelRecords.get(0).getCoords()[1]);
-            minParcelRecord = memory.parcelRecords.get(0);
+            Float min = null;
 
             for (Memory.ParcelRecord parcel : memory.parcelRecords) {
                 float value = computeVectorNorm(getX(), parcel.getCoords()[0], getY(), parcel.getCoords()[1]);
-                if (value < min) {
-                    min = value;
-                    minParcelRecord = parcel;
+                if (min == null || value < min) {
+                    if(parcel.getWeight() <= weightCapacity) {
+                        min = value;
+                        minParcelRecord = parcel;
+                    }
                 }
             }
         }
@@ -760,6 +761,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             private Float[] destCoords;
             private Date lastDetectedDateTime;
             private Date popTime;
+            private Float weight;
 
             public ParcelRecord(Parcel p) {
                 id = p.getId();
@@ -767,6 +769,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 destCoords = p.getDestCoord();
                 popTime = p.getPopTime();
                 lastDetectedDateTime = new Date();
+                weight = p.getWeight();
             }
 
             Float[] getCoords(){
@@ -789,12 +792,17 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 return id;
             }
 
+            public Float getWeight(){
+                return weight;
+            }
+
             @Override
             public String toString() {
                 return "ParcelRecord{" +
                         "coords=" + Arrays.toString(coords) +
                         ", lastDetectedDateTime=" + lastDetectedDateTime +
                         ", popTime=" + popTime +
+                        ", weight=" + weight +
                         '}';
             }
         }
