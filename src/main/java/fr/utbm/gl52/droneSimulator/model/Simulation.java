@@ -1,10 +1,11 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
+import javafx.application.Platform;
+
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Simulation {
     public static final long secondsInAMinute = 60L;
@@ -27,15 +28,16 @@ public class Simulation {
     private static Integer parcelNumber;
     private static Integer droneNumber;
     private static  Integer chargingStation;
-    private static Float competitionDifficulty;
+
     private static Float[] droneWeightCapacity = new Float[2];
     private static Float[] droneBatteryCapacity = new Float[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
     private static Integer simulationDuration = 240;
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
-    private static Map<String, Float> competitionDifficultyLevels = new HashMap<>();
 
+    private static Map<String, Integer[]> parcelTimeToDisappearRangeLinkedToDifficulty = new HashMap<>();
+    private static Integer[] parcelTimeToDisappearRange = new Integer[2];
 
     private static final Float mainAreaWidth = 1600f;
     private static final Float mainAreaHeight = 900f;
@@ -67,13 +69,19 @@ public class Simulation {
         simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
-        setCompetitionDifficultyLevels();
+        initCompetitionDifficultyLevels();
+        parcelTimeToDisappearRange = parcelTimeToDisappearRangeLinkedToDifficulty.get("soft");
     }
 
-    private void setCompetitionDifficultyLevels() {
-        competitionDifficultyLevels.put("soft", .025f);
-        competitionDifficultyLevels.put("medium", 0.50f);
-        competitionDifficultyLevels.put("hard", 0.75f);
+    private void initCompetitionDifficultyLevels() {
+        Integer[] range = {60, 260};
+        parcelTimeToDisappearRangeLinkedToDifficulty.put("soft", range);
+        range[0] = 30;
+        range[1] = 120;
+        parcelTimeToDisappearRangeLinkedToDifficulty.put("medium", range);
+        range[0] = 15;
+        range[1] = 60;
+        parcelTimeToDisappearRangeLinkedToDifficulty.put("hard", range);
     }
 
     public static void setSimulationSpeed(Float f) {
@@ -139,6 +147,36 @@ public class Simulation {
         }
     }
 
+    /**
+     * Simulate the competition by removing parcels form the map.
+     */
+    private static void makeParcelDisappearWhenPickedByCompetitors() { //TODO: régler les confilts de Threads
+        Parcel parcel;
+        List<ParcelGraphicElement> parcelsGraphicToRemove = new ArrayList<>();
+
+        for(ParcelGraphicElement parcelGraphic : SimulationWindowView.getParcelGraphicElements()){
+            parcel = (Parcel) parcelGraphic.getSimulationElement();
+            if(isParcelDisappearing(parcel)){
+                parcelsGraphicToRemove.add(parcelGraphic);
+                Parcel finalParcel = parcel;
+                Platform.runLater(() -> getParcels().remove(finalParcel));
+                System.out.println("Removing parcel " + finalParcel.getId() + " after " + finalParcel.getTimeToDisappear() + " min");
+            }
+        }
+        Platform.runLater(() -> SimulationWindowView.removeParcelsGraphic(parcelsGraphicToRemove));
+    }
+
+    /**
+     * Check if the parcel has reach is end of life (catch by other competitors) and it is not already loaded
+     *
+     * @param parcel Parcel to check
+     *
+     * @return True if yes
+     */
+    private static boolean isParcelDisappearing(Parcel parcel) {
+        return parcel.getTimeToDisappear() < MathHelper.convertMillisecondsToMinutes(elapsedTime) && !parcel.isInJourney();
+    }
+
     public static void stop(){
         setPlay(false);
         for(Thread droneThread: droneThreads){
@@ -151,6 +189,7 @@ public class Simulation {
         for (Integer i = 0; i < getParcelNumber(); ++i) {
             parcels.add(Parcel.createRandomized(i));
         }
+        System.out.println(parcels.toString());
     }
 
     private static void popAreas() {
@@ -174,6 +213,7 @@ public class Simulation {
     public static void manageSimulationStop(){
         while (isPlay()){
             updatePlayStatusAccordingToDuration();
+            makeParcelDisappearWhenPickedByCompetitors();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -194,8 +234,8 @@ public class Simulation {
     }
 
     public static void setCompetitionDifficulty(String difficulty){
-        competitionDifficulty = competitionDifficultyLevels.get(difficulty);
-        if(competitionDifficulty == null){
+        parcelTimeToDisappearRange = parcelTimeToDisappearRangeLinkedToDifficulty.get(difficulty);
+        if(parcelTimeToDisappearRange == null){
             throw new IllegalArgumentException(difficulty + " is not defined");
         }
     }
@@ -288,9 +328,6 @@ public class Simulation {
     public static Integer[] getNumberOfSimulationIterationRange() {
         return numberOfSimulationIterationRange;
     }
-    public static Map<String, Float> getCompetitionDifficultyLevels() {
-        return competitionDifficultyLevels;
-    }
 
     public static Float getMaxThreadSleepAcceleration() {
         return maxThreadSleepAcceleration;
@@ -306,5 +343,13 @@ public class Simulation {
 
     public static Long getElapsedTime() {
         return elapsedTime;
+    }
+
+    public static Integer[] getParcelTimeToDisappearRange() {
+        return parcelTimeToDisappearRange;
+    }
+
+    public static Map<String, Integer[]> getCompetitionDifficultyLevels(){
+        return parcelTimeToDisappearRangeLinkedToDifficulty;
     }
 }

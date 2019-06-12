@@ -223,11 +223,33 @@ public class SimulationWindowView {
      */
     public static void removeParcelGraphicIfExists(ParcelGraphicElement parcelToRemove) {
         if(parcelToRemove != null) {
-            Pane pane = (Pane) root.lookup("#simulationPane");
+
+            removeParcelFromPane(parcelToRemove);
             parcelGraphicElements.remove(parcelToRemove);
-            pane.getChildren().remove(parcelToRemove.getShape());
-            pane.getChildren().remove(parcelToRemove.getGraphicalId());
         }
+    }
+
+    /**
+     * Remove a list of parcel graphic elements
+     *
+     * @param parcels Parcels to remove
+     */
+    public static void removeParcelsGraphic(List<ParcelGraphicElement> parcels){
+        for(ParcelGraphicElement parcel: parcels){
+            removeParcelFromPane(parcel);
+        }
+        parcelGraphicElements.removeAll(parcels);
+    }
+
+    /**
+     * Remove a parcel from the view
+     *
+     * @param parcel Parcel to remove
+     */
+    public static void removeParcelFromPane(ParcelGraphicElement parcel){
+        Pane pane = (Pane) root.lookup("#simulationPane");
+        pane.getChildren().remove(parcel.getShape());
+        pane.getChildren().remove(parcel.getGraphicalId());
     }
 
     public static javafx.scene.Parent getParent() {

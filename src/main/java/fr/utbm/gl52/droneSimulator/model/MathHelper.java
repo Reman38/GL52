@@ -88,4 +88,8 @@ public abstract class MathHelper {
     static Float convertNanosecondsToMinutes(Long deltaT){
         return convertNanosecondsToSeconds(deltaT) / 60;
     }
+
+    public static Float convertMillisecondsToMinutes(Long elapsedTime) {
+        return elapsedTime / 60000f;
+    }
 }

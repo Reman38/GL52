@@ -126,7 +126,7 @@ public class ParameterWindowView {
     private void createCompetitionDropDown(){
         ComboBox competitionLevels = (ComboBox) root.lookup("#competitionLevelComboBox");
 
-        for(Map.Entry<String, Float> difficulty: getCompetitionDifficultyLevels().entrySet())
+        for(Map.Entry<String, Integer[]> difficulty: getCompetitionDifficultyLevels().entrySet())
         competitionLevels.getItems().add(difficulty.getKey());
     }
 
