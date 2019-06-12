@@ -17,6 +17,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     private Date timeDeliveryGoal;
     private Float[] destCoord = new Float[2];
     private boolean isInJourney = false;
+    private Float timeToDisappear;
 
     /**
      * Construct a nex parcel with the given Id
@@ -57,6 +58,12 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         } catch (OutOfMainAreaException e) {
             e.printStackTrace();
         }
+
+        setRandTimeToDisappear();
+    }
+
+    private void setRandTimeToDisappear() {
+        timeToDisappear = RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
     }
 
     /**
@@ -203,10 +210,15 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         isInJourney = inJourney;
     }
 
+    public Float getTimeToDisappear() {
+        return timeToDisappear;
+    }
+
     @Override
     public String toString() {
         return "Parcel{" +
                 "popTime=" + popTime +
+                ", timeToDisappear= " + timeToDisappear +
                 ", weight=" + weight +
                 ", timeDeliveryGoal=" + timeDeliveryGoal +
                 ", destCoord=" + Arrays.toString(destCoord) +

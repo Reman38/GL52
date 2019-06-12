@@ -121,8 +121,17 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         Message.endOfCharge(this);
         targetChargingStation.freeChargingStation();
         targetChargingStation = null;
-        geographicalTarget = isLoaded ? targetParcel.getDestCoords() : targetParcel.getCoords();
+        resumeDelivery();
         takeOff();
+    }
+
+    /**
+     * If a delivery was initiated before reloading at charging station, resume it
+     */
+    private void resumeDelivery() {
+        if(targetParcel != null) {
+            geographicalTarget = isLoaded ? targetParcel.getDestCoords() : targetParcel.getCoords();
+        }
     }
 
     /**
@@ -134,7 +143,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             Message.startToCharge(this);
         }
 
-        System.out.println("charging");
         targetChargingStation.reloadDrone(this, deltaTSimStep);
         land();
     }
@@ -330,12 +338,14 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return minChargingStation;
     }
 
-    /**
+    /**c
      * Add the new discovered parcel in the memory of the drone
      * Remove the parcels that became unavailable form the memory of the drone
      */
     private void parcelMemoryUpdate() {
-        for(Parcel parcel: Simulation.getParcels()){
+        Parcel parcel;
+        for(int i = 0; i < Simulation.getParcels().size(); i++){
+            parcel = Simulation.getParcels().get(i);
             if (detect(parcel)) {
                 if(!isParcelInMemory(parcel)){
                     memory.add(parcel);
@@ -435,7 +445,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         isLoaded = false;
         batteryFullCapacity = Simulation.getDroneBatteryCapacity()[1];
         batteryCapacity = batteryFullCapacity;
-        weightCapacity = Simulation.getDroneWeightCapacity()[0];
 
         memory = new Memory();
     }
@@ -458,13 +467,21 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     /**
-     * Randomize the position of the drone
+     * Randomize the position  and the weight capacity of the drone
      *
      * @throws OutOfMainAreaException Position is out of main area
      */
     public void randomize() throws OutOfMainAreaException {
         setRandCoord();
         setRandRotation();
+        setRandWeightCapacity();
+    }
+
+    /**
+     * Set a random weight capacity between parcel min weight and max
+     */
+    private void setRandWeightCapacity() {
+        setWeightCapacity(RandomHelper.getRandFloat(Simulation.getDroneWeightCapacity()[0], Simulation.getDroneWeightCapacity()[1]));
     }
 
     /**
