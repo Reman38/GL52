@@ -15,6 +15,7 @@ import java.io.IOException;
 import static fr.utbm.gl52.droneSimulator.controller.ControllerHelper.getRootWith;
 import static fr.utbm.gl52.droneSimulator.model.Simulation.setCompetitionDifficulty;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimulationWindow;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.throwNoDifficultyChosenErrorPopup;
 
 public class IterationPopupController {
 
@@ -25,12 +26,17 @@ public class IterationPopupController {
      */
     @FXML
     public void validate(ActionEvent event) {
-        Parent root = ControllerHelper.getRootWith(event);
-        ConfigureCompetitionDifficultyParameter(root);
-        setIterationParameter(event);
-        launchSimulation(event);
-        Stage parentWindow = IterationPopupView.getParentWindow();
-        parentWindow.hide();
+        try {
+            Parent root = ControllerHelper.getRootWith(event);
+            ConfigureCompetitionDifficultyParameter(root);
+            setIterationParameter(event);
+            launchSimulation(event);
+            Stage parentWindow = IterationPopupView.getParentWindow();
+            parentWindow.hide();
+        } catch (IllegalArgumentException e) {
+            throwNoDifficultyChosenErrorPopup();
+        }
+
     }
 
     /**
@@ -54,8 +60,8 @@ public class IterationPopupController {
      */
     private void setIterationParameter(ActionEvent event) {
         Parent root = getRootWith(event);
-        Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
-        double iterationNumber =  IterationSlider.getValue();
+        Slider IterationSlider = (Slider) root.lookup("#iterationSlider");
+        double iterationNumber = IterationSlider.getValue();
         Simulation.setTimeSimulationParameters((int) iterationNumber);
     }
 
@@ -63,7 +69,6 @@ public class IterationPopupController {
      * Configure completion difficulty according to view combobox selection
      *
      * @param root The root node of the window
-     *
      * @throws IllegalArgumentException No choice was made
      */
     private void ConfigureCompetitionDifficultyParameter(Parent root) throws IllegalArgumentException {
