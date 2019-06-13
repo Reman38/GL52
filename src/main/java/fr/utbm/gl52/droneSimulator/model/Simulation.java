@@ -39,8 +39,8 @@ public class Simulation {
     private static Map<String, Integer[]> parcelTimeToDisappearRangeLinkedToDifficulty = new HashMap<>();
     private static Integer[] parcelTimeToDisappearRange = new Integer[2];
 
-    private static final Float mainAreaWidth = 1600f;
-    private static final Float mainAreaHeight = 900f;
+    private static final Float mainAreaWidth = 1800f;
+    private static final Float mainAreaHeight = 600f;
 
     public static final String DEFAULT = "DEFAULT";
     public static final String RANDOM = "RANDOM";
