@@ -42,6 +42,12 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         return parcel;
     }
 
+    public static Parcel createRandomized(Integer id, Long elapsedTime) {
+        Parcel parcel = new Parcel(id);
+        parcel.randomize(elapsedTime);
+        return parcel;
+    }
+
     /**
      * Randomize the weight, position and destination of the parcel
      */
@@ -59,11 +65,17 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
             e.printStackTrace();
         }
 
-        setRandTimeToDisappear();
+        setRandTimeToDisappear(0L);
     }
 
-    private void setRandTimeToDisappear() {
-        timeToDisappear = RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
+    public void randomize(Long elapsedTime){
+        randomize();
+
+        setRandTimeToDisappear(elapsedTime);
+    }
+
+    private void setRandTimeToDisappear(Long elapsedTime) {
+        timeToDisappear = elapsedTime + RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
     }
 
     /**
