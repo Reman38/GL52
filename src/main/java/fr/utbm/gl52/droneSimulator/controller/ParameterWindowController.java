@@ -156,17 +156,6 @@ public class ParameterWindowController{
     }
 
     /**
-     * Throw an error popup that signals that at choosing a difficulty is mandatory
-     */
-    private void throwNoDifficultyChosenErrorPopup(){
-        try {
-            throwErrorPopup("You must choose a valid competition difficulty");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Throw an error popup that signals that at least one drone is needed
      */
     private void throwZeroDroneErrorPopup() {
@@ -186,18 +175,6 @@ public class ParameterWindowController{
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Throw an error popup
-     *
-     * @param errorMsg The string message of the error
-     *
-     * @throws IOException The associated fxml template was not found
-     */
-    private void throwErrorPopup(String errorMsg) throws IOException {
-        ErrorPopupView errorPopupView = new ErrorPopupView(errorMsg);
-        createPopup(errorPopupView.getParent(), ERROR_TITLE);
     }
 
     /**
