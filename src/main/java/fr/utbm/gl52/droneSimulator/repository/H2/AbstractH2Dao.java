@@ -1,16 +1,17 @@
 package fr.utbm.gl52.droneSimulator.repository.H2;
 
 import fr.utbm.gl52.droneSimulator.repository.AbstractDao;
+import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import org.hibernate.Session;
-import repository.HibernateHelper;
-
 import java.util.List;
 
 /**
  * @param <E> MyEntity
  */
-public abstract class AbstractH2Dao<E> extends AbstractDao {
-    private Class<E> clazz;
+public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
+    public AbstractH2Dao(Class<E> clazz) {
+        super(clazz);
+    }
 
     public E get(long id) {
         Session session = HibernateHelper.getSessionFactory().openSession();

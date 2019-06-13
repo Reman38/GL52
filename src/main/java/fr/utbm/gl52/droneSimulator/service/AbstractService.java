@@ -1,8 +1,7 @@
-package service;
+package fr.utbm.gl52.droneSimulator.service;
 
 import fr.utbm.gl52.droneSimulator.repository.AbstractDao;
 import fr.utbm.gl52.droneSimulator.repository.H2.AbstractH2Dao;
-import fr.utbm.gl52.droneSimulator.service.ServiceInterface;
 import fr.utbm.gl52.droneSimulator.service.entity.MyEntity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,31 +10,27 @@ import java.lang.reflect.InvocationTargetException;
  * Use different Dao to persist entities
  * @param <E> MyEntity
  */
-public class AbstractService<E extends MyEntity> implements ServiceInterface {
+public class AbstractService<E extends MyEntity> implements ServiceInterface{
     protected AbstractDao<E> mySqlDao;
     protected AbstractDao<E> redisDao;
-    private Class<E> clazz;
+    protected Class<E> clazz;
 
     public AbstractService(Class<E> clazz) {
         this.clazz = clazz;
-
-        System.out.println("00"+clazz);
-        System.out.println("11"+clazz.getClass());
-        System.out.println("22"+clazz.getDeclaredClasses());
-//        System.out.println(((ParameterizedType)mySuperclass).getActualTypeArguments()[0]);
     }
-    private AbstractH2Dao<E> getH2Dao() {
+
+    public AbstractH2Dao<E> getH2Dao() {
         if (mySqlDao == null){
             mySqlDao = getDao("H2");
         }
         return (AbstractH2Dao<E>) mySqlDao; // TODO éviter le cast
     }
 
-    private AbstractDao<E> getDao(String technology) {
+    public AbstractDao<E> getDao(String technology) {
         Object dao = null;
         try {
-            System.out.println(technology + clazz + "Dao");
-            Class daoClass = Class.forName(technology + clazz + "Dao");
+            System.out.println("repository.mysql." + technology + clazz.getSimpleName() + "Dao");
+            Class daoClass = Class.forName("repository.mysql." + technology + clazz.getSimpleName() + "Dao");
             dao = daoClass.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -44,11 +39,11 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface {
         return (AbstractDao<E>) dao; // TODO éviter le cast
     }
 
-    private E get(int id) {
+    public E get(int id) {
         return getInDatabase(id);
     }
 
-    private E getInDatabase(int id) {
+    public E getInDatabase(int id) {
         return getH2Dao().get(id);
     }
 
@@ -57,7 +52,7 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface {
         deleteInDatabase(entity);
     }
 
-    private void deleteInDatabase(E entity) {
+    public void deleteInDatabase(E entity) {
         getH2Dao().delete(entity);
     }
 
@@ -65,15 +60,15 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface {
         saveInDatabase(entity);
     }
 
-    private void saveInDatabase(E entity) {
+    public void saveInDatabase(E entity) {
         getH2Dao().save(entity);
     }
 
-//    private void registerInCsv(Client client) {
+//    public void registerInCsv(Client client) {
 //        getCsvClientDao().save(client);
 //    }
 //
-//    private void registerInConsole(Client client) {
+//    public void registerInConsole(Client client) {
 //        getConsoleClientDao().save(client);
 //    }
 //

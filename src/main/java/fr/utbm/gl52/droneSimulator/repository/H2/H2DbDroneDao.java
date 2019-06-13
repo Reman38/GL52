@@ -1,19 +1,23 @@
 package fr.utbm.gl52.droneSimulator.repository.H2;
 
+import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import org.hibernate.Session;
-import repository.HibernateHelper;
 
-public class H2DroneDao extends AbstractH2Dao<DbDrone> {
+public class H2DbDroneDao extends AbstractH2Dao<DbDrone> {
+    public H2DbDroneDao() {
+        super(DbDrone.class);
+    }
+
     public void modify(long id, String firstName) {
         Session session = HibernateHelper.getSessionFactory().openSession();
         session.beginTransaction();
 
         // TODO déplacer get dans service ?
-        DbDrone drone = get(id);
-//        drone.setFirstName(firstName);
+        DbDrone client = get(id);
+//        client.setFirstName(firstName);
 
-        session.merge(drone);
+        session.merge(client);
         session.getTransaction().commit();
     }
 
