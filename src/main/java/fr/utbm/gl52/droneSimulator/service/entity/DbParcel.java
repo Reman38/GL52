@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "PARCEL")
-public class DbParcel {
+public class DbParcel extends MyEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idSimu;

@@ -1,4 +1,4 @@
-package fr.utbm.gl52.droneSimulator.repository.tool;
+package fr.utbm.gl52.droneSimulator.repository;
 
 // TODO refactor
 
@@ -9,8 +9,6 @@ public class HibernateHelper {
     private static final SessionFactory sessionFactory = buildSessionFactory();
 
     private static SessionFactory buildSessionFactory() {
-//        .addAnnotatedClass(clazz)
-
 //        try {
         Configuration configuration = new Configuration();
         configuration.configure("hibernate.cfg.xml");

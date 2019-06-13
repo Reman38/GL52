@@ -6,7 +6,6 @@ import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 
 public class Main {
-
     public static void main(String[] args) {
         var dbDrone = new DbDrone();
         var dbParcel = new DbParcel();
@@ -27,7 +26,4 @@ public class Main {
 //        GuiMain.main(args);
     }
 
-
 }
-
-
