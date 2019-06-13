@@ -25,6 +25,8 @@ public class SimulationWindowView {
 
     private static Boolean isViewFullyLoaded = false;
 
+    private static Pane simulationPane;
+
     /**
      * Initialize the simulation
      *
@@ -42,9 +44,9 @@ public class SimulationWindowView {
         loader.load();
 
         root = loader.getRoot();
-        Pane pane = (Pane) root.lookup("#simulationPane");
+        simulationPane = (Pane) root.lookup("#simulationPane");
 
-        startView(pane);
+        startView(simulationPane);
 
         refreshSimulationSpeed();
 
@@ -62,7 +64,7 @@ public class SimulationWindowView {
 
         displayMainArea(pane);
         displayAreas(pane);
-        displayParcels(pane);
+        displayParcels();
         displayChargingStation(pane);
         displayDronesAndAssociatedTabs(pane);
     }
@@ -118,17 +120,10 @@ public class SimulationWindowView {
 
     /**
      * Add parcels to the simulation pane
-     *
-     * @param pane Simulation Pane
      */
-    private static void displayParcels(Pane pane) {
+    private static void displayParcels() {
         for (Parcel parcel : Simulation.getParcels()) {
-            ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(parcel);
-            parcelGraphicElements.add(parcelGraphicElement);
-            Text id = parcelGraphicElement.getGraphicalId();
-            Shape shape = parcelGraphicElement.getShape();
-            pane.getChildren().add(shape);
-            pane.getChildren().add(id);
+            addParcelToView(parcel);
         }
     }
 
@@ -250,6 +245,20 @@ public class SimulationWindowView {
         Pane pane = (Pane) root.lookup("#simulationPane");
         pane.getChildren().remove(parcel.getShape());
         pane.getChildren().remove(parcel.getGraphicalId());
+    }
+
+    /**
+     * add the parcel to the view
+     *
+     * @param parcel parcel to add
+     */
+    public static void addParcelToView(Parcel parcel) {
+        ParcelGraphicElement parcelGraphicElement = new ParcelGraphicElement(parcel);
+        parcelGraphicElements.add(parcelGraphicElement);
+        Text id = parcelGraphicElement.getGraphicalId();
+        Shape shape = parcelGraphicElement.getShape();
+        simulationPane.getChildren().add(shape);
+        simulationPane.getChildren().add(id);
     }
 
     public static javafx.scene.Parent getParent() {

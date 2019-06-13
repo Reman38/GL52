@@ -214,6 +214,7 @@ public class Simulation {
         while (isPlay()){
             updatePlayStatusAccordingToDuration();
             makeParcelDisappearWhenPickedByCompetitors();
+            popRandomParcels();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -222,6 +223,19 @@ public class Simulation {
         }
         System.out.println("Time elapsed");
         stop();
+    }
+
+    private static void popRandomParcels() {
+        Integer random = RandomHelper.getRandInt(0, 100);
+
+        if(random == 42){
+            Integer id = parcelNumber++;
+
+            Parcel parcel = Parcel.createRandomized(id, elapsedTime);
+            parcels.add(parcel);
+            Platform.runLater(() -> SimulationWindowView.addParcelToView(parcel));
+            System.out.println("parcel n " + id + "  has popped");
+        }
     }
 
     public static void setTimeSimulationParameters(Integer numberOfSimulationIteration){

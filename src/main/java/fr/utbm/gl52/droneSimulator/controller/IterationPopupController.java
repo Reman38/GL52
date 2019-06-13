@@ -5,7 +5,6 @@ import fr.utbm.gl52.droneSimulator.view.IterationPopupView;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
@@ -19,6 +18,11 @@ import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.crea
 
 public class IterationPopupController {
 
+    /**
+     * Validate the parameters
+     *
+     * @param event Trigger event
+     */
     @FXML
     public void validate(ActionEvent event) {
         Parent root = ControllerHelper.getRootWith(event);
@@ -29,6 +33,11 @@ public class IterationPopupController {
         parentWindow.hide();
     }
 
+    /**
+     * Launch the simulation
+     *
+     * @param event Trigger event
+     */
     private void launchSimulation(ActionEvent event) {
         try {
             SimulationWindowView.init(IterationPopupView.getSimulationMode());
@@ -38,6 +47,11 @@ public class IterationPopupController {
         }
     }
 
+    /**
+     * Set parameters on iteration slider
+     *
+     * @param event Trigger event
+     */
     private void setIterationParameter(ActionEvent event) {
         Parent root = getRootWith(event);
         Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
