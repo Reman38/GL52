@@ -8,6 +8,7 @@ public class Main {
         var simulationId = 1;
 
         var dbDroneService = new DbDroneService();
+
         var dbDrones = dbDroneService.getAllFromSimulationId(simulationId);
 
         for (DbDrone dbDrone : dbDrones) {

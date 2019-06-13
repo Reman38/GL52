@@ -3,7 +3,6 @@ package fr.utbm.gl52.droneSimulator.service.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "DRONE")
 public class DbDrone extends MyEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
