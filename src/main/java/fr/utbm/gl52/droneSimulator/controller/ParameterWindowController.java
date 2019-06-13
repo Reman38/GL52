@@ -228,7 +228,7 @@ public class ParameterWindowController{
     }
 
     /**
-     * Confiure competion difficulty according to view combobox selection
+     * Configure completion difficulty according to view combobox selection
      *
      * @param root The root node of the window
      *
