@@ -40,6 +40,14 @@ public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
         return entities;
     }
 
+    public List<E> list(int simulationId) {
+        Session session = HibernateHelper.getSessionFactory().openSession();
+
+        List entities = session.createQuery("FROM " + clazz + "WHERE idSimu = "+simulationId).list();
+
+        return entities;
+    }
+
     public void save(E entity) {
         Session session = HibernateHelper.getSessionFactory().openSession();
         session.beginTransaction();

@@ -5,6 +5,7 @@ import fr.utbm.gl52.droneSimulator.repository.H2.AbstractH2Dao;
 import fr.utbm.gl52.droneSimulator.service.entity.MyEntity;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * Use different Dao to persist entities
@@ -29,8 +30,8 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface{
     public AbstractDao<E> getDao(String technology) {
         Object dao = null;
         try {
-            System.out.println("repository.mysql." + technology + clazz.getSimpleName() + "Dao");
-            Class daoClass = Class.forName("repository.mysql." + technology + clazz.getSimpleName() + "Dao");
+            System.out.println("fr.utbm.gl52.droneSimulator.repository.H2." + technology + clazz.getSimpleName() + "Dao");
+            Class daoClass = Class.forName("fr.utbm.gl52.droneSimulator.repository.H2." + technology + clazz.getSimpleName() + "Dao");
             dao = daoClass.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -64,25 +65,7 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface{
         getH2Dao().save(entity);
     }
 
-//    public void registerInCsv(Client client) {
-//        getCsvClientDao().save(client);
-//    }
-//
-//    public void registerInConsole(Client client) {
-//        getConsoleClientDao().save(client);
-//    }
-//
-//    public ConsoleClientDao getConsoleClientDao() {
-//        if (consoleClientDao == null)
-//            consoleClientDao = new ConsoleClientDao();
-//
-//        return consoleClientDao;
-//    }
-//
-//    public CsvClientDao getCsvClientDao() {
-//        if (csvClientDao == null)
-//            csvClientDao = new CsvClientDao();
-//
-//        return csvClientDao;
-//    }
+    public List<E> getAllFromSimulationId(int simulationId) {
+        return getH2Dao().list(simulationId);
+    }
 }

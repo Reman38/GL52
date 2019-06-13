@@ -7,10 +7,12 @@ public class DbDroneService extends AbstractService<DbDrone> {
         super(DbDrone.class);
     }
 
-    public void register(String lastName, String firstName, String address, String phone, String email) {
+    public void save(String lastName, String firstName, String address, String phone, String email) {
 //        DbDrone newDbDrone = new DbDrone(lastName, firstName, address, phone, email);
 //        save(newDbDrone);
     }
+
+
 
 //    public void modify(long id, String firstName) {
 //        modifyInDatabase(id, firstName);
