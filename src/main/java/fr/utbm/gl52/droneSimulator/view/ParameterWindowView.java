@@ -1,21 +1,30 @@
 package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.Simulation;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.MainAreaGraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import static fr.utbm.gl52.droneSimulator.model.Simulation.getCompetitionDifficultyLevels;
+import static fr.utbm.gl52.droneSimulator.model.Simulation.initMainArea;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.addElementTo;
 
 public class ParameterWindowView {
     private Parent root;
+    private static List<DroneGraphicElement> droneGraphicElements = new ArrayList<>();
+    private static List<ChargingStationGraphicElement> chargingStationGraphicElements = new ArrayList<>();
+
+    private static Simulation simulation = new Simulation();
 
     public ParameterWindowView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
@@ -27,16 +36,20 @@ public class ParameterWindowView {
 
         Pane pane = (Pane) root.lookup("#visualSettingPane");
 
-
-        Simulation simulation = new Simulation();
-
         createDroneWeightSlider();
 
         createDroneBatterySlider();
 
-        simulation.start();
+        createSimulationDurationSlider();
 
-        GraphicElement.setCoefficient(0.065f);
+        createIterationNumberslider();
+
+        createCompetitionDropDown();
+
+        initMainArea();
+
+        GraphicElement.setModelViewCoefficient(0.65f);
+        CenteredAndErgonomicGraphicElement.setZoomCoefficient(20f);
 
         Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
         addElementTo(pane, mainAreaGraphicElementShape);
@@ -76,7 +89,60 @@ public class ParameterWindowView {
         });
     }
 
+    private void createSimulationDurationSlider() {
+        Slider simulationDurationSlider = (Slider)  root.lookup("#simulationDurationSlider");
+        Text simulationDuration = (Text) root.lookup("#SimulationDurationText");
+        simulationDuration.setText(Simulation.getSimulationDurationRange()[0].toString() + " min");
+        simulationDurationSlider.setMin(Simulation.getSimulationDurationRange()[0]);
+        simulationDurationSlider.setMax(Simulation.getSimulationDurationRange()[1]);
+        simulationDurationSlider.setShowTickLabels(true);
+
+        refreshSimulationDuration(simulationDurationSlider, simulationDuration);
+    }
+
+    private void refreshSimulationDuration(Slider simulationDurationSlider, Text simulationDuration) {
+        simulationDurationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            simulationDuration.setText(String.format("%d", newValue.intValue()) + " min");
+        });
+    }
+
+    private void createIterationNumberslider() {
+        Slider IterationSlider = (Slider)  root.lookup("#iterationSlider");
+        Text IterationNumber = (Text) root.lookup("#iterationNumber");
+        IterationNumber.setText(Simulation.getNumberOfSimulationIterationRange()[0].toString());
+        IterationSlider.setMin(Simulation.getNumberOfSimulationIterationRange()[0]);
+        IterationSlider.setMax(Simulation.getNumberOfSimulationIterationRange()[1]);
+        IterationSlider.setShowTickLabels(true);
+
+        refreshIterationNumber(IterationSlider, IterationNumber);
+    }
+
+    private void refreshIterationNumber(Slider IterationSlider, Text iterationNumber) {
+        IterationSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            iterationNumber.setText(String.format("%d", newValue.intValue()));
+        });
+    }
+
+    private void createCompetitionDropDown(){
+        ComboBox competitionLevels = (ComboBox) root.lookup("#competitionLevelComboBox");
+
+        for(Map.Entry<String, Integer[]> difficulty: getCompetitionDifficultyLevels().entrySet())
+        competitionLevels.getItems().add(difficulty.getKey());
+    }
+
     public javafx.scene.Parent getParent(){
         return root;
+    }
+
+    public static List<DroneGraphicElement> getDroneGraphicElements() {
+        return droneGraphicElements;
+    }
+
+    public static List<ChargingStationGraphicElement> getChargingStationGraphicElements() {
+        return chargingStationGraphicElements;
+    }
+
+    public static Simulation getSimulation(){
+        return simulation;
     }
 }
