@@ -1,5 +1,4 @@
 package fr.utbm.gl52.droneSimulator.controller;
-;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -9,16 +8,6 @@ import javafx.scene.input.MouseEvent;
 import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement.getModelViewCoefficient;
 
 public class ControllerHelper {
-
-    protected static void createWindow(MouseEvent event, Parent parent) {
-        Scene scene = new Scene(parent);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("Drone Simulator");
-        stage.setMaximized(true);
-        stage.show();
-        ((Node)(event.getSource())).getScene().getWindow().hide();
-    }
 
     protected static Parent getRootWith(Event e){
         Node source = (Node) e.getSource();
