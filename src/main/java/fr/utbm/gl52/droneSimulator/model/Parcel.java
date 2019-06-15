@@ -4,6 +4,7 @@ import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.removeParcelGraphicIfExists;
@@ -16,6 +17,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     private Date timeDeliveryGoal;
     private Float[] destCoord = new Float[2];
     private boolean isInJourney = false;
+    private Float timeToDisappear;
 
     /**
      * Construct a nex parcel with the given Id
@@ -40,6 +42,12 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         return parcel;
     }
 
+    public static Parcel createRandomized(Integer id, Long elapsedTime) {
+        Parcel parcel = new Parcel(id);
+        parcel.randomize(elapsedTime);
+        return parcel;
+    }
+
     /**
      * Randomize the weight, position and destination of the parcel
      */
@@ -56,6 +64,18 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         } catch (OutOfMainAreaException e) {
             e.printStackTrace();
         }
+
+        setRandTimeToDisappear(0L);
+    }
+
+    public void randomize(Long elapsedTime){
+        randomize();
+
+        setRandTimeToDisappear(elapsedTime);
+    }
+
+    private void setRandTimeToDisappear(Long elapsedTime) {
+        timeToDisappear = elapsedTime + RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
     }
 
     /**
@@ -73,12 +93,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
             parcel.setInJourney(true);
         }
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                removeParcelGraphicIfExists(parcelToRemove);
-            }
-        });
+        Platform.runLater(() -> removeParcelGraphicIfExists(parcelToRemove));
     }
 
     /**
@@ -205,5 +220,21 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      */
     public void setInJourney(boolean inJourney) {
         isInJourney = inJourney;
+    }
+
+    public Float getTimeToDisappear() {
+        return timeToDisappear;
+    }
+
+    @Override
+    public String toString() {
+        return "Parcel{" +
+                "popTime=" + popTime +
+                ", timeToDisappear= " + timeToDisappear +
+                ", weight=" + weight +
+                ", timeDeliveryGoal=" + timeDeliveryGoal +
+                ", destCoord=" + Arrays.toString(destCoord) +
+                ", isInJourney=" + isInJourney +
+                '}';
     }
 }
