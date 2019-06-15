@@ -35,6 +35,7 @@ public class Simulation {
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
     private static Integer simulationDuration = 240;
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
+    private static Integer currentIteration = 1;
 
     private static Map<String, Integer[]> parcelTimeToDisappearRangeLinkedToDifficulty = new HashMap<>();
     private static Integer[] parcelTimeToDisappearRange = new Integer[2];
@@ -84,6 +85,10 @@ public class Simulation {
         parcelTimeToDisappearRangeLinkedToDifficulty.put("hard", range);
     }
 
+    private static void initIteration() {
+
+    }
+
     public static void setSimulationSpeed(Float f) {
         simulationSpeed = f; // TODO ajouter controle et exception
     }
@@ -96,17 +101,17 @@ public class Simulation {
         setSimulationSpeed(getSimulationSpeed() * (1 + nb));
     }
 
-
     public static void removeParcel(Parcel parcel) {
         parcels.remove(parcel);
     }
+
     public static void removeAllParcels() {
         parcels.clear();
     }
-
     public static void removeDrone(Drone drone) {
         drones.remove(drone);
     }
+
     public static void removeAllDrones() {
         drones.clear();
     }
@@ -222,7 +227,18 @@ public class Simulation {
             }
         }
         System.out.println("Time elapsed");
+        rebootSimulationForNextIteration();
         stop();
+    }
+
+    private static void rebootSimulationForNextIteration() {
+        if(!isPlay()){
+            if(currentIteration < numberOfSimulationIteration){
+                initIteration();
+            } else {
+                stop();
+            }
+        }
     }
 
     private static void popRandomParcels() {
