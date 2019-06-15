@@ -9,21 +9,25 @@ import javafx.scene.Parent;
 import javafx.scene.chart.*;
 
 import java.io.IOException;
-import java.util.Random;
+import java.util.*;
 
 public class StatisticsWindowView {
     private Parent root;
+    public Hashtable<Integer, Double> averageDroneKmIterationSimu1 = new Hashtable<>();
+    public Hashtable<Integer, Double> averageDroneKmIterationSimu2 = new Hashtable<>();
+    int nbIterationSimu1 = 3;
+    int nbIterationSimu2 = 3;
 
     public StatisticsWindowView() throws IOException {
-        var simulationId = 1;
+        int simulation1Id = 1;
+        int simulation2Id = 2;
 
         var dbDroneService = new DbDroneService();
+        var dbDronesSimu1 = dbDroneService.getAllFromSimulationId(simulation1Id);
+        var dbDronesSimu2 = dbDroneService.getAllFromSimulationId(simulation2Id);
 
-        var dbDrones = dbDroneService.getAllFromSimulationId(simulationId);
-
-        for (DbDrone dbDrone : dbDrones) {
-            System.out.println(dbDrone.getIdDrone());
-        }
+        averageDroneKmIterationSimu1 = averageDroneKmSimu(dbDronesSimu1);
+        averageDroneKmIterationSimu2 = averageDroneKmSimu(dbDronesSimu2);
 
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/StatisticsWindow.fxml")
@@ -40,6 +44,22 @@ public class StatisticsWindowView {
         }
     }
 
+    private Hashtable<Integer, Double> averageDroneKmSimu(List<DbDrone> dbDronesSimu) {
+        Double oldValue;
+        Hashtable<Integer, Double> averageDroneKmIterationSimu = new Hashtable<>();
+
+        for (DbDrone dbDrone : dbDronesSimu) {
+            if (averageDroneKmIterationSimu.containsKey(dbDrone.getIdIteration())){
+                oldValue = averageDroneKmIterationSimu.get(dbDrone.getIdIteration());
+                averageDroneKmIterationSimu.put(dbDrone.getIdIteration(), oldValue + dbDrone.getKilometers());
+            } else {
+                averageDroneKmIterationSimu.put(dbDrone.getIdIteration(), dbDrone.getKilometers());
+            }
+        }
+
+        return averageDroneKmIterationSimu;
+    }
+
     public ObservableList<XYChart.Series<String, Double>> getDummyChartData() {
         ObservableList<XYChart.Series<String, Double>> data = FXCollections.observableArrayList();
 
@@ -49,12 +69,12 @@ public class StatisticsWindowView {
         simulation1.setName("Simulation 1");
         simulation2.setName("Simulation 2");
 
-        Random r = new Random();
-        int nbIteration = 5;
+        for (int iteration = 1; iteration <= nbIterationSimu1; iteration++) {
+            simulation1.getData().add(new XYChart.Data<>(Integer.toString(iteration), averageDroneKmIterationSimu1.get(iteration)));
+        }
 
-        for (int iteration = 1; iteration <= nbIteration; iteration++) {
-            simulation1.getData().add(new XYChart.Data<>(Integer.toString(iteration), r.nextDouble()));
-            simulation2.getData().add(new XYChart.Data<>(Integer.toString(iteration), r.nextDouble()));
+        for (int iteration = 1; iteration <= nbIterationSimu2; iteration++) {
+            simulation2.getData().add(new XYChart.Data<>(Integer.toString(iteration), averageDroneKmIterationSimu2.get(iteration)));
         }
 
         data.addAll(simulation1, simulation2);
