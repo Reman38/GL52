@@ -6,31 +6,47 @@ import javax.persistence.*;
 public class DbDrone extends MyEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column
+    private int idDrone;
+
+    @Column
     private int idSimu;
 
     @Column
     private int idIteration;
 
     @Column
-    private int chargingtime;
+    private double chargingtime;
 
     @Column
-    private int batteryCapacity;
+    private double batteryCapacity;
 
     @Column
-    private int weightCapacity;
+    private double weightCapacity;
 
     @Column
-    private int kilometers;
+    private double kilometers;
 
-    public DbDrone() {}
+    @Column
+    private double x;
 
-    public DbDrone(int idIteration, int chargingtime, int batteryCapacity, int weightCapacity, int kilometers) {
+    @Column
+    private double y;
+
+    public DbDrone(int idIteration, int idDrone, float chargingtime, float batteryCapacity, float weightCapacity, float kilometers, float x, float y) {
         this.idIteration = idIteration;
+        this.idDrone = idDrone;
         this.chargingtime = chargingtime;
         this.batteryCapacity = batteryCapacity;
         this.weightCapacity = weightCapacity;
         this.kilometers = kilometers;
+        this.x = x;
+        this.y = y;
+    }
+
+    public DbDrone() {
     }
 
     public int getIdSimu() {
@@ -49,35 +65,59 @@ public class DbDrone extends MyEntity{
         this.idIteration = idIteration;
     }
 
-    public int getChargingtime() {
+    public int getIdDrone() {
+        return idDrone;
+    }
+
+    public void setIdDrone(int idDrone) {
+        this.idDrone = idDrone;
+    }
+
+    public double getChargingtime() {
         return chargingtime;
     }
 
-    public void setChargingtime(int chargingtime) {
+    public void setChargingtime(float chargingtime) {
         this.chargingtime = chargingtime;
     }
 
-    public int getBatteryCapacity() {
+    public double getBatteryCapacity() {
         return batteryCapacity;
     }
 
-    public void setBatteryCapacity(int batteryCapacity) {
+    public void setBatteryCapacity(float batteryCapacity) {
         this.batteryCapacity = batteryCapacity;
     }
 
-    public int getWeightCapacity() {
+    public double getWeightCapacity() {
         return weightCapacity;
     }
 
-    public void setWeightCapacity(int weightCapacity) {
+    public void setWeightCapacity(float weightCapacity) {
         this.weightCapacity = weightCapacity;
     }
 
-    public int getKilometers() {
+    public double getKilometers() {
         return kilometers;
     }
 
-    public void setKilometers(int kilometers) {
+    public void setKilometers(float kilometers) {
         this.kilometers = kilometers;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 }

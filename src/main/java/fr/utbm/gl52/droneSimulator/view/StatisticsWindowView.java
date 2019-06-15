@@ -1,5 +1,7 @@
 package fr.utbm.gl52.droneSimulator.view;
 
+import fr.utbm.gl52.droneSimulator.service.DbDroneService;
+import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +15,16 @@ public class StatisticsWindowView {
     private Parent root;
 
     public StatisticsWindowView() throws IOException {
+        var simulationId = 1;
+
+        var dbDroneService = new DbDroneService();
+
+        var dbDrones = dbDroneService.getAllFromSimulationId(simulationId);
+
+        for (DbDrone dbDrone : dbDrones) {
+            System.out.println(dbDrone.getIdDrone());
+        }
+
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/StatisticsWindow.fxml")
         );
