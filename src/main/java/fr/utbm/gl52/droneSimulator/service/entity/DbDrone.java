@@ -18,7 +18,7 @@ public class DbDrone extends MyEntity{
     private int idIteration;
 
     @Column
-    private double chargingtime;
+    private Integer chargingTime;
 
     @Column
     private double batteryCapacity;
@@ -35,10 +35,11 @@ public class DbDrone extends MyEntity{
     @Column
     private double y;
 
-    public DbDrone(int idIteration, int idDrone, float chargingtime, float batteryCapacity, float weightCapacity, float kilometers, float x, float y) {
+    public DbDrone(int idSimu, int idIteration, int idDrone, int chargingTime, float batteryCapacity, float weightCapacity, float kilometers, float x, float y) {
+        this.idSimu = idSimu;
         this.idIteration = idIteration;
         this.idDrone = idDrone;
-        this.chargingtime = chargingtime;
+        this.chargingTime = chargingTime;
         this.batteryCapacity = batteryCapacity;
         this.weightCapacity = weightCapacity;
         this.kilometers = kilometers;
@@ -73,12 +74,12 @@ public class DbDrone extends MyEntity{
         this.idDrone = idDrone;
     }
 
-    public double getChargingtime() {
-        return chargingtime;
+    public double getChargingTime() {
+        return chargingTime;
     }
 
-    public void setChargingtime(float chargingtime) {
-        this.chargingtime = chargingtime;
+    public void setChargingTime(Integer chargingTime) {
+        this.chargingTime = chargingTime;
     }
 
     public double getBatteryCapacity() {

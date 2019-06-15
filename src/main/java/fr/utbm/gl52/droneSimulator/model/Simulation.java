@@ -1,5 +1,8 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import fr.utbm.gl52.droneSimulator.service.DbDroneService;
+import fr.utbm.gl52.droneSimulator.service.DbParameterService;
+import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
@@ -18,6 +21,10 @@ public class Simulation {
     private static ArrayList<Area> areas = new ArrayList<>();
     private static List<ChargingStation> chargingStations = new ArrayList<>();
     private static MainArea mainArea;
+
+    private static DbParameterService parameterService = new DbParameterService();
+    private static DbDroneService droneService = new DbDroneService();
+    private static DbParameter parameters;
 
     private static Boolean play = true;
 
@@ -50,7 +57,7 @@ public class Simulation {
     private static final Integer imagesPerSecond = 30;
     private static final Float maxThreadSleepAcceleration = 30f;
 
-    private static Long lauchSimTime = Instant.now().toEpochMilli();
+    private static Long launchSimTime = Instant.now().toEpochMilli();
     private static Long currentTime = Instant.now().toEpochMilli();
     private static Long elapsedTime = 0L;
 
@@ -118,6 +125,32 @@ public class Simulation {
 
     public static void initMainArea() {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
+    }
+
+    public static void flushParameters(){
+        parameters = parameterService.save(
+                simulationDuration,
+                numberOfSimulationIteration,
+                parcelTimeToDisappearRange[0],
+                parcelTimeToDisappearRange[1]
+        );
+        flushDroneData();
+    }
+
+    public static void flushDroneData(){
+        for(Drone drone: drones){
+            droneService.save(
+                    parameters.getIdSimu(),
+                    currentIteration,
+                    drone.getId(),
+                    0,
+                    drone.getBatteryCapacity(),
+                    drone.getWeightCapacity(),
+                    0,
+                    drone.getX(),
+                    drone.getY()
+            );
+        }
     }
 
     public static void startDefault() {
@@ -276,7 +309,7 @@ public class Simulation {
     private static void updatePlayStatusAccordingToDuration(){
         currentTime = Instant.now().toEpochMilli();
         long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
-        elapsedTime = (long)(StrictMath.abs(currentTime - lauchSimTime)*simulationSpeed);
+        elapsedTime = (long)(StrictMath.abs(currentTime - launchSimTime)*simulationSpeed);
         //System.out.println("time elapsed " + elapsedTime/60000);
         play = elapsedTime <= simulationDurationInMilli;
     }

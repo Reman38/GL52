@@ -193,6 +193,7 @@ public class SimulationWindowView {
             default:
                 throw new IllegalArgumentException("the mode '" + simulationMode + "' doesn't exist");
         }
+        Simulation.flushParameters();
     }
 
     /**

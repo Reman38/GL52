@@ -7,27 +7,9 @@ public class DbDroneService extends AbstractService<DbDrone> {
         super(DbDrone.class);
     }
 
-    public void save(String lastName, String firstName, String address, String phone, String email) {
-//        DbDrone newDbDrone = new DbDrone(lastName, firstName, address, phone, email);
-//        save(newDbDrone);
+    public void save(int idSimu, int idIteration, int idDrone, Integer chargingTime, float batteryCapacity, float weightCapacity, float kilometers, float x, float y) {
+        DbDrone dbDrone = new DbDrone(idSimu, idIteration, idDrone, chargingTime, batteryCapacity, weightCapacity, kilometers, x, y);
+
+        save(dbDrone);
     }
-
-
-
-//    public void modify(long id, String firstName) {
-//        modifyInDatabase(id, firstName);
-//    }
-//
-//    private void modifyInDatabase(long id, String firstName) {
-//        modify(id, firstName);
-//    }
-
-//    private void migrateDbDroneFromDatabaseToConsole() {
-//        ConsoleDbDroneDao consoleDbDroneDao = new ConsoleDbDroneDao();
-//
-//        List<DbDrone> clients = mySqlDbDroneDao.list();
-//        for(DbDrone client: clients){
-//            consoleDbDroneDao.save(client);
-//        }
-//    }
 }
