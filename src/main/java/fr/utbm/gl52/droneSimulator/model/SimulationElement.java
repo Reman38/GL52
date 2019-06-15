@@ -43,11 +43,6 @@ public abstract class SimulationElement implements SimulationElementInterface {
         return coord;
     }
 
-    public void setCoord(Float x, Float y){
-        setX(x);
-        setY(y);
-    }
-
     public Float getX() {
         return coord[0];
     }
