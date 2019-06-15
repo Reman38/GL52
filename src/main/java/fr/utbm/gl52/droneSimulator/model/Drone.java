@@ -8,8 +8,8 @@ import java.util.Date;
 
 public class Drone extends CenteredAndSquaredSimulationElement {
     // constantes
-    static final private Float speed = 18f/30f; // 41 mph, 65 km/h, 18m/s
-    static final private Integer visibleDistance = 100000;
+    static final private Float speed = 5f;
+    static final private Integer visibleDistance = 10000;
 
     // attributs
     private Boolean isBusy;
@@ -36,7 +36,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         ArrayList<ParcelRecord> parcelRecords = new ArrayList<ParcelRecord>();
 
         public class ParcelRecord {
-            private Float[] coord = new Float[2];;
+            private Float[] coord = new Float[2];
             private Date lastDetectedDateTime;
             private Date popTime;
 
@@ -71,35 +71,23 @@ public class Drone extends CenteredAndSquaredSimulationElement {
 
     public static Drone createRandomizedDrone() {
         Drone drone = new Drone();
-        try {
-            drone.randomize();
-        } catch (OutOfMainAreaException e) {
-            e.printStackTrace();
-        }
+        drone.randomize();
         return drone;
     }
 
-    public void randomize() throws OutOfMainAreaException {
+    public void randomize() {
         setRandCoord();
-        setRandRotation();
     }
 
     public void move() {
-        Float newX = getX() + (getSpeed() * (float) Math.cos(rotation));
-        Float newY = getY() + (getSpeed() * (float) Math.sin(-rotation));
+        Float newX = getX() + (speed * (float) Math.cos(rotation));
+        Float newY = getY() + (speed * (float) Math.sin(-rotation));
 
         try {
             setX(newX);
             setY(newY);
         } catch (OutOfMainAreaException e) {
-            if (newX < Simulation.getMainArea().getX() || newX > Simulation.getMainArea().getWidth()) {
-                rotation += MathHelper.getPi()/3;
-            }
-            if (newY < Simulation.getMainArea().getY() || newY > Simulation.getMainArea().getHeight()) {
-                rotation += MathHelper.getPi()/3;
-            }
-
-            move();
+            e.printStackTrace();
         }
     }
 
@@ -199,7 +187,7 @@ public class Drone extends CenteredAndSquaredSimulationElement {
         setRotation(RandomHelper.getRandFloat(0f, (float) (2 * Math.PI)));
     }
 
-    public void setRandCoord() throws OutOfMainAreaException {
+    public void setRandCoord() {
         setRandCoord(Simulation.getMainArea());
     }
 

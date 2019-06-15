@@ -1,7 +1,10 @@
 package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.Simulation;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicElement;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.MainAreaGraphicElement;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
@@ -23,8 +26,6 @@ public class ParameterWindowView {
     private static List<DroneGraphicElement> droneGraphicElements = new ArrayList<>();
     private static List<ChargingStationGraphicElement> chargingStationGraphicElements = new ArrayList<>();
 
-    private static Simulation simulation = new Simulation();
-
     public ParameterWindowView() throws IOException {
         FXMLLoader loader =  new FXMLLoader(
             getClass().getResource("/fxml/ParameterWindow.fxml")
@@ -34,6 +35,9 @@ public class ParameterWindowView {
         root = loader.getRoot();
 
         Pane pane = (Pane) root.lookup("#visualSettingPane");
+
+
+        Simulation simulation = new Simulation();
 
         createDroneWeightSlider();
 
@@ -47,8 +51,7 @@ public class ParameterWindowView {
 
         Simulation.start();
 
-        GraphicElement.setModelViewCoefficient(0.65f);
-        CenteredAndErgonomicGraphicElement.setZoomCoefficient(20f);
+        GraphicElement.setCoefficient(0.065f);
 
         Shape mainAreaGraphicElementShape = MainAreaGraphicElement.getShape(Simulation.getMainArea());
         addElementTo(pane, mainAreaGraphicElementShape);
@@ -139,9 +142,5 @@ public class ParameterWindowView {
 
     public static List<ChargingStationGraphicElement> getChargingStationGraphicElements() {
         return chargingStationGraphicElements;
-    }
-
-    public static Simulation getSimulation(){
-        return simulation;
     }
 }
