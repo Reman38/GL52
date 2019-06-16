@@ -12,8 +12,8 @@ import java.io.IOException;
 public class GuiMain extends Application {
 
     public void start(Stage primaryStage) throws IOException {
-//       StartPageView startPageView = new StartPageView();
-       StatisticsWindowView startPageView = new StatisticsWindowView();
+       StartPageView startPageView = new StartPageView();
+//       StatisticsWindowView startPageView = new StatisticsWindowView();
 
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);

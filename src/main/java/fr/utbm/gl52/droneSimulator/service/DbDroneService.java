@@ -2,6 +2,8 @@ package fr.utbm.gl52.droneSimulator.service;
 
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 
+import java.util.List;
+
 public class DbDroneService extends AbstractService<DbDrone> {
     public DbDroneService() {
         super(DbDrone.class);
@@ -11,5 +13,9 @@ public class DbDroneService extends AbstractService<DbDrone> {
         DbDrone dbDrone = new DbDrone(idSimu, idIteration, idDrone, chargingTime, batteryCapacity, weightCapacity, kilometers, x, y);
 
         save(dbDrone);
+    }
+
+    public List<DbDrone> getDronesInFirstIterationSimu(int idSimu) {
+        return getH2Dao().droneListInFirstIteration(idSimu);
     }
 }

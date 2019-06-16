@@ -1,14 +1,21 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
 import fr.utbm.gl52.droneSimulator.service.DbDroneService;
 import fr.utbm.gl52.droneSimulator.service.DbParameterService;
+import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
+
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimulationWindow;
 
 public class Simulation {
     public static final long secondsInAMinute = 60L;
@@ -34,7 +41,7 @@ public class Simulation {
     private static Float maxSimulationSpeedAcceleration = 20f;
     private static Integer parcelNumber;
     private static Integer droneNumber;
-    private static  Integer chargingStation;
+    private static Integer chargingStation;
 
     private static Float[] droneWeightCapacity = new Float[2];
     private static Float[] droneBatteryCapacity = new Float[2];
@@ -73,7 +80,7 @@ public class Simulation {
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5f;
         droneBatteryCapacity[1] = 55f;
-        simulationDurationRange[0] = 240;
+        simulationDurationRange[0] = 2;
         simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
@@ -93,7 +100,48 @@ public class Simulation {
     }
 
     private static void initIteration() {
+        drones = new ArrayList<>();
+        Drone drone;
+        List<DbDrone> dbDrones = droneService.getDronesInFirstIterationSimu(parameters.getIdSimu());
 
+        for (DbDrone dbDrone : dbDrones) {
+            drone = new Drone(dbDrone.getIdDrone());
+            drone.setWeightCapacity((float) dbDrone.getWeightCapacity());
+            drone.setBatteryFullCapacity((float) dbDrone.getBatteryCapacity());
+            drone.setBatteryCapacity(drone.getWeightCapacity());
+            try {
+                drone.setX((float) dbDrone.getX());
+                drone.setY((float) dbDrone.getY());
+                drones.add(drone);
+            } catch (OutOfMainAreaException e) {
+                e.printStackTrace();
+            }
+        }
+
+        cleanAndRestartSimulationWindow();
+
+        for (ChargingStation chargingStation : chargingStations) {
+            chargingStation.freeChargingStation();
+        }
+
+
+        parcels = new ArrayList<>();
+        popParcels();
+        System.out.println("init new iteration");
+
+        launchSimTime = Instant.now().toEpochMilli();
+        currentTime = Instant.now().toEpochMilli();
+        elapsedTime = 0L;
+        currentIteration++;
+        SimulationWindowView.setViewFullyLoaded(true);
+        globalStart();
+    }
+
+    private static void cleanAndRestartSimulationWindow() {
+
+        SimulationWindowView.cleanView();
+        Platform.runLater(SimulationWindowView::displayDronesAndAssociatedTabs);
+        Platform.runLater(SimulationWindowView::displayParcels);
     }
 
     public static void setSimulationSpeed(Float f) {
@@ -115,6 +163,7 @@ public class Simulation {
     public static void removeAllParcels() {
         parcels.clear();
     }
+
     public static void removeDrone(Drone drone) {
         drones.remove(drone);
     }
@@ -127,7 +176,7 @@ public class Simulation {
         mainArea = new MainArea(0f, 0f, mainAreaWidth, mainAreaHeight);
     }
 
-    public static void flushParameters(){
+    public static void flushParameters() {
         parameters = parameterService.save(
                 simulationDuration,
                 numberOfSimulationIteration,
@@ -137,8 +186,8 @@ public class Simulation {
         flushDroneData();
     }
 
-    public static void flushDroneData(){
-        for(Drone drone: drones){
+    public static void flushDroneData() {
+        for (Drone drone : drones) {
             droneService.save(
                     parameters.getIdSimu(),
                     currentIteration,
@@ -176,13 +225,17 @@ public class Simulation {
         globalStart();
     }
 
-    public static void globalStart(){
+    public static void globalStart() {
+        if (simulationThread.getState() != Thread.State.NEW) {
+            simulationThread = new Thread(Simulation::manageSimulationStop);
+        }
         simulationThread.start();
-        for(Drone drone: drones){
+        for (Drone drone : drones) {
             Thread droneThread = new Thread(drone);
             droneThreads.add(droneThread);
             droneThread.start();
         }
+        setPlay(true);
     }
 
     /**
@@ -192,9 +245,9 @@ public class Simulation {
         Parcel parcel;
         List<ParcelGraphicElement> parcelsGraphicToRemove = new ArrayList<>();
 
-        for(ParcelGraphicElement parcelGraphic : SimulationWindowView.getParcelGraphicElements()){
+        for (ParcelGraphicElement parcelGraphic : SimulationWindowView.getParcelGraphicElements()) {
             parcel = (Parcel) parcelGraphic.getSimulationElement();
-            if(isParcelDisappearing(parcel)){
+            if (isParcelDisappearing(parcel)) {
                 parcelsGraphicToRemove.add(parcelGraphic);
                 Parcel finalParcel = parcel;
                 Platform.runLater(() -> getParcels().remove(finalParcel));
@@ -208,16 +261,15 @@ public class Simulation {
      * Check if the parcel has reach is end of life (catch by other competitors) and it is not already loaded
      *
      * @param parcel Parcel to check
-     *
      * @return True if yes
      */
     private static boolean isParcelDisappearing(Parcel parcel) {
         return parcel.getTimeToDisappear() < MathHelper.convertMillisecondsToMinutes(elapsedTime) && !parcel.isInJourney();
     }
 
-    public static void stop(){
+    public static void stop() {
         setPlay(false);
-        for(Thread droneThread: droneThreads){
+        for (Thread droneThread : droneThreads) {
             droneThread.interrupt();
         }
         simulationThread.interrupt();
@@ -242,14 +294,14 @@ public class Simulation {
         }
     }
 
-    private static void popChargingStations(){
+    private static void popChargingStations() {
         for (Integer i = 0; i < getChargingStationNumber(); ++i) {
             chargingStations.add(ChargingStation.createRandomizedChargingStations(i));
         }
     }
 
-    public static void manageSimulationStop(){
-        while (isPlay()){
+    public static void manageSimulationStop() {
+        while (isPlay()) {
             updatePlayStatusAccordingToDuration();
             makeParcelDisappearWhenPickedByCompetitors();
             popRandomParcels();
@@ -259,25 +311,26 @@ public class Simulation {
                 Thread.currentThread().interrupt();
             }
         }
-        System.out.println("Time elapsed");
-        rebootSimulationForNextIteration();
-        stop();
+
+        if (!play) {
+            System.out.println("Time elapsed");
+            stop();
+            rebootSimulationForNextIteration();
+        }
     }
 
     private static void rebootSimulationForNextIteration() {
-        if(!isPlay()){
-            if(currentIteration < numberOfSimulationIteration){
-                initIteration();
-            } else {
-                stop();
-            }
+        if (currentIteration <= numberOfSimulationIteration) {
+            initIteration();
+        } else {
+            //todo
         }
     }
 
     private static void popRandomParcels() {
         Integer random = RandomHelper.getRandInt(0, 100);
 
-        if(random == 42){
+        if (random == 42) {
             Integer id = parcelNumber++;
 
             Parcel parcel = Parcel.createRandomized(id, elapsedTime);
@@ -287,18 +340,18 @@ public class Simulation {
         }
     }
 
-    public static void setTimeSimulationParameters(Integer numberOfSimulationIteration){
+    public static void setTimeSimulationParameters(Integer numberOfSimulationIteration) {
         setTimeSimulationParameters(Simulation.DEFAULT_DURATION, numberOfSimulationIteration);
     }
 
-    public static void setTimeSimulationParameters(Integer simulationDuration, Integer numberOfSimulationIteration){
+    public static void setTimeSimulationParameters(Integer simulationDuration, Integer numberOfSimulationIteration) {
         Simulation.simulationDuration = simulationDuration;
         Simulation.numberOfSimulationIteration = numberOfSimulationIteration;
     }
 
-    public static void setCompetitionDifficulty(String difficulty){
+    public static void setCompetitionDifficulty(String difficulty) {
         parcelTimeToDisappearRange = parcelTimeToDisappearRangeLinkedToDifficulty.get(difficulty);
-        if(parcelTimeToDisappearRange == null){
+        if (parcelTimeToDisappearRange == null) {
             throw new IllegalArgumentException(difficulty + " is not defined");
         }
     }
@@ -306,10 +359,10 @@ public class Simulation {
     /**
      * Iterate the clock according to elapsed time and simulation speed.
      */
-    private static void updatePlayStatusAccordingToDuration(){
+    private static void updatePlayStatusAccordingToDuration() {
         currentTime = Instant.now().toEpochMilli();
         long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
-        elapsedTime = (long)(StrictMath.abs(currentTime - launchSimTime)*simulationSpeed);
+        elapsedTime = (long) (StrictMath.abs(currentTime - launchSimTime) * simulationSpeed);
         //System.out.println("time elapsed " + elapsedTime/60000);
         play = elapsedTime <= simulationDurationInMilli;
     }
@@ -322,72 +375,95 @@ public class Simulation {
     public static Boolean isPlay() {
         return play;
     }
+
     public static Float getSimulationSpeed() {
         return simulationSpeed;
     }
+
     public static Float getMinSimulationSpeedAcceleration() {
         return minSimulationSpeedAcceleration;
     }
+
     public static Float getMaxSimulationSpeedAcceleration() {
         return maxSimulationSpeedAcceleration;
     }
+
     public static Integer getTime() {
         return time;
     }
+
     public static ArrayList<Drone> getDrones() {
         return drones;
     }
+
     public static Integer getDroneNumber() {
         return droneNumber;
     }
+
     public static ArrayList<Parcel> getParcels() {
         return parcels;
     }
+
     public static Integer getParcelNumber() {
         return parcelNumber;
     }
+
     public static Area getMainArea() {
         return mainArea;
     }
+
     public static ArrayList<Area> getAreas() {
         return areas;
     }
+
     public static void setPlay(Boolean b) {
         play = b;
     }
+
     public static void setTime(Integer i) {
         time = i;
     }
+
     public static void setDroneNumber(Integer i) {
         droneNumber = i;
     }
+
     public static void setParcelNumber(Integer i) {
         parcelNumber = i;
     }
+
     public static void setDrones(ArrayList<Drone> drones) {
         drones = drones;
     }
+
     public static void setParcels(ArrayList<Parcel> parcels) {
         parcels = parcels;
     }
+
     public static List<ChargingStation> getChargingStations() {
         return chargingStations;
     }
+
     public static Integer getChargingStationNumber() {
         return chargingStation;
     }
+
     public static void setChargingStationNumber(Integer chargingStation) {
         Simulation.chargingStation = chargingStation;
     }
+
     public static Float[] getDroneWeightCapacity() {
         return droneWeightCapacity;
     }
+
     public static Float[] getDroneBatteryCapacity() {
         return droneBatteryCapacity;
     }
+
     public static Integer[] getSimulationDurationRange() {
         return simulationDurationRange;
     }
+
     public static Integer[] getNumberOfSimulationIterationRange() {
         return numberOfSimulationIterationRange;
     }
@@ -412,7 +488,7 @@ public class Simulation {
         return parcelTimeToDisappearRange;
     }
 
-    public static Map<String, Integer[]> getCompetitionDifficultyLevels(){
+    public static Map<String, Integer[]> getCompetitionDifficultyLevels() {
         return parcelTimeToDisappearRangeLinkedToDifficulty;
     }
 }

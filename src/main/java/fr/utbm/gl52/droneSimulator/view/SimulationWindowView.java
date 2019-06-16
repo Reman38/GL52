@@ -2,6 +2,7 @@ package fr.utbm.gl52.droneSimulator.view;
 
 import fr.utbm.gl52.droneSimulator.model.*;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.*;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +21,8 @@ public class SimulationWindowView {
     private static Parent root;
 
     private static List<ParcelGraphicElement> parcelGraphicElements = new ArrayList<>();
+
+    private static List<DroneGraphicElement> droneGraphicElements = new ArrayList<>();
 
     private static Map<Drone, TextArea> consoleMap = new HashMap<>();
 
@@ -66,17 +69,15 @@ public class SimulationWindowView {
         displayAreas(pane);
         displayParcels();
         displayChargingStation(pane);
-        displayDronesAndAssociatedTabs(pane);
+        displayDronesAndAssociatedTabs();
     }
 
     /**
      * Add drones on simulation pane and add one tab per drone
-     *
-     * @param pane The simulation pane
      */
-    private static void displayDronesAndAssociatedTabs(Pane pane) {
+    public static void displayDronesAndAssociatedTabs() {
         for (Drone drone : Simulation.getDrones()) {
-            displayDrone(pane, drone);
+            displayDrone(simulationPane, drone);
             displayDroneLogTab(drone);
         }
     }
@@ -89,6 +90,7 @@ public class SimulationWindowView {
      */
     private static void displayDrone(Pane pane, Drone drone) {
         DroneGraphicElement droneGraphicElement = new DroneGraphicElement(drone);
+        droneGraphicElements.add(droneGraphicElement);
         Shape shape = droneGraphicElement.getShape();
         Text id = droneGraphicElement.getGraphicalId();
         pane.getChildren().add(shape);
@@ -121,7 +123,7 @@ public class SimulationWindowView {
     /**
      * Add parcels to the simulation pane
      */
-    private static void displayParcels() {
+    public static void displayParcels() {
         for (Parcel parcel : Simulation.getParcels()) {
             addParcelToView(parcel);
         }
@@ -213,6 +215,14 @@ public class SimulationWindowView {
     }
 
     /**
+     * remove drone tabs
+     */
+    private static void removeEventTabs(){
+        TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");
+        tabPaneLog.getTabs().removeAll(tabPaneLog.getTabs());
+    }
+
+    /**
      * Remove the parcel from the simulation if it exists
      *
      * @param parcelToRemove Parcel graphic element to remove
@@ -271,6 +281,36 @@ public class SimulationWindowView {
     }
 
     public static Boolean isViewFullyLoaded() {
-        return isViewFullyLoaded;
+        try{
+                TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");
+            return isViewFullyLoaded && tabPaneLog.getTabs().size() == droneGraphicElements.size();
+        } catch (NullPointerException e){
+            return false;
+        }
+    }
+
+    public static void cleanView() {
+
+        isViewFullyLoaded = false;
+
+        for(DroneGraphicElement droneGraphic: droneGraphicElements){
+            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getShape()));
+            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getGraphicalId()));
+        }
+
+        droneGraphicElements = new ArrayList<>();
+
+        for(ParcelGraphicElement parcelGraphic: parcelGraphicElements){
+            Platform.runLater(() ->simulationPane.getChildren().remove(parcelGraphic.getShape()));
+            Platform.runLater(() ->simulationPane.getChildren().remove(parcelGraphic.getGraphicalId()));
+        }
+
+        parcelGraphicElements = new ArrayList<>();
+
+        Platform.runLater(SimulationWindowView::removeEventTabs);
+    }
+
+    public static void setViewFullyLoaded(boolean b) {
+        isViewFullyLoaded = b;
     }
 }

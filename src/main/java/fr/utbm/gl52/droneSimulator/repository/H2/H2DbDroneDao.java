@@ -4,6 +4,8 @@ import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import org.hibernate.Session;
 
+import java.util.List;
+
 public class H2DbDroneDao extends AbstractH2Dao<DbDrone> {
     public H2DbDroneDao() {
         super(DbDrone.class);
@@ -19,6 +21,7 @@ public class H2DbDroneDao extends AbstractH2Dao<DbDrone> {
 
         session.merge(client);
         session.getTransaction().commit();
+        session.close();
     }
 
     //TODO si besoin
