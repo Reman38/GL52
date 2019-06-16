@@ -14,8 +14,6 @@ public class DbParameterService extends AbstractService<DbParameter> {
         return newDbParameter;
     }
 
-
-
 //    public void modify(long id, String firstName) {
 //        modifyInDatabase(id, firstName);
 //    }

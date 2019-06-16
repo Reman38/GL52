@@ -68,4 +68,8 @@ public class AbstractService<E extends MyEntity> implements ServiceInterface{
     public List<E> getAllFromSimulationId(int simulationId) {
         return getH2Dao().list(simulationId);
     }
+
+    public List<E> getAllSimulation() {
+        return getH2Dao().list();
+    }
 }
