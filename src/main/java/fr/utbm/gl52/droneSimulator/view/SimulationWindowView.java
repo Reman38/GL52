@@ -210,7 +210,9 @@ public class SimulationWindowView {
         if(drone == null){
             throw new IllegalArgumentException("This drone does not exist");
         } else {
-            text.appendText(event + "\n");
+            synchronized (Drone.class) {
+                text.appendText(event + "\n");
+            }
         }
     }
 
@@ -283,8 +285,8 @@ public class SimulationWindowView {
     public static Boolean isViewFullyLoaded() {
         try{
                 TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");
-            return isViewFullyLoaded && tabPaneLog.getTabs().size() == droneGraphicElements.size();
-        } catch (NullPointerException e){
+            return isViewFullyLoaded && tabPaneLog.getTabs().size() == droneGraphicElements.size() && tabPaneLog.getTabs().get(0).getText() != null;
+        } catch (NullPointerException | IndexOutOfBoundsException e){
             return false;
         }
     }

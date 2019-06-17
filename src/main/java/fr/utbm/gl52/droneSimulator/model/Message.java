@@ -1,5 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
+import javafx.application.Platform;
+
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.logDroneEventInTab;
 
 public class Message {
@@ -53,6 +55,7 @@ public class Message {
      */
     private static void sendMessageToTab(Drone drone, String message){
         String msg = formatSimulationDuration() + " (battery: "+ String.format("%.2f",drone.getBatteryCapacity()) + " min remaining): " + message;
+//        Platform.runLater(() -> logDroneEventInTab(drone, msg));
         logDroneEventInTab(drone, msg);
     }
 

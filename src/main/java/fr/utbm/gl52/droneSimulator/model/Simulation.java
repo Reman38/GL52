@@ -22,6 +22,8 @@ public class Simulation {
     public static final long millisecondsInASecond = 1000L;
     private static final Integer DEFAULT_DURATION = 240;
 
+    private static Boolean isAppClosed = false;
+
     private static ArrayList<Drone> drones = new ArrayList<>();
     private static ArrayList<Thread> droneThreads = new ArrayList<>();
     private static ArrayList<Parcel> parcels = new ArrayList<>();
@@ -47,7 +49,7 @@ public class Simulation {
     private static Float[] droneBatteryCapacity = new Float[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
-    private static Integer simulationDuration = 240;
+    private static Integer simulationDuration = 12;
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
     private static Integer currentIteration = 1;
 
@@ -72,7 +74,7 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(1f);
+        setSimulationSpeed(20f);
         droneNumber = 1;
         parcelNumber = 25;
         chargingStation = 5;
@@ -80,7 +82,7 @@ public class Simulation {
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5f;
         droneBatteryCapacity[1] = 55f;
-        simulationDurationRange[0] = 2;
+        simulationDurationRange[0] = 12;
         simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
@@ -108,7 +110,7 @@ public class Simulation {
             drone = new Drone(dbDrone.getIdDrone());
             drone.setWeightCapacity((float) dbDrone.getWeightCapacity());
             drone.setBatteryFullCapacity((float) dbDrone.getBatteryCapacity());
-            drone.setBatteryCapacity(drone.getWeightCapacity());
+            drone.setBatteryCapacity(drone.getBatteryCapacity());
             try {
                 drone.setX((float) dbDrone.getX());
                 drone.setY((float) dbDrone.getY());
@@ -127,13 +129,12 @@ public class Simulation {
 
         parcels = new ArrayList<>();
         popParcels();
-        System.out.println("init new iteration");
 
         launchSimTime = Instant.now().toEpochMilli();
         currentTime = Instant.now().toEpochMilli();
         elapsedTime = 0L;
         currentIteration++;
-        SimulationWindowView.setViewFullyLoaded(true);
+        System.out.println("init iteration " + currentIteration);
         globalStart();
     }
 
@@ -273,6 +274,7 @@ public class Simulation {
             droneThread.interrupt();
         }
         simulationThread.interrupt();
+        Thread.currentThread().interrupt();
     }
 
     private static void popParcels() {
@@ -315,7 +317,9 @@ public class Simulation {
         if (!play) {
             System.out.println("Time elapsed");
             stop();
-            rebootSimulationForNextIteration();
+            if(!isAppClosed){
+                rebootSimulationForNextIteration();
+            }
         }
     }
 
@@ -490,5 +494,9 @@ public class Simulation {
 
     public static Map<String, Integer[]> getCompetitionDifficultyLevels() {
         return parcelTimeToDisappearRangeLinkedToDifficulty;
+    }
+
+    public static void setAppClosed(Boolean isAppClosed) {
+        Simulation.isAppClosed = isAppClosed;
     }
 }

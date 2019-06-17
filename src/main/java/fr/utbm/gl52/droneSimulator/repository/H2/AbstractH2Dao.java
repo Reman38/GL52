@@ -74,12 +74,11 @@ public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
     }
 
     public List<DbDrone> droneListInFirstIteration(int idSimu){
-        Session session = HibernateHelper.getSessionFactory().getCurrentSession();
+        Session session = HibernateHelper.getSessionFactory().openSession();
 
-        session.beginTransaction();
         List<DbDrone> entities = session.createQuery("FROM " + clazz.getSimpleName() + " WHERE idSimu = " + idSimu + " AND IDITERATION = 1").list();
 
-        //session.close();
+        session.close();
         return entities;
     }
 
