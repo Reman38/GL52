@@ -2,6 +2,7 @@ package fr.utbm.gl52.droneSimulator.service;
 
 import fr.utbm.gl52.droneSimulator.repository.AbstractDao;
 import fr.utbm.gl52.droneSimulator.repository.H2.AbstractH2Dao;
+import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import fr.utbm.gl52.droneSimulator.service.entity.MyEntity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +12,7 @@ import java.util.List;
  * Use different Dao to persist entities
  * @param <E> MyEntity
  */
-public class AbstractService<E extends MyEntity> implements ServiceInterface{
+public abstract class AbstractService<E extends MyEntity> implements ServiceInterface{
     protected AbstractDao<E> mySqlDao;
     protected AbstractDao<E> redisDao;
     protected Class<E> clazz;

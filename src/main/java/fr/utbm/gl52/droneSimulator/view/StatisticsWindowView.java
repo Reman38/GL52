@@ -1,9 +1,12 @@
 package fr.utbm.gl52.droneSimulator.view;
 
+import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.DbDroneService;
 import fr.utbm.gl52.droneSimulator.service.DbParameterService;
+import fr.utbm.gl52.droneSimulator.service.DbParcelService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
+import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +23,8 @@ public class StatisticsWindowView {
     private static Parent staticRoot;
     public static LineChart<Number, Number> lineChart;
     public static LineChart<Number, Number> lineChart2;
+    public static LineChart<Number, Number> lineChart3;
+    public static LineChart<Number, Number> lineChart4;
 
     public StatisticsWindowView() throws IOException {
         var dbParameterService = new DbParameterService();
@@ -113,36 +118,90 @@ public class StatisticsWindowView {
         lineChart2.getXAxis().setLabel("Iteration");
         lineChart2.getYAxis().setLabel("Charging Number");
 
+        lineChart3 = new LineChart<>(new NumberAxis(), new NumberAxis());
+        lineChart3.setTitle("Average Delivery Times");
+        lineChart3.getXAxis().setLabel("Iteration");
+        lineChart3.getYAxis().setLabel("Minute");
+
+        lineChart4 = new LineChart<>(new NumberAxis(), new NumberAxis());
+        lineChart4.setTitle("Average Delivery Constraints Times");
+        lineChart4.getXAxis().setLabel("Iteration");
+        lineChart4.getYAxis().setLabel("Minute");
+
+        lineChart.setPrefWidth((1000-50)/2);
+        lineChart.setPrefHeight((700-50)/2);
+        lineChart2.setPrefWidth((1000)/2);
+        lineChart2.setPrefHeight((700-50)/2);
+        lineChart3.setPrefHeight((1000)/2);
+        lineChart3.setPrefHeight((700-50)/2);
+        lineChart4.setPrefHeight((1000)/2);
+        lineChart4.setPrefHeight((700-50)/2);
+
         HBox hBox;
         hBox = (HBox) staticRoot.lookup("#hbox1");
         hBox.getChildren().addAll(lineChart, lineChart2);
+
+        hBox = (HBox) staticRoot.lookup("#hbox2");
+        hBox.getChildren().addAll(lineChart3, lineChart4);
     }
 
     public static void resizeCharts(){
         Pane statisticsPane = (Pane) staticRoot.lookup("#statisticsPane");
 
-        lineChart.setPrefWidth(statisticsPane.getWidth()/2);
-        lineChart.setPrefHeight(statisticsPane.getHeight());
-        lineChart2.setPrefWidth(statisticsPane.getWidth()/2);
-        lineChart2.setPrefHeight(statisticsPane.getHeight());
+        lineChart.setPrefWidth((statisticsPane.getWidth()-50)/2);
+        lineChart.setPrefHeight((statisticsPane.getHeight()-50)/2);
+        lineChart2.setPrefWidth((statisticsPane.getWidth()-50)/2);
+        lineChart2.setPrefHeight((statisticsPane.getHeight()-50)/2);
+        lineChart3.setPrefHeight((statisticsPane.getWidth()-50)/2);
+        lineChart3.setPrefHeight((statisticsPane.getHeight()-50)/2);
+        lineChart4.setPrefHeight((statisticsPane.getWidth()-50)/2);
+        lineChart4.setPrefHeight((statisticsPane.getHeight()-50)/2);
     }
 
     public static void updateCharts(){
         var dbDroneService = new DbDroneService();
+        var dbParcelService = new DbParcelService();
+
         var simu1 = getComboBox(1);
         var simu2 = getComboBox(2);
         var dbDronesSimu1 = dbDroneService.getAllFromSimulationId(simu1);
         var dbDronesSimu2 = dbDroneService.getAllFromSimulationId(simu2);
+        var dbDeliveryDataSimu1 = dbParcelService.getAllFromSimulationId(simu1, HibernateHelper.Event.DELIVERY.toString());
+        var dbDeliveryDataSimu2 = dbParcelService.getAllFromSimulationId(simu2, HibernateHelper.Event.DELIVERY.toString());
+        var dbDeliveryConstraintsDataSimu1 = dbParcelService.getAllFromSimulationId(simu1, HibernateHelper.Event.DELIVERYCONSTRAINTS.toString());
+        var dbDeliveryConstraintsDataSimu2 = dbParcelService.getAllFromSimulationId(simu2, HibernateHelper.Event.DELIVERYCONSTRAINTS.toString());
 
         resizeCharts();
 
         lineChart.setData(getDummyChartData(simu1, simu2, averageDistancesDronesTravelled(dbDronesSimu1), averageDistancesDronesTravelled(dbDronesSimu2)));
         lineChart2.setData(getDummyChartData(simu1, simu2, averageChargingNumberDrones(dbDronesSimu1), averageChargingNumberDrones(dbDronesSimu2)));
+        lineChart3.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryDataSimu1), averageDeliveryTime(dbDeliveryDataSimu2)));
+        lineChart4.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryConstraintsDataSimu1), averageDeliveryTime(dbDeliveryConstraintsDataSimu2)));
 
         HBox hBox;
         hBox = (HBox) staticRoot.lookup("#hbox1");
         hBox.getChildren().removeAll(lineChart, lineChart2);
         hBox.getChildren().addAll(lineChart, lineChart2);
+
+        hBox = (HBox) staticRoot.lookup("#hbox2");
+        hBox.getChildren().removeAll(lineChart3, lineChart4);
+        hBox.getChildren().addAll(lineChart3, lineChart4);
     }
+
+    private static Hashtable<Integer, Double> averageDeliveryTime(List<DbParcel> dbDatas) {
+        Double oldValue;
+        Hashtable<Integer, Double> average = new Hashtable<>();
+
+        for (DbParcel dbData : dbDatas) {
+            if (average.containsKey(dbData.getIdIteration())){
+                oldValue = average.get(dbData.getIdIteration());
+                average.put(dbData.getIdIteration(), oldValue + dbData.getDelta());
+            } else {
+                average.put(dbData.getIdIteration(), (double) dbData.getDelta());
+            }
+        }
+        return average;
+    }
+
     public static javafx.scene.Parent getParent(){ return staticRoot; }
 }

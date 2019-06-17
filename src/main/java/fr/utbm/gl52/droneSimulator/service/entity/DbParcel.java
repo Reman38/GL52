@@ -6,24 +6,35 @@ import javax.persistence.*;
 public class DbParcel extends MyEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column
     private int idSimu;
 
     @Column
     private int idIteration;
 
     @Column
-    private int event;
+    private String event;
 
     @Column
-    private int delta;
+    private long delta;
 
-    public DbParcel() {}
+    public DbParcel(){}
 
-    public DbParcel(int idSimu, int idIteration, int event, int delta) {
+    public DbParcel(int idSimu, int idIteration, String event, long delta) {
         this.idSimu = idSimu;
         this.idIteration = idIteration;
         this.event = event;
         this.delta = delta;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getIdSimu() {
@@ -42,19 +53,19 @@ public class DbParcel extends MyEntity{
         this.idIteration = idIteration;
     }
 
-    public int getEvent() {
+    public String getEvent() {
         return event;
     }
 
-    public void setEvent(int event) {
+    public void setEvent(String event) {
         this.event = event;
     }
 
-    public int getDelta() {
+    public long getDelta() {
         return delta;
     }
 
-    public void setDelta(int delta) {
+    public void setDelta(long delta) {
         this.delta = delta;
     }
 }

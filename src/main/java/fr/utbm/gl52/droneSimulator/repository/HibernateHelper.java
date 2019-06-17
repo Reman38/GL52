@@ -6,8 +6,21 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateHelper {
     private static final SessionFactory sessionFactory = buildSessionFactory();
+    public enum Event {
+        DELIVERY("delivery"), DELIVERYCONSTRAINTS("deliveryConstraints");
 
-    private static SessionFactory buildSessionFactory() {
+        private String evt;
+
+        Event(String _evt) {
+            evt = _evt;
+        }
+
+        public String toString(){
+            return evt;
+        }
+    }
+
+        private static SessionFactory buildSessionFactory() {
 //        try {
         Configuration configuration = new Configuration();
         configuration.configure("hibernate.cfg.xml");
