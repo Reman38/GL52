@@ -21,13 +21,13 @@
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Drone:" />
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ee0000" height="10.0" stroke="WHITE" strokeType="INSIDE" width="10.0" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Parcel">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Parcel:">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>
                   </Text>
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="10.0" layoutX="404.0" layoutY="18.0" stroke="#119001" strokeType="INSIDE" strokeWidth="1.5" width="10.0" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Charging Station">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Charging Station:">
                      <HBox.margin>
                         <Insets left="15.0" />
                      </HBox.margin>

@@ -8,22 +8,22 @@ public class Message {
 
     static void chooseClosestParcel(Drone drone, Integer parcelId)
     {
-        String message = "Decides to load parcel " + parcelId + " because it's the nearest that fit with it weight capacity";
+        String message = "Decides to load parcel " + parcelId + " because it's the nearest that fit with it weight capacity.";
         sendMessageToTab(drone, message);
     }
 
     static void parcelDisappear(Drone drone, Integer parcelId){
-        String message = "Remove parcel " + parcelId + " from target because it becomes unavailable";
+        String message = "Removes parcel " + parcelId + " from target because it becomes unavailable.";
         sendMessageToTab(drone, message);
     }
 
     static void loadParcel(Drone drone, Integer parcelId){
-        String message = "Load parcel " + parcelId;
+        String message = "Loads parcel " + parcelId + ".";
         sendMessageToTab(drone,message);
     }
 
     static void deliverParcel(Drone drone, Integer parcelId){
-        String message = "deliver parcel " + parcelId;
+        String message = "Delivers parcel " + parcelId + ".";
         sendMessageToTab(drone, message);
     }
 
@@ -33,17 +33,17 @@ public class Message {
     }
 
     static void startToCharge(Drone drone) {
-        String message = "starting to charge battery";
+        String message = "Starting to charge battery.";
         sendMessageToTab(drone, message);
     }
 
     static void endOfCharge(Drone drone) {
-        String message = "End of charge; resume delivery";
+        String message = "End of charge; resume delivery.";
         sendMessageToTab(drone, message);
     }
 
     static void outOfBattery(Drone drone) {
-        String message = "Out of battery";
+        String message = "Out of battery.";
         sendMessageToTab(drone, message);
     }
 
