@@ -72,7 +72,7 @@ public class Simulation {
     public Simulation() {
         time = 0;
         setSimulationSpeed(20f);
-        droneNumber = 1;
+        droneNumber = 3;
         parcelNumber = 25;
         chargingStation = 5;
         droneWeightCapacity[0] = 0.1f;
@@ -357,7 +357,7 @@ public class Simulation {
     }
 
     private static void rebootSimulationForNextIteration() {
-        if (currentIteration <= numberOfSimulationIteration) {
+        if (currentIteration < numberOfSimulationIteration) {
             initIteration();
         } else {
             //todo
