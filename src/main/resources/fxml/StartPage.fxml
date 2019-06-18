@@ -4,25 +4,27 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.utbm.gl52.droneSimulator.controller.StartPageController">
+<AnchorPane minHeight="400.0" minWidth="400.0" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.utbm.gl52.droneSimulator.controller.StartPageController">
    <children>
-      <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox alignment="TOP_CENTER" layoutX="150.0" layoutY="100.0" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Parameters of your simulation:" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
+            <VBox alignment="TOP_CENTER" spacing="30.0">
                <children>
-                  <Button minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#launchSimulationWithDefaultParameters" prefWidth="100.0" text="Default" textAlignment="CENTER">
+                  <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#launchSimulationWithDefaultParameters" prefWidth="100.0" text="Default" textAlignment="CENTER">
                      <tooltip>
                         <Tooltip text="Default parameters" />
-                     </tooltip></Button>
-                  <Button fx:id="randomButton" layoutX="22.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#launchSimulationWithRandomParameters" prefWidth="100.0" text="Random" textAlignment="CENTER">
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="randomButton" layoutX="22.0" layoutY="10.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#launchSimulationWithRandomParameters" prefWidth="100.0" text="Random" textAlignment="CENTER">
                      <tooltip>
                         <Tooltip text="Randomly chosen parameters" />
-                     </tooltip></Button>
-                  <Button fx:id="customButton" layoutX="22.0" layoutY="76.0" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#launchParametersWindows" prefWidth="100.0" text="Custom" textAlignment="CENTER">
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="customButton" layoutX="22.0" layoutY="76.0" minWidth="-Infinity" mnemonicParsing="false" onAction="#launchParametersWindow" prefWidth="100.0" text="Custom" textAlignment="CENTER">
                      <tooltip>
                         <Tooltip text="Allow you to choose all the parameters" />
                      </tooltip>
@@ -31,8 +33,19 @@
                <padding>
                   <Insets top="10.0" />
                </padding>
-            </VBox>
-            <Text layoutX="95.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Parameters of your simulation:" textAlignment="CENTER" />
-         </children></Pane>
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin>
+             </VBox>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Statistics:">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin></Text>
+            <Button mnemonicParsing="false" onAction="#launchStatisticWindow" prefWidth="100.0" text="View" />
+         </children>
+         <padding>
+            <Insets top="50.0" />
+         </padding>
+      </VBox>
    </children>
 </AnchorPane>

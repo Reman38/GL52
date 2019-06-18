@@ -29,7 +29,7 @@ public class GraphicHelper {
      * @param event Trigger event
      * @param parent Parent window
      */
-    public static void createWindow(MouseEvent event, Parent parent) {
+    public static void createWindow(Event event, Parent parent) {
         Scene scene = new Scene(parent);
         Stage stage = new Stage();
         stage.setScene(scene);
