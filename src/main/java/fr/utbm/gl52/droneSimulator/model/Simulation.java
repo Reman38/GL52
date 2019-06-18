@@ -6,13 +6,17 @@ import fr.utbm.gl52.droneSimulator.service.DbParameterService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.StartPageView;
+import fr.utbm.gl52.droneSimulator.view.StatisticsWindowView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.isViewFullyLoaded;
+import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimpleWindow;
 
 public class Simulation {
     public static final long secondsInAMinute = 60L;
@@ -360,7 +364,14 @@ public class Simulation {
         if (currentIteration < numberOfSimulationIteration) {
             initIteration();
         } else {
-            //todo
+            try {
+                new StatisticsWindowView();
+                Platform.runLater(() -> createSimpleWindow(StatisticsWindowView.getParent()));
+                SimulationWindowView.closeStage();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

@@ -330,4 +330,8 @@ public class SimulationWindowView {
     public static void setViewFullyLoaded(boolean b) {
         isViewFullyLoaded = b;
     }
+
+    public static void closeStage(){
+        Platform.runLater(() -> root.getScene().getWindow().hide());
+    }
 }
