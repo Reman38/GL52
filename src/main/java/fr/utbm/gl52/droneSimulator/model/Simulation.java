@@ -107,6 +107,13 @@ public class Simulation {
      * Init a new iteration of the simulation
      */
     private static synchronized void initIteration() {
+
+        saveDroneStats();
+
+        currentIteration++;
+
+        flushDroneData();
+
         reloadDronesFromDatabase();
 
         reloadRandomParcels();
@@ -117,9 +124,17 @@ public class Simulation {
 
         resetSimulationClock();
 
-        currentIteration++;
 
         globalStart();
+    }
+
+    private static void saveDroneStats() {
+        for(Drone drone: drones){
+            DbDrone dbDrone = droneService.getDroneBy(parameters.getIdSimu(), currentIteration, drone.getId());
+            dbDrone.setChargingTime(drone.getChargingTime());
+            dbDrone.setKilometers(drone.getDistance() / 1000);
+            droneService.merge(dbDrone);
+        }
     }
 
     /**
@@ -376,6 +391,7 @@ public class Simulation {
         if (currentIteration < numberOfSimulationIteration) {
             initIteration();
         } else {
+            saveDroneStats();
             try {
                 new StatisticsWindowView();
                 Platform.runLater(() -> createSimpleWindow(StatisticsWindowView.getParent()));

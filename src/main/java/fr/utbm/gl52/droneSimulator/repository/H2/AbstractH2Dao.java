@@ -5,6 +5,8 @@ import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import java.util.List;
 
 /**
@@ -91,6 +93,19 @@ public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
 
         session.close();
         return entities;
+    }
+
+    public DbDrone getDroneBy(Integer idSimu, Integer currentIteration, Integer droneId){
+        Session session = HibernateHelper.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from DbDrone where idDrone = :idDrone and idIteration = :idIteration and idSimu = :idSimu");
+        query.setParameter("idDrone", droneId);
+        query.setParameter("idIteration", currentIteration);
+        query.setParameter("idSimu", idSimu);
+        List<DbDrone> dbdrones = query.list();
+
+        session.close();
+        return dbdrones.get(0);
     }
 
 }

@@ -15,7 +15,15 @@ public class DbDroneService extends AbstractService<DbDrone> {
         save(dbDrone);
     }
 
+    public void merge(DbDrone dbDrone){
+       getH2Dao().merge(dbDrone);
+    }
+
     public List<DbDrone> getDronesInFirstIterationSimu(int idSimu) {
         return getH2Dao().droneListInFirstIteration(idSimu);
+    }
+
+    public DbDrone getDroneBy(Integer idSimu, Integer currentIteration, Integer droneId){
+        return getH2Dao().getDroneBy(idSimu, currentIteration, droneId);
     }
 }

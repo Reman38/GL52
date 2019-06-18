@@ -2,6 +2,7 @@ package fr.utbm.gl52.droneSimulator.service;
 
 import fr.utbm.gl52.droneSimulator.repository.AbstractDao;
 import fr.utbm.gl52.droneSimulator.repository.H2.AbstractH2Dao;
+import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import fr.utbm.gl52.droneSimulator.service.entity.MyEntity;
 
@@ -64,6 +65,10 @@ public abstract class AbstractService<E extends MyEntity> implements ServiceInte
 
     public void saveInDatabase(E entity) {
         getH2Dao().save(entity);
+    }
+
+    public void merge(E entity){
+        getH2Dao().merge(entity);
     }
 
     public List<E> getAllFromSimulationId(int simulationId) {

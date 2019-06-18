@@ -38,6 +38,9 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private Memory memory;
     private boolean isLanded = false;
 
+    private Float distance = 0f;
+    private Integer chargingTime = 0;
+
     /**
      * Run the drone simulation
      */
@@ -104,6 +107,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 if (targetChargingStation.isBusy() && !targetChargingStation.isCurrentDroneReloading(this)) {
                     land();
                 } else {
+                    chargingTime++;
                     connectToChargingStation();
                     if (isBatteryFull()) {
                         leaveChargingStation();
@@ -500,8 +504,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 Float newX = getX() + (getSpeed() * deltaTSec * (float) Math.cos(rotation));
                 Float newY = getY() + (getSpeed() * deltaTSec * (float) Math.sin(-rotation));
 
-                /*Float norm = computeVectorNorm(getX(), newX, getY(), newY);
-                consumeBattery(norm);*/
+                Float norm = computeVectorNorm(getX(), newX, getY(), newY);
+
+                distance += norm;
+
                 consumeBatteryDuring(deltaT);
                 //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
@@ -905,6 +911,14 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
     public void setBatteryCapacity(Float batteryCapacity) {
         this.batteryCapacity = batteryCapacity;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public Integer getChargingTime() {
+        return chargingTime;
     }
 
     @Override
