@@ -67,7 +67,7 @@ public class StartPageController extends ControllerHelper {
     @FXML
     public void launchStatisticWindow(ActionEvent event){
         try {
-            StatisticsWindowView statisticsWindowView = new StatisticsWindowView();
+            new StatisticsWindowView();
             createWindow(event, StatisticsWindowView.getParent());
         } catch (IOException e) {
             e.printStackTrace();
