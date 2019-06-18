@@ -17,7 +17,8 @@ public class StartPageController extends ControllerHelper {
 
     /**
      * Launch the default simulation
-     * @param event
+     *
+     * @param event The trigger event
      */
     @FXML
     public void launchSimulationWithDefaultParameters(ActionEvent event){
