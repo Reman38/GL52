@@ -53,6 +53,21 @@ public class GraphicHelper {
     }
 
     /**
+     * Create a window
+     *
+     * @param event Trigger event
+     * @param parent Parent window
+     */
+    public static void createSimpleWindow(Event event, Parent parent) {
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Drone Simulator");
+        stage.show();
+        ((Node)(event.getSource())).getScene().getWindow().hide();
+    }
+
+    /**
      * Create a simulation window
      *
      * @param event Trigger event

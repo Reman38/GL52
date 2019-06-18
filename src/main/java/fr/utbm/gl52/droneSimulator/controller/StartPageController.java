@@ -69,7 +69,7 @@ public class StartPageController extends ControllerHelper {
     public void launchStatisticWindow(ActionEvent event){
         try {
             new StatisticsWindowView();
-            createWindow(event, StatisticsWindowView.getParent());
+            createSimpleWindow(event, StatisticsWindowView.getParent());
         } catch (IOException e) {
             e.printStackTrace();
         }
