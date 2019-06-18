@@ -75,6 +75,10 @@ public abstract class AbstractService<E extends MyEntity> implements ServiceInte
         return getH2Dao().list(simulationId);
     }
 
+    public E getSimulationParameter(int simulationId) {
+        return getH2Dao().get(simulationId);
+    }
+
     public List<E> getAllSimulation() {
         return getH2Dao().list();
     }

@@ -53,32 +53,34 @@ public class StatisticsWindowView {
 
     public static Hashtable<Integer, Double> averageDistancesDronesTravelled(List<DbDrone> dbDrones) {
         Double oldValue;
-        Hashtable<Integer, Double> average = new Hashtable<>();
+        Hashtable<Integer, Double> total = new Hashtable<>();
 
         for (DbDrone dbDrone : dbDrones) {
-            if (average.containsKey(dbDrone.getIdIteration())){
-                oldValue = average.get(dbDrone.getIdIteration());
-                average.put(dbDrone.getIdIteration(), oldValue + dbDrone.getKilometers());
+            if (total.containsKey(dbDrone.getIdIteration())){
+                oldValue = total.get(dbDrone.getIdIteration());
+                total.put(dbDrone.getIdIteration(), oldValue + dbDrone.getKilometers());
             } else {
-                average.put(dbDrone.getIdIteration(), dbDrone.getKilometers());
+                total.put(dbDrone.getIdIteration(), dbDrone.getKilometers());
             }
         }
-        return average;
+
+        return getAverage(total, dbDrones.size());
     }
 
     public static Hashtable<Integer, Double> averageChargingNumberDrones(List<DbDrone> dbDrones) {
         Double oldValue;
-        Hashtable<Integer, Double> average = new Hashtable<>();
+        Hashtable<Integer, Double> total = new Hashtable<>();
 
         for (DbDrone dbDrone : dbDrones) {
-            if (average.containsKey(dbDrone.getIdIteration())){
-                oldValue = average.get(dbDrone.getIdIteration());
-                average.put(dbDrone.getIdIteration(), oldValue + dbDrone.getChargingTime());
+            if (total.containsKey(dbDrone.getIdIteration())){
+                oldValue = total.get(dbDrone.getIdIteration());
+                total.put(dbDrone.getIdIteration(), oldValue + dbDrone.getChargingTime());
             } else {
-                average.put(dbDrone.getIdIteration(), dbDrone.getChargingTime());
+                total.put(dbDrone.getIdIteration(), dbDrone.getChargingTime());
             }
         }
-        return average;
+
+        return getAverage(total, dbDrones.size());
     }
 
     public static ObservableList<XYChart.Series<Number, Number>> getDummyChartData(Integer simu1, Integer simu2, Hashtable<Integer, Double> dataSimu1, Hashtable<Integer, Double> dataSimu2) {
@@ -90,10 +92,14 @@ public class StatisticsWindowView {
         simulation1.setName("Simulation " + simu1);
         simulation2.setName("Simulation " + simu2);
 
-        for (Integer iteration = 1; iteration <= 3; iteration++) {
+        var dbParameterService = new DbParameterService();
+        var parameterSimu1 = dbParameterService.getSimulationParameter(simu1);
+        var parameterSimu2 = dbParameterService.getSimulationParameter(simu2);
+
+        for (Integer iteration = 1; iteration <= parameterSimu1.getNbIteration(); iteration++) {
             simulation1.getData().add(new XYChart.Data<>(iteration, dataSimu1.get(iteration)));
         }
-        for (Integer iteration = 1; iteration <= 3; iteration++) {
+        for (Integer iteration = 1; iteration <= parameterSimu2.getNbIteration(); iteration++) {
             simulation2.getData().add(new XYChart.Data<>(iteration, dataSimu2.get(iteration)));
         }
 
@@ -190,16 +196,29 @@ public class StatisticsWindowView {
 
     private static Hashtable<Integer, Double> averageDeliveryTime(List<DbParcel> dbDatas) {
         Double oldValue;
-        Hashtable<Integer, Double> average = new Hashtable<>();
+        Hashtable<Integer, Double> total = new Hashtable<>();
 
         for (DbParcel dbData : dbDatas) {
-            if (average.containsKey(dbData.getIdIteration())){
-                oldValue = average.get(dbData.getIdIteration());
-                average.put(dbData.getIdIteration(), oldValue + dbData.getDelta());
+            if (total.containsKey(dbData.getIdIteration())){
+                oldValue = total.get(dbData.getIdIteration());
+                total.put(dbData.getIdIteration(), oldValue + dbData.getDelta());
             } else {
-                average.put(dbData.getIdIteration(), (double) dbData.getDelta());
+                total.put(dbData.getIdIteration(), (double) dbData.getDelta());
             }
         }
+
+        return getAverage(total, dbDatas.size());
+    }
+
+    private static Hashtable<Integer, Double> getAverage(Hashtable<Integer, Double> average, int size) {
+        Set<Integer> keys = average.keySet();
+        Iterator<Integer> itr = keys.iterator();
+        Integer key;
+        while(itr.hasNext()){
+            key = itr.next();
+            average.replace(key, average.get(key) / size);
+        }
+
         return average;
     }
 
