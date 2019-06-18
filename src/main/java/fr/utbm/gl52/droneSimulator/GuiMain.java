@@ -1,5 +1,6 @@
 package fr.utbm.gl52.droneSimulator;
 
+import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import fr.utbm.gl52.droneSimulator.view.StartPageView;
 import fr.utbm.gl52.droneSimulator.view.StatisticsWindowView;
@@ -12,8 +13,8 @@ import java.io.IOException;
 public class GuiMain extends Application {
 
     public void start(Stage primaryStage) throws IOException {
-//       StartPageView startPageView = new StartPageView();
-       StatisticsWindowView startPageView = new StatisticsWindowView();
+       StartPageView startPageView = new StartPageView();
+//       StatisticsWindowView startPageView = new StatisticsWindowView();
 
         Scene scene = new Scene(startPageView.getParent());
         primaryStage.setScene(scene);
@@ -24,5 +25,10 @@ public class GuiMain extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        HibernateHelper.getSessionFactory().close();
     }
 }

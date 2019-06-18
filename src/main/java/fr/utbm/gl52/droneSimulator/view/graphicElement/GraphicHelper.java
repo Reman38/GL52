@@ -56,6 +56,7 @@ public class GraphicHelper {
             @Override
             public void handle(WindowEvent event) {
                 System.out.println("closing");
+                Simulation.setAppClosed(true);
                 Simulation.stop();
                 Platform.exit();
             }

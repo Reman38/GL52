@@ -903,6 +903,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return batteryCapacity;
     }
 
+    public void setBatteryCapacity(Float batteryCapacity) {
+        this.batteryCapacity = batteryCapacity;
+    }
+
     @Override
     public String toString() {
         return "Drone{" +
