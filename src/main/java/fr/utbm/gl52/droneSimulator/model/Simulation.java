@@ -76,7 +76,7 @@ public class Simulation {
 
     public Simulation() {
         time = 0;
-        setSimulationSpeed(20f);
+        setSimulationSpeed(1f);
         droneNumber = 3;
         parcelNumber = 25;
         chargingStation = 5;
@@ -84,7 +84,7 @@ public class Simulation {
         droneWeightCapacity[1] = 20f;
         droneBatteryCapacity[0] = 5f;
         droneBatteryCapacity[1] = 55f;
-        simulationDurationRange[0] = 12;
+        simulationDurationRange[0] = 20;
         simulationDurationRange[1] = 1440;
         numberOfSimulationIterationRange[0] = 1;
         numberOfSimulationIterationRange[1] = 10;
