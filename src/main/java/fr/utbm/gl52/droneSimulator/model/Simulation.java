@@ -6,16 +6,13 @@ import fr.utbm.gl52.droneSimulator.service.DbParameterService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
-import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
-import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.createSimulationWindow;
+import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.isViewFullyLoaded;
 
 public class Simulation {
     public static final long secondsInAMinute = 60L;
@@ -400,11 +397,13 @@ public class Simulation {
      * Iterate the clock according to elapsed time and simulation speed.
      */
     private static void updatePlayStatusAccordingToDuration() {
-        currentTime = Instant.now().toEpochMilli();
-        long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
-        elapsedTime = (long) (StrictMath.abs(currentTime - launchSimTime) * simulationSpeed);
-        //System.out.println("time elapsed " + elapsedTime/60000);
-        play = elapsedTime <= simulationDurationInMilli;
+        if (isViewFullyLoaded()) {
+            currentTime = Instant.now().toEpochMilli();
+            long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
+            elapsedTime = (long) (StrictMath.abs(currentTime - launchSimTime) * simulationSpeed);
+            //System.out.println("time elapsed " + elapsedTime/60000);
+            play = elapsedTime <= simulationDurationInMilli;
+        }
     }
 
     private static void incrementTime() {
