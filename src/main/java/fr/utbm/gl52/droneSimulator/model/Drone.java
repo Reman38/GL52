@@ -211,7 +211,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         isBusy = false;
         geographicalTarget = null;
         try {
-            Thread.sleep(1000);
+            Thread.sleep((long)(1000/Simulation.getSimulationSpeed()));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
