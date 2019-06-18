@@ -97,10 +97,10 @@ public class StatisticsWindowView {
         var parameterSimu2 = dbParameterService.getSimulationParameter(simu2);
 
         for (Integer iteration = 1; iteration <= parameterSimu1.getNbIteration(); iteration++) {
-            simulation1.getData().add(new XYChart.Data<>(iteration, dataSimu1.get(iteration)));
+            simulation1.getData().add(new XYChart.Data<>(iteration-1, dataSimu1.get(iteration)));
         }
         for (Integer iteration = 1; iteration <= parameterSimu2.getNbIteration(); iteration++) {
-            simulation2.getData().add(new XYChart.Data<>(iteration, dataSimu2.get(iteration)));
+            simulation2.getData().add(new XYChart.Data<>(iteration-1, dataSimu2.get(iteration)));
         }
 
         data.addAll(simulation1, simulation2);

@@ -3,6 +3,7 @@ package fr.utbm.gl52.droneSimulator.repository.H2;
 import fr.utbm.gl52.droneSimulator.repository.AbstractDao;
 import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
+import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -64,6 +65,16 @@ public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
         session.close();
 
         return entities;
+    }
+
+    public DbParameter parameterSimu(int simulationId) {
+        Session session = HibernateHelper.getSessionFactory().openSession();
+
+        List<DbParameter> entities = session.createQuery("FROM " + clazz.getSimpleName() + " WHERE idsimu = " + simulationId).list();
+
+        session.close();
+
+        return entities.get(0);
     }
 
     public void save(E entity) {
