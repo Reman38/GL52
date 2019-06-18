@@ -20,7 +20,7 @@ import static fr.utbm.gl52.droneSimulator.view.graphicElement.GraphicHelper.crea
 public class Simulation {
     public static final long secondsInAMinute = 60L;
     public static final long millisecondsInASecond = 1000L;
-    private static final Integer DEFAULT_DURATION = 240;
+    private static final Integer DEFAULT_DURATION = 12;
 
     private static Boolean isAppClosed = false;
 
@@ -101,7 +101,56 @@ public class Simulation {
         parcelTimeToDisappearRangeLinkedToDifficulty.put("hard", range);
     }
 
-    private static void initIteration() {
+    /**
+     * Init a new iteration of the simulation
+     */
+    private static synchronized void initIteration() {
+        reloadDronesFromDatabase();
+
+        reloadRandomParcels();
+
+        cleanAndRestartSimulationWindow();
+
+        resetChargingStations();
+
+        resetSimulationClock();
+
+        currentIteration++;
+
+        globalStart();
+    }
+
+    /**
+     * Reset simulation clock to 0.
+     */
+    private static void resetSimulationClock() {
+        launchSimTime = Instant.now().toEpochMilli();
+        currentTime = Instant.now().toEpochMilli();
+        elapsedTime = 0L;
+    }
+
+    /**
+     * reset charging stations to original state (free)
+     */
+    private static void resetChargingStations() {
+        for (ChargingStation chargingStation : chargingStations) {
+            chargingStation.freeChargingStation();
+        }
+    }
+
+    /**
+     * pop new random parcels
+     */
+    private static void reloadRandomParcels() {
+        parcels.clear();
+        parcels = new ArrayList<>();
+        popParcels();
+    }
+
+    /**
+     * Reload drones to state on database
+     */
+    private static void reloadDronesFromDatabase() {
         drones = new ArrayList<>();
         Drone drone;
         List<DbDrone> dbDrones = droneService.getDronesInFirstIterationSimu(parameters.getIdSimu());
@@ -119,30 +168,17 @@ public class Simulation {
                 e.printStackTrace();
             }
         }
-
-        cleanAndRestartSimulationWindow();
-
-        for (ChargingStation chargingStation : chargingStations) {
-            chargingStation.freeChargingStation();
-        }
-
-
-        parcels = new ArrayList<>();
-        popParcels();
-
-        launchSimTime = Instant.now().toEpochMilli();
-        currentTime = Instant.now().toEpochMilli();
-        elapsedTime = 0L;
-        currentIteration++;
-        System.out.println("init iteration " + currentIteration);
-        globalStart();
     }
 
+    /**
+     * clean all view parameters and put elements to start position
+     */
     private static void cleanAndRestartSimulationWindow() {
 
         SimulationWindowView.cleanView();
         Platform.runLater(SimulationWindowView::displayDronesAndAssociatedTabs);
         Platform.runLater(SimulationWindowView::displayParcels);
+        SimulationWindowView.setViewFullyLoaded(true);
     }
 
     public static void setSimulationSpeed(Float f) {
@@ -227,6 +263,7 @@ public class Simulation {
     }
 
     public static void globalStart() {
+        setPlay(true);
         if (simulationThread.getState() != Thread.State.NEW) {
             simulationThread = new Thread(Simulation::manageSimulationStop);
         }
@@ -236,7 +273,6 @@ public class Simulation {
             droneThreads.add(droneThread);
             droneThread.start();
         }
-        setPlay(true);
     }
 
     /**

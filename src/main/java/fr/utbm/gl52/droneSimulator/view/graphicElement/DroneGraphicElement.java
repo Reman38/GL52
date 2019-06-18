@@ -9,13 +9,21 @@ import javafx.event.EventHandler;
 import javafx.util.Duration;
 
 public class DroneGraphicElement extends CenteredAndErgonomicGraphicElement {
+
+    private Timeline timeline = new Timeline();
+
+    /**
+     * Default constructor of a drone graphic elements
+     * Manage the animation
+     *
+     * @param se Simulation element
+     */
     public DroneGraphicElement(SimulationElement se) {
         super(se);
 
         setColor("red");
         isFilled(true);
 
-        Timeline timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
 
         KeyFrame moveDrone = new KeyFrame(Duration.seconds(1f/30f), new EventHandler<ActionEvent>() {
@@ -29,5 +37,12 @@ public class DroneGraphicElement extends CenteredAndErgonomicGraphicElement {
 
         timeline.getKeyFrames().add(moveDrone);
         timeline.play();
+    }
+
+    /**
+     * Stop the animation
+     */
+    public void stopAnimation(){
+        timeline.stop();
     }
 }

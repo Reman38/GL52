@@ -127,6 +127,7 @@ public class SimulationWindowView {
         for (Parcel parcel : Simulation.getParcels()) {
             addParcelToView(parcel);
         }
+        System.out.println("display parcel");
     }
 
     /**
@@ -285,31 +286,45 @@ public class SimulationWindowView {
     public static Boolean isViewFullyLoaded() {
         try{
                 TabPane tabPaneLog = (TabPane) root.lookup("#tabPaneLogs");
-            return isViewFullyLoaded && tabPaneLog.getTabs().size() == droneGraphicElements.size() && tabPaneLog.getTabs().get(0).getText() != null;
+            return isViewFullyLoaded && tabPaneLog.getTabs().size() == droneGraphicElements.size() && tabPaneLog.getTabs().size() != 0;
         } catch (NullPointerException | IndexOutOfBoundsException e){
             return false;
         }
     }
 
+    /**
+     * Remove all drones and parcels from the view
+     */
     public static void cleanView() {
 
         isViewFullyLoaded = false;
 
-        for(DroneGraphicElement droneGraphic: droneGraphicElements){
-            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getShape()));
-            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getGraphicalId()));
-        }
+        removeAllDrones();
 
-        droneGraphicElements = new ArrayList<>();
+        removeAllParcels();
 
+        Platform.runLater(SimulationWindowView::removeEventTabs);
+    }
+
+    private static void removeAllParcels() {
         for(ParcelGraphicElement parcelGraphic: parcelGraphicElements){
             Platform.runLater(() ->simulationPane.getChildren().remove(parcelGraphic.getShape()));
             Platform.runLater(() ->simulationPane.getChildren().remove(parcelGraphic.getGraphicalId()));
         }
 
+        parcelGraphicElements.clear();
         parcelGraphicElements = new ArrayList<>();
+    }
 
-        Platform.runLater(SimulationWindowView::removeEventTabs);
+    private static void removeAllDrones() {
+        for(DroneGraphicElement droneGraphic: droneGraphicElements){
+            droneGraphic.stopAnimation();
+            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getShape()));
+            Platform.runLater(() ->simulationPane.getChildren().remove(droneGraphic.getGraphicalId()));
+        }
+
+        droneGraphicElements.clear();
+        droneGraphicElements = new ArrayList<>();
     }
 
     public static void setViewFullyLoaded(boolean b) {

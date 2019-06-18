@@ -506,11 +506,11 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 //printDroneSpeedForDebug(deltaTSec, newX, newY);
 
                 tryToMoveDroneWithinBoundaries(deltaT, newX, newY);
+                System.out.println("newX " + newX + " newY " + newY);
             } else {
                 printOutOfBattery();
             }
         }
-        //System.out.println("newX " + newX + " newY " + newY);
     }
 
     /**
