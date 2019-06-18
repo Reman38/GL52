@@ -63,8 +63,8 @@ public class Simulation {
     private static final Integer imagesPerSecond = 30;
     private static final Float maxThreadSleepAcceleration = 30f;
 
-    private static Long launchSimTime = Instant.now().toEpochMilli();
-    private static Long currentTime = Instant.now().toEpochMilli();
+    private static Long t1 = Instant.now().toEpochMilli();
+    private static Long t2 = Instant.now().toEpochMilli();
     private static Long elapsedTime = 0L;
 
     private static Thread simulationThread = new Thread(Simulation::manageSimulationStop);
@@ -121,8 +121,8 @@ public class Simulation {
      * Reset simulation clock to 0.
      */
     private static void resetSimulationClock() {
-        launchSimTime = Instant.now().toEpochMilli();
-        currentTime = Instant.now().toEpochMilli();
+        t1 = Instant.now().toEpochMilli();
+        t2 = Instant.now().toEpochMilli();
         elapsedTime = 0L;
     }
 
@@ -398,11 +398,12 @@ public class Simulation {
      */
     private static void updatePlayStatusAccordingToDuration() {
         if (isViewFullyLoaded()) {
-            currentTime = Instant.now().toEpochMilli();
+            t2 = Instant.now().toEpochMilli();
             long simulationDurationInMilli = simulationDuration * secondsInAMinute * millisecondsInASecond;
-            elapsedTime = (long) (StrictMath.abs(currentTime - launchSimTime) * simulationSpeed);
+            elapsedTime += (long) (StrictMath.abs(t2 - t1) * simulationSpeed);
             //System.out.println("time elapsed " + elapsedTime/60000);
             play = elapsedTime <= simulationDurationInMilli;
+            t1 = Instant.now().toEpochMilli();
         }
     }
 
@@ -515,8 +516,8 @@ public class Simulation {
         return imagesPerSecond;
     }
 
-    public static Long getCurrentTime() {
-        return currentTime;
+    public static Long getT2() {
+        return t2;
     }
 
     public static Long getElapsedTime() {
