@@ -574,4 +574,12 @@ public class Simulation {
     public static void setAppClosed(Boolean isAppClosed) {
         Simulation.isAppClosed = isAppClosed;
     }
+
+    public static Integer getId(){
+        return parameters.getIdSimu();
+    }
+
+    public static Integer getCurrentIteration(){
+        return currentIteration;
+    }
 }

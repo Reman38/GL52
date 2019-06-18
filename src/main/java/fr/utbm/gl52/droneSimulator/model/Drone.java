@@ -1,6 +1,9 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
+import fr.utbm.gl52.droneSimulator.service.DbParcelService;
+import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 
 import java.util.*;
@@ -25,6 +28,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private Memory.ParcelRecord targetParcel = null;
     private Float[] geographicalTarget = new Float[2];
 
+    private DbParcelService parcelService = new DbParcelService();
+
     private Boolean hasStartedToCharge = false;
     private Boolean isOutOfBattery = false;
 
@@ -40,6 +45,25 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
     private Float distance = 0f;
     private Integer chargingTime = 0;
+
+    private Long parcelT1;
+    private Long parcelT2;
+
+    /**
+     * Constructor of the drone
+     *
+     * @param id Unique ID of the drone
+     */
+    public Drone(Integer id) {
+        super(id, .8f);
+
+        isBusy = false;
+        isLoaded = false;
+        batteryFullCapacity = Simulation.getDroneBatteryCapacity()[1];
+        batteryCapacity = batteryFullCapacity;
+
+        memory = new Memory();
+    }
 
     /**
      * Run the drone simulation
@@ -214,12 +238,41 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         isLoaded = false;
         isBusy = false;
         geographicalTarget = null;
+
+        parcelT2 = Simulation.getElapsedTime();
+        long timeToDeliver = StrictMath.round(convertMillisecondsToMinutes(parcelT2 - parcelT1));
+
+        storeParcelEvent(timeToDeliver, HibernateHelper.Event.DELIVERY);
+
+        long timeConstraints = StrictMath.round(convertMillisecondsToMinutes(Simulation.getElapsedTime()) - targetParcel.timeConstraints);
+
+        storeParcelEvent(timeConstraints, HibernateHelper.Event.DELIVERYCONSTRAINTS);
+
         try {
             Thread.sleep((long)(1000/Simulation.getSimulationSpeed()));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         realDeltaT = deltaT;
+    }
+
+    /**
+     * Store parcel event on the database
+     *
+     * @param time Time delta linked with the event
+     * @param parcelEvent Event form the enum.
+     */
+    private void storeParcelEvent(long time, HibernateHelper.Event parcelEvent) {
+        DbParcel dbParcel = new DbParcel(
+                Simulation.getId(),
+                Simulation.getCurrentIteration(),
+                parcelEvent.toString(),
+                time
+        );
+
+        synchronized (this) {
+            parcelService.save(dbParcel);
+        }
     }
 
     /**
@@ -231,6 +284,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
         loadParcelAtCoord(targetParcel.getCoords(), this);
         geographicalTarget = targetParcel.getDestCoords();
+
+        parcelT1 = Simulation.getElapsedTime();
     }
 
     /**
@@ -438,22 +493,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     /**
-     * Constructor of the drone
-     *
-     * @param id Unique ID of the drone
-     */
-    public Drone(Integer id) {
-        super(id, .8f);
-
-        isBusy = false;
-        isLoaded = false;
-        batteryFullCapacity = Simulation.getDroneBatteryCapacity()[1];
-        batteryCapacity = batteryFullCapacity;
-
-        memory = new Memory();
-    }
-
-    /**
      * Create a drone with randomized parameters
      *
      * @param id Id of the drone
@@ -600,17 +639,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return deltaT;
     }
 
-    /*private void printDroneSpeedForDebug(float deltaTsec, Float newX, Float newY) {
-        float dist = computeVectorNorm(getX(), newX, getY(), newY);
-        System.out.println("dist "+ dist);
-        System.out.println("Drone speed " + computeCurrentSpeed(dist,deltaTsec));
-        System.out.println("real drone speed " + dist/(convertNanosecondsToSeconds(realDeltaT)));
-    }*/
-
-   /* private Float computeCurrentSpeed(Float norm, Float deltaTsec){
-        return norm/deltaTsec;
-    }*/
-
     /**
      * Rotate the drone
      *
@@ -631,44 +659,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         return MathHelper.calculDistanceWith(this, se) < getDetectionRange();
     }
 
-    private void exchangeData(Drone drone) {
-        // TODO appeler à l'aide pour porter un colis
-        // TODO detect drones
-        // TODO detect parcels
-        // data.merge(drone.data);
-        // drone.data.merge(data);
-    }
-
-    /**
-     * Check if the parcel is transportable
-     *
-     * @param parcel Parcel to check
-     *
-     * @return True if yes
-     */
-    private Boolean isTransportable(Parcel parcel) {
-        return true; // TODO
-    }
-
-   /* public void handleDroneInteractions() {
-        ArrayList<Drone> drones = Simulation.getDrones();
-
-        for (Integer j = 0; j < drones.size(); ++j) {
-            Drone drone = drones.get(j);
-            if (this != drone && detect(drone)) {
-                exchangeData(drone);
-            }
-        }
-    }
-
-    public void handleParcelInteractions() {
-        ArrayList<Parcel> detectedParcels = getDetectedParcel();
-
-        for (Parcel parcel : detectedParcels) {
-            memory.add(parcel);
-        }
-    }*/
-
     /**
      * Get a list of all detected parcel
      *
@@ -686,21 +676,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
         return detectedParcel;
     }
-
-   /* public Boolean isOverThe(Parcel parcel) {
-        return MathHelper.calculDistanceWith(this, parcel) < getSize() / 2;
-    }
-
-    public void interactWith(Parcel parcel) {
-        if (isTransportable(parcel))
-            load(parcel);
-        else
-            callHelp();
-    }*/
-
-    /*private void callHelp() {
-//        TODO
-    }*/
 
     /**
      * Load parcel
@@ -743,17 +718,10 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     }
 
     /**
-     * Reduce the load of the battery according to the fly distance
+     * Check if battery is empty
      *
-     * @param norm Fly distance
+     * @return True if yes
      */
-    public void consumeBattery(Float norm){
-        batteryCapacity -= (norm / getSpeed())/60;
-        if(batteryCapacity <= 0){
-            batteryCapacity = 0f;
-        }
-    }
-
     private Boolean isBatteryEmpty(){
         return batteryCapacity <= 0f;
     }
@@ -785,6 +753,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
             private Date lastDetectedDateTime;
             private Date popTime;
             private Float weight;
+            private Float timeConstraints;
 
             public ParcelRecord(Parcel p) {
                 id = p.getId();
@@ -793,6 +762,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 popTime = p.getPopTime();
                 lastDetectedDateTime = new Date();
                 weight = p.getWeight();
+                timeConstraints = p.getTimeToDisappear();
             }
 
             Float[] getCoords(){
@@ -819,13 +789,20 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 return weight;
             }
 
+            public Float getTimeConstraints() {
+                return timeConstraints;
+            }
+
             @Override
             public String toString() {
                 return "ParcelRecord{" +
-                        "coords=" + Arrays.toString(coords) +
+                        "id=" + id +
+                        ", coords=" + Arrays.toString(coords) +
+                        ", destCoords=" + Arrays.toString(destCoords) +
                         ", lastDetectedDateTime=" + lastDetectedDateTime +
                         ", popTime=" + popTime +
                         ", weight=" + weight +
+                        ", timeConstraints=" + timeConstraints +
                         '}';
             }
         }
@@ -933,4 +910,11 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
                 ", coords=" + Arrays.toString(coord) +
                 '}';
     }
+
 }
+
+
+
+
+
+

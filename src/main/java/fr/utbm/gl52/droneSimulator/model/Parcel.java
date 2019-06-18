@@ -14,7 +14,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
 
     private Date popTime;
     private Float weight;
-    private Date timeDeliveryGoal;
+    private Float timeDeliveryGoal;
     private Float[] destCoord = new Float[2];
     private boolean isInJourney = false;
     private Float timeToDisappear;
@@ -66,16 +66,32 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
         }
 
         setRandTimeToDisappear(0L);
+        setRandTimeConstraints(0L);
     }
 
     public void randomize(Long elapsedTime){
         randomize();
 
         setRandTimeToDisappear(elapsedTime);
+        setRandTimeConstraints(elapsedTime);
     }
 
+    /**
+     * Random time to make parcel disappear
+     *
+     * @param elapsedTime Elapsed time since the beginning of the iteration.
+     */
     private void setRandTimeToDisappear(Long elapsedTime) {
         timeToDisappear = elapsedTime + RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
+    }
+
+    /**
+     * Random time constraints
+     *
+     * @param elapsedTime Elapsed time since the beginning of the iteration.
+     */
+    private void setRandTimeConstraints(Long elapsedTime) {
+        timeDeliveryGoal = elapsedTime + RandomHelper.getRandFloat((float)Simulation.getParcelTimeToDisappearRange()[0], (float)Simulation.getParcelTimeToDisappearRange()[1]);
     }
 
     /**
