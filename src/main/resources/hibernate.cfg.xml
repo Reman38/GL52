@@ -21,5 +21,6 @@
         <mapping class="fr.utbm.gl52.droneSimulator.service.entity.DbDrone"/>
         <mapping class="fr.utbm.gl52.droneSimulator.service.entity.DbParcel"/>
         <mapping class="fr.utbm.gl52.droneSimulator.service.entity.DbParameter"/>
+        <mapping class="fr.utbm.gl52.droneSimulator.service.entity.DbChargingStation"/>
     </session-factory>
 </hibernate-configuration>

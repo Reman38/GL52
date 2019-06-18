@@ -1,12 +1,12 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
+import fr.utbm.gl52.droneSimulator.service.DbChargingStationService;
 import fr.utbm.gl52.droneSimulator.service.DbDroneService;
 import fr.utbm.gl52.droneSimulator.service.DbParameterService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbDrone;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParameter;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
-import fr.utbm.gl52.droneSimulator.view.StartPageView;
 import fr.utbm.gl52.droneSimulator.view.StatisticsWindowView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ParcelGraphicElement;
 import javafx.application.Platform;
@@ -34,6 +34,7 @@ public class Simulation {
 
     private static DbParameterService parameterService = new DbParameterService();
     private static DbDroneService droneService = new DbDroneService();
+    private static DbChargingStationService chargingStationService = new DbChargingStationService();
     private static DbParameter parameters;
 
     private static Boolean play = true;
@@ -222,6 +223,7 @@ public class Simulation {
                 parcelTimeToDisappearRange[1]
         );
         flushDroneData();
+        flushChargingStationData();
     }
 
     public static void flushDroneData() {
@@ -236,6 +238,16 @@ public class Simulation {
                     0,
                     drone.getX(),
                     drone.getY()
+            );
+        }
+    }
+
+    public static void flushChargingStationData() {
+        for (ChargingStation chargingStation : chargingStations) {
+            chargingStationService.save(
+                    parameters.getIdSimu(),
+                    chargingStation.getX(),
+                    chargingStation.getY()
             );
         }
     }
