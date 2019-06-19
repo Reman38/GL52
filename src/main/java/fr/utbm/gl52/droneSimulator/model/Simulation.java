@@ -92,6 +92,9 @@ public class Simulation {
         parcelTimeToDisappearRange = parcelTimeToDisappearRangeLinkedToDifficulty.get("soft");
     }
 
+    /**
+     * Prepare competition range value
+     */
     private void initCompetitionDifficultyLevels() {
         Integer[] range = {60, 260};
         parcelTimeToDisappearRangeLinkedToDifficulty.put("soft", range);
@@ -128,6 +131,9 @@ public class Simulation {
         globalStart();
     }
 
+    /**
+     * Store drone statistics
+     */
     private static void saveDroneStats() {
         for(Drone drone: drones){
             DbDrone dbDrone = droneService.getDroneBy(parameters.getIdSimu(), currentIteration, drone.getId());
@@ -199,31 +205,11 @@ public class Simulation {
     }
 
     public static void setSimulationSpeed(Float f) {
-        simulationSpeed = f; // TODO ajouter controle et exception
-    }
-
-    public static void addNumberToSpeed(Float nb) {
-        setSimulationSpeed(getSimulationSpeed() + nb);
-    }
-
-    public static void addPercentageToSpeed(Float nb) {
-        setSimulationSpeed(getSimulationSpeed() * (1 + nb));
+        simulationSpeed = f;
     }
 
     public static void removeParcel(Parcel parcel) {
         parcels.remove(parcel);
-    }
-
-    public static void removeAllParcels() {
-        parcels.clear();
-    }
-
-    public static void removeDrone(Drone drone) {
-        drones.remove(drone);
-    }
-
-    public static void removeAllDrones() {
-        drones.clear();
     }
 
     public static void initMainArea() {
@@ -267,16 +253,22 @@ public class Simulation {
         }
     }
 
+    /**
+     * Start simulation with default parameters
+     */
     public static void startDefault() {
         initMainArea();
         //popAreas();
         instanciateDefaultDrones();
-        instanciateDefaultCharginStations();
+        instanciateDefaultChargingStations();
         popParcels();
         globalStart();
     }
 
-    private static void instanciateDefaultCharginStations() {
+    /**
+     * Create charging stations for the default case
+     */
+    private static void instanciateDefaultChargingStations() {
         ChargingStation chargingStation = new ChargingStation(0);
         try {
             chargingStation.setX(281f);
@@ -308,6 +300,9 @@ public class Simulation {
         chargingStations.add(chargingStation);
     }
 
+    /**
+     * Create drones for the default case
+     */
     private static void instanciateDefaultDrones() {
         Drone drone;
 
@@ -360,6 +355,9 @@ public class Simulation {
         drones.add(drone);
     }
 
+    /**
+     * Start simulation with random parameters
+     */
     public static void startRandom() {
         initMainArea();
         //popAreas();
@@ -369,11 +367,17 @@ public class Simulation {
         globalStart();
     }
 
+    /**
+     * Start the simulation with custom parameters
+     */
     public static void startCustom() {
         popParcels();
         globalStart();
     }
 
+    /**
+     * Start all the threads
+     */
     public static void globalStart() {
         setPlay(true);
         if (simulationThread.getState() != Thread.State.NEW) {
@@ -390,7 +394,7 @@ public class Simulation {
     /**
      * Simulate the competition by removing parcels form the map.
      */
-    private static void makeParcelDisappearWhenPickedByCompetitors() { //TODO: régler les confilts de Threads
+    private static void makeParcelDisappearWhenPickedByCompetitors() {
         Parcel parcel;
         List<ParcelGraphicElement> parcelsGraphicToRemove = new ArrayList<>();
 
@@ -425,6 +429,9 @@ public class Simulation {
         Thread.currentThread().interrupt();
     }
 
+    /**
+     * Create random parcels
+     */
     private static void popParcels() {
         for (Integer i = 0; i < getParcelNumber(); ++i) {
             parcels.add(Parcel.createRandomized(i));
@@ -438,18 +445,27 @@ public class Simulation {
         }
     }
 
+    /**
+     * Create random drones
+     */
     private static void popDrones() {
         for (Integer i = 0; i < getDroneNumber(); ++i) {
             drones.add(Drone.createRandomizedDrone(i));
         }
     }
 
+    /**
+     * Create random charging stations
+     */
     private static void popChargingStations() {
         for (Integer i = 0; i < getChargingStationNumber(); ++i) {
             chargingStations.add(ChargingStation.createRandomizedChargingStations(i));
         }
     }
 
+    /**
+     * Stop simulation if time is exceeded
+     */
     public static void manageSimulationStop() {
         while (isPlay()) {
             updatePlayStatusAccordingToDuration();
@@ -471,6 +487,9 @@ public class Simulation {
         }
     }
 
+    /**
+     * Launch a new iteration if asked by the parameter
+     */
     private static void rebootSimulationForNextIteration() {
         if (currentIteration < numberOfSimulationIteration) {
             initIteration();
@@ -487,6 +506,9 @@ public class Simulation {
         }
     }
 
+    /**
+     * pop random parcels during the simulation (at random time)
+     */
     private static void popRandomParcels() {
         Integer random = RandomHelper.getRandInt(0, 100);
 
@@ -631,9 +653,6 @@ public class Simulation {
         return numberOfSimulationIterationRange;
     }
 
-    public static Float getMaxThreadSleepAcceleration() {
-        return maxThreadSleepAcceleration;
-    }
 
     public static Integer getImagesPerSecond() {
         return imagesPerSecond;

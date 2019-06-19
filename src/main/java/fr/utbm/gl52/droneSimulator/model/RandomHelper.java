@@ -1,7 +1,7 @@
 package fr.utbm.gl52.droneSimulator.model;
 
 import java.util.Vector;
-import java.util.concurrent.ThreadLocalRandom; // TODO revoir l'utilité
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class RandomHelper {
     public static Boolean getRandBool() {

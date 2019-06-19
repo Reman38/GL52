@@ -1,5 +1,4 @@
 package fr.utbm.gl52.droneSimulator.repository;
-// TODO refactor
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
