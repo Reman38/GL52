@@ -15,7 +15,6 @@ public class H2DbDroneDao extends AbstractH2Dao<DbDrone> {
         Session session = HibernateHelper.getSessionFactory().openSession();
         session.beginTransaction();
 
-        // TODO déplacer get dans service ?
         DbDrone client = get(id);
 //        client.setFirstName(firstName);
 
@@ -24,9 +23,6 @@ public class H2DbDroneDao extends AbstractH2Dao<DbDrone> {
         session.close();
     }
 
-    //TODO si besoin
     //session.createQuery("from Cat where cat.name = ?");
     //session.setString(0, name);
-
-    //TODO catch exception (ex : au delete, modify) et faire remonter jusque dans la vue
 }

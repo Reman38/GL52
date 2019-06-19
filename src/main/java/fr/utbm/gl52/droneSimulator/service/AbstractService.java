@@ -27,7 +27,7 @@ public abstract class AbstractService<E extends MyEntity> implements ServiceInte
         if (mySqlDao == null){
             mySqlDao = getDao("H2");
         }
-        return (AbstractH2Dao<E>) mySqlDao; // TODO éviter le cast
+        return (AbstractH2Dao<E>) mySqlDao;
     }
 
     public AbstractDao<E> getDao(String technology) {
@@ -39,8 +39,7 @@ public abstract class AbstractService<E extends MyEntity> implements ServiceInte
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
-        // TODO si le dao spécifique n'est pas trouvé, retourner un DAO plus générique
-        return (AbstractDao<E>) dao; // TODO éviter le cast
+        return (AbstractDao<E>) dao;
     }
 
     public E get(int id) {

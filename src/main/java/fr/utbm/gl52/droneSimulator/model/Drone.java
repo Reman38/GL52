@@ -673,7 +673,6 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
     private ArrayList<Parcel> getDetectedParcel() {
         ArrayList<Parcel> detectedParcel = new ArrayList<>();
 
-        // TODO : améliorer le réalisme, ici on boucle sur les paquets présent dans la simulation..
         for (Parcel parcel : Simulation.getParcels()) {
             if (detect(parcel)) {
                 detectedParcel.add(parcel);
