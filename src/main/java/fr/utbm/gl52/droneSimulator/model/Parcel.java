@@ -36,13 +36,13 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @return Parcel
      */
-    public static Parcel createRandomized(Integer id) {
+    static Parcel createRandomized(Integer id) {
         Parcel parcel = new Parcel(id);
         parcel.randomize();
         return parcel;
     }
 
-    public static Parcel createRandomized(Integer id, Long elapsedTime) {
+    static Parcel createRandomized(Integer id, Long elapsedTime) {
         Parcel parcel = new Parcel(id);
         parcel.randomize(elapsedTime);
         return parcel;
@@ -98,14 +98,13 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      * Load on the drone the parcel that is at the given coordinates
      *
      * @param coord coordinates of the parcel
-     * @param drone drone that loads the parcel
      */
-    public static void loadParcelAtCoord(Float[] coord, Drone drone){
+    static void loadParcelAtCoord(Float[] coord){
         ParcelGraphicElement parcelToRemove;
 
         parcelToRemove = findParcelGraphicWithParcelCoord(coord);
         Parcel parcel = (Parcel) parcelToRemove.getSimulationElement();
-        synchronized (drone) {
+        synchronized (Drone.class) {
             parcel.setInJourney(true);
         }
 
@@ -115,7 +114,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
     /**
      * Set a rand weight to the parcel
      */
-    public void setRandWeight() {
+    private void setRandWeight() {
         setWeight(RandomHelper.getRandFloat(0f, 20f));
     }
 
@@ -126,7 +125,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @throws OutOfMainAreaException The abscissa exceeds the area boundaries
      */
-    protected void setRandDestX(Area area) throws OutOfMainAreaException {
+    private void setRandDestX(Area area) throws OutOfMainAreaException {
 //        setDestX(RandomHelper.getRandFloat(area.getX(), (area.getX() + area.getWidth())));
 //        setDestX(area.getWidth()/2);
         setDestX(RandomHelper.getRandFloat(area.getX() + getWidth() / 2, (area.getX() + area.getWidth()) - getWidth() / 2));
@@ -139,7 +138,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @throws OutOfMainAreaException The ordinates exceeds the area boundaries
      */
-    protected void setRandDestY(Area area) throws OutOfMainAreaException {
+    private void setRandDestY(Area area) throws OutOfMainAreaException {
 //        setDestY(RandomHelper.getRandFloat(area.getY(), (area.getY()+ area.getHeight())));
 //        setDestY(area.getHeight()/2);
         setDestY(RandomHelper.getRandFloat(area.getY() + getHeight() / 2, (area.getY() + area.getHeight()) - getHeight() / 2));
@@ -152,7 +151,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @throws OutOfMainAreaException The coordinates exceeds the area boundaries
      */
-    public void setRandDestCoord(Area area) throws OutOfMainAreaException {
+    private void setRandDestCoord(Area area) throws OutOfMainAreaException {
         setRandDestX(area);
         setRandDestY(area);
     }
@@ -164,12 +163,10 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @return pop time of the drone
      */
-    public Date getPopTime() {
+    Date getPopTime() {
         return popTime;
     }
-    public void setPopTime(Date popTime) {
-        this.popTime = popTime;
-    }
+
     public Float getWeight() {
         return weight;
     }
@@ -188,7 +185,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @return Array [x,y]
      */
-    public Float[] getDestCoord() {
+    Float[] getDestCoord() {
         return destCoord;
     }
 
@@ -199,7 +196,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @throws OutOfMainAreaException x is not in the main area
      */
-    public void setDestX(float x) throws OutOfMainAreaException {
+    private void setDestX(float x) throws OutOfMainAreaException {
         if (Simulation.getMainArea().isInAreaXBoundary(x))
             throw new OutOfMainAreaException("x out of mainArea boundary : " + x);
         else
@@ -213,7 +210,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @throws OutOfMainAreaException x is not in the main area
      */
-    public void setDestY(float y) throws OutOfMainAreaException {
+    private void setDestY(float y) throws OutOfMainAreaException {
         if (Simulation.getMainArea().isInAreaYBoundary(y))
             throw new OutOfMainAreaException("y out of mainArea boundary : " + y);
         else
@@ -225,7 +222,7 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @return True if the parcel is in journey
      */
-    public boolean isInJourney() {
+    boolean isInJourney() {
         return isInJourney;
     }
 
@@ -234,11 +231,11 @@ public class Parcel extends CenteredAndSquaredSimulationElement {
      *
      * @param inJourney True if the parcel is in journey
      */
-    public void setInJourney(boolean inJourney) {
+    private void setInJourney(boolean inJourney) {
         isInJourney = inJourney;
     }
 
-    public Float getTimeToDisappear() {
+    Float getTimeToDisappear() {
         return timeToDisappear;
     }
 

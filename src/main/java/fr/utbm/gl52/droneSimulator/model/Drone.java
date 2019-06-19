@@ -6,7 +6,6 @@ import fr.utbm.gl52.droneSimulator.service.DbParcelService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import java.util.*;
@@ -287,7 +286,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         Message.loadParcel(this, targetParcel.id);
         isLoaded = true;
 
-        loadParcelAtCoord(targetParcel.getCoords(), this);
+        loadParcelAtCoord(targetParcel.getCoords());
         geographicalTarget = targetParcel.getDestCoords();
         getDroneGraphic().getShape().setFill(Paint.valueOf("blue"));
 

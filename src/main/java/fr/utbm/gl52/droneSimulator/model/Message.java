@@ -1,7 +1,5 @@
 package fr.utbm.gl52.droneSimulator.model;
 
-import javafx.application.Platform;
-
 import static fr.utbm.gl52.droneSimulator.view.SimulationWindowView.logDroneEventInTab;
 
 public class Message {

@@ -5,7 +5,6 @@ import fr.utbm.gl52.droneSimulator.model.ChargingStation;
 import fr.utbm.gl52.droneSimulator.model.Drone;
 import fr.utbm.gl52.droneSimulator.model.Simulation;
 import fr.utbm.gl52.droneSimulator.model.exception.OutOfMainAreaException;
-import fr.utbm.gl52.droneSimulator.view.ErrorPopupView;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.ChargingStationGraphicElement;
 import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
 import javafx.event.ActionEvent;
@@ -122,11 +121,9 @@ public class ParameterWindowController{
      * Launch the simulation
      *
      * @param event The trigger event
-     *
-     * @throws IOException The simulation window was not found
      */
     @FXML
-    public void launchSimulationWithCustomParameters(MouseEvent event) throws IOException {
+    public void launchSimulationWithCustomParameters(MouseEvent event) {
         if(isLeftClick(event)) {
             System.out.println("run simulation");
             if(isAtLeastOneDroneInstanciated()){

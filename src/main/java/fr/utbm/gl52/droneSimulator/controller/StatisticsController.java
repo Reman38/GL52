@@ -12,6 +12,10 @@ import static fr.utbm.gl52.droneSimulator.view.StatisticsWindowView.*;
 
 public class StatisticsController {
 
+    /**
+     * Refresh diagram's data
+     * @param ae The trigger event
+     */
     @FXML
     public void refreshData(ActionEvent ae){
         Parent root = ControllerHelper.getRootWith(ae);
