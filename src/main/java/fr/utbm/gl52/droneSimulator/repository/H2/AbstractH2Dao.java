@@ -14,7 +14,8 @@ import java.util.List;
  * @param <E> MyEntity
  */
 public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
-    public AbstractH2Dao(Class<E> clazz) {
+
+    AbstractH2Dao(Class<E> clazz) {
         super(clazz);
     }
 

@@ -21,14 +21,15 @@ import java.util.*;
 
 public class StatisticsWindowView {
     private static Parent staticRoot;
-    public static LineChart<Number, Number> lineChart;
-    public static LineChart<Number, Number> lineChart2;
-    public static LineChart<Number, Number> lineChart3;
-    public static LineChart<Number, Number> lineChart4;
+    private static LineChart<Number, Number> lineChart;
+    private static LineChart<Number, Number> lineChart2;
+    private static LineChart<Number, Number> lineChart3;
+    private static LineChart<Number, Number> lineChart4;
 
     /**
+     * Default constructor
      *
-     * @throws IOException
+     * @throws IOException The associated FXML file was not found
      */
     public StatisticsWindowView() throws IOException {
         var dbParameterService = new DbParameterService();
@@ -58,10 +59,10 @@ public class StatisticsWindowView {
     /**
      * Calculation of the average distance travelled per drones
      *
-     * @param dbDrones
-     * @return
+     * @param dbDrones drones of the iteration
+     * @return Average distance in kilometers
      */
-    public static Hashtable<Integer, Double> averageDistancesDronesTravelled(List<DbDrone> dbDrones) {
+    private static Hashtable<Integer, Double> averageDistancesDronesTravelled(List<DbDrone> dbDrones) {
         Double oldValue;
         Hashtable<Integer, Double> total = new Hashtable<>();
 
@@ -80,10 +81,10 @@ public class StatisticsWindowView {
     /**
      *  Calculation of the average charging number per drones
      *
-     * @param dbDrones
-     * @return
+     * @param dbDrones drones of the iteration
+     * @return Average of battery reload per drone
      */
-    public static Hashtable<Integer, Double> averageChargingNumberDrones(List<DbDrone> dbDrones) {
+    private static Hashtable<Integer, Double> averageChargingNumberDrones(List<DbDrone> dbDrones) {
         Double oldValue;
         Hashtable<Integer, Double> total = new Hashtable<>();
 
@@ -102,13 +103,13 @@ public class StatisticsWindowView {
     /**
      * Insert data to charts
      *
-     * @param simu1
-     * @param simu2
-     * @param dataSimu1
-     * @param dataSimu2
-     * @return
+     * @param simu1 Id of simulation 1
+     * @param simu2 Id of simulation 2
+     * @param dataSimu1 Data associated with simulation 1
+     * @param dataSimu2 Data associated with simulation 2
+     * @return Reworked data
      */
-    public static ObservableList<XYChart.Series<Number, Number>> getDummyChartData(Integer simu1, Integer simu2, Hashtable<Integer, Double> dataSimu1, Hashtable<Integer, Double> dataSimu2) {
+    private static ObservableList<XYChart.Series<Number, Number>> getDummyChartData(Integer simu1, Integer simu2, Hashtable<Integer, Double> dataSimu1, Hashtable<Integer, Double> dataSimu2) {
         ObservableList<XYChart.Series<Number, Number>> data = FXCollections.observableArrayList();
 
         XYChart.Series<Number, Number> simulation1 = new XYChart.Series<>();
@@ -134,10 +135,11 @@ public class StatisticsWindowView {
 
     /**
      * Get the value of a comboBox
-     * @param i
-     * @return
+     *
+     * @param i get the combobox number
+     * @return Value of the combo box
      */
-    public static Integer getComboBox(Integer i){
+    private static Integer getComboBox(Integer i){
         ComboBox comboBox;
         comboBox = (ComboBox) staticRoot.lookup("#comboBox" + i);
         return (Integer) comboBox.getValue();
@@ -146,7 +148,7 @@ public class StatisticsWindowView {
     /**
      * Initializes the graphs the first time
      */
-    public static void createCharts(){
+    private static void createCharts(){
         lineChart = new LineChart<>(new NumberAxis(), new NumberAxis());
         lineChart.setTitle("Average Distance Travelled Per Drone");
         lineChart.getXAxis().setLabel("Iteration");
@@ -187,7 +189,7 @@ public class StatisticsWindowView {
     /**
      *  Resize charts according to the size of windows
      */
-    public static void resizeCharts(){
+    private static void resizeCharts(){
         Pane statisticsPane = (Pane) staticRoot.lookup("#statisticsPane");
 
         lineChart.setPrefWidth((statisticsPane.getWidth()-50)/2);
@@ -236,10 +238,10 @@ public class StatisticsWindowView {
     /**
      *  Calculation of the average of an event per parcel
      *
-     * @param dbDatas
-     * @param simu
-     * @param event
-     * @return
+     * @param dbDatas Data from database associated with parcels
+     * @param simu Id of the simulation
+     * @param event Event to filter
+     * @return the average time delta associated with the event
      */
     private static Hashtable<Integer, Double> averageEventParcel(List<DbParcel> dbDatas, int simu, String event) {
         Double oldValue;
@@ -260,9 +262,9 @@ public class StatisticsWindowView {
     /**
      * Divides the total by the number of drone
      *
-     * @param average
-     * @param size
-     * @return
+     * @param average data per drone
+     * @param size Number of drones
+     * @return Computed average
      */
     private static Hashtable<Integer, Double> getAverageDrone(Hashtable<Integer, Double> average, int size) {
         Set<Integer> keys = average.keySet();
@@ -281,10 +283,10 @@ public class StatisticsWindowView {
     /**
      * Divides the total by the number of event
      *
-     * @param average
-     * @param simu
-     * @param event
-     * @return
+     * @param average Data per parcel
+     * @param simu Id of the simulation
+     * @param event Associated event
+     * @return Average associated with the event.
      */
     private static Hashtable<Integer, Double> getAverageEvent(Hashtable<Integer, Double> average, int simu, String event) {
         Set<Integer> keys = average.keySet();

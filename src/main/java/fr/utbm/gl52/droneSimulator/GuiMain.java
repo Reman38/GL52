@@ -25,7 +25,7 @@ public class GuiMain extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         HibernateHelper.getSessionFactory().close();
     }
 }
