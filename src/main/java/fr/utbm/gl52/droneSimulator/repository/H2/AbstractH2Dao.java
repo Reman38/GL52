@@ -77,6 +77,16 @@ public abstract class AbstractH2Dao<E> extends AbstractDao<E> {
         return entities.get(0);
     }
 
+    public int nbEventIterationSimu(int simulationId, int iterationId, String event) {
+        Session session = HibernateHelper.getSessionFactory().openSession();
+
+        List entities = session.createQuery("FROM " + clazz.getSimpleName() + " WHERE idsimu = " + simulationId + " AND iditeration = " + iterationId + " AND event = '" + event + "'").list();
+
+        session.close();
+
+        return entities.size();
+    }
+
     public void save(E entity) {
         Session session = HibernateHelper.getSessionFactory().openSession();
         session.beginTransaction();

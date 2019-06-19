@@ -64,7 +64,7 @@ public class StatisticsWindowView {
             }
         }
 
-        return getAverage(total, dbDrones.size());
+        return getAverageDrone(total, dbDrones.size());
     }
 
     public static Hashtable<Integer, Double> averageChargingNumberDrones(List<DbDrone> dbDrones) {
@@ -80,7 +80,7 @@ public class StatisticsWindowView {
             }
         }
 
-        return getAverage(total, dbDrones.size());
+        return getAverageDrone(total, dbDrones.size());
     }
 
     public static ObservableList<XYChart.Series<Number, Number>> getDummyChartData(Integer simu1, Integer simu2, Hashtable<Integer, Double> dataSimu1, Hashtable<Integer, Double> dataSimu2) {
@@ -115,22 +115,22 @@ public class StatisticsWindowView {
 
     public static void createCharts(){
         lineChart = new LineChart<>(new NumberAxis(), new NumberAxis());
-        lineChart.setTitle("Average Distance Travelled");
+        lineChart.setTitle("Average Distance Travelled By Drone");
         lineChart.getXAxis().setLabel("Iteration");
         lineChart.getYAxis().setLabel("Km");
 
         lineChart2 = new LineChart<>(new NumberAxis(), new NumberAxis());
-        lineChart2.setTitle("Average Charging Number");
+        lineChart2.setTitle("Average Charging Number By Drone");
         lineChart2.getXAxis().setLabel("Iteration");
         lineChart2.getYAxis().setLabel("Charging Number");
 
         lineChart3 = new LineChart<>(new NumberAxis(), new NumberAxis());
-        lineChart3.setTitle("Average Delivery Times");
+        lineChart3.setTitle("Average Delivery Time By Parcel");
         lineChart3.getXAxis().setLabel("Iteration");
         lineChart3.getYAxis().setLabel("Minute");
 
         lineChart4 = new LineChart<>(new NumberAxis(), new NumberAxis());
-        lineChart4.setTitle("Average Delivery Constraints Times");
+        lineChart4.setTitle("Average Time Delivery Constraints Delta By Parcel");
         lineChart4.getXAxis().setLabel("Iteration");
         lineChart4.getYAxis().setLabel("Minute");
 
@@ -181,8 +181,8 @@ public class StatisticsWindowView {
 
         lineChart.setData(getDummyChartData(simu1, simu2, averageDistancesDronesTravelled(dbDronesSimu1), averageDistancesDronesTravelled(dbDronesSimu2)));
         lineChart2.setData(getDummyChartData(simu1, simu2, averageChargingNumberDrones(dbDronesSimu1), averageChargingNumberDrones(dbDronesSimu2)));
-        lineChart3.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryDataSimu1), averageDeliveryTime(dbDeliveryDataSimu2)));
-        lineChart4.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryConstraintsDataSimu1), averageDeliveryTime(dbDeliveryConstraintsDataSimu2)));
+        lineChart3.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryDataSimu1, simu1, "delivery"), averageDeliveryTime(dbDeliveryDataSimu2, simu1, "delivery")));
+        lineChart4.setData(getDummyChartData(simu1, simu2, averageDeliveryTime(dbDeliveryConstraintsDataSimu1, simu2, "deliveryConstraints"), averageDeliveryTime(dbDeliveryConstraintsDataSimu2, simu2, "deliveryConstraints")));
 
         HBox hBox;
         hBox = (HBox) staticRoot.lookup("#hbox1");
@@ -194,7 +194,7 @@ public class StatisticsWindowView {
         hBox.getChildren().addAll(lineChart3, lineChart4);
     }
 
-    private static Hashtable<Integer, Double> averageDeliveryTime(List<DbParcel> dbDatas) {
+    private static Hashtable<Integer, Double> averageDeliveryTime(List<DbParcel> dbDatas, int simu, String event) {
         Double oldValue;
         Hashtable<Integer, Double> total = new Hashtable<>();
 
@@ -207,16 +207,34 @@ public class StatisticsWindowView {
             }
         }
 
-        return getAverage(total, dbDatas.size());
+        return getAverageEvent(total, simu, event);
     }
 
-    private static Hashtable<Integer, Double> getAverage(Hashtable<Integer, Double> average, int size) {
+    private static Hashtable<Integer, Double> getAverageDrone(Hashtable<Integer, Double> average, int size) {
         Set<Integer> keys = average.keySet();
         Iterator<Integer> itr = keys.iterator();
         Integer key;
+
         while(itr.hasNext()){
             key = itr.next();
+
             average.replace(key, average.get(key) / size);
+        }
+
+        return average;
+    }
+
+    private static Hashtable<Integer, Double> getAverageEvent(Hashtable<Integer, Double> average, int simu, String event) {
+        Set<Integer> keys = average.keySet();
+        Iterator<Integer> itr = keys.iterator();
+        Integer key;
+
+        var dbParcelService = new DbParcelService();
+
+        while(itr.hasNext()){
+            key = itr.next();
+
+            average.replace(key, average.get(key) / dbParcelService.getNbEventIterationSimu(simu, key, event));
         }
 
         return average;

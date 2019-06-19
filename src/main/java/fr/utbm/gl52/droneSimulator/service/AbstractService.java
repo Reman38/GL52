@@ -83,4 +83,8 @@ public abstract class AbstractService<E extends MyEntity> implements ServiceInte
     public List<E> getAllSimulation() {
         return getH2Dao().list();
     }
+
+    public int getNbEventIterationSimu(int simulationId, int iterationId, String event) {
+        return getH2Dao().nbEventIterationSimu(simulationId,iterationId,event);
+    }
 }
