@@ -51,7 +51,7 @@ public class Simulation {
     private static Float[] droneBatteryCapacity = new Float[2];
     private static Integer[] simulationDurationRange = new Integer[2];
     private static Integer[] numberOfSimulationIterationRange = new Integer[2];
-    private static Integer simulationDuration = 12;
+    private static Integer simulationDuration = 20;
     private static Integer numberOfSimulationIteration = numberOfSimulationIterationRange[0];
     private static Integer currentIteration = 1;
 
@@ -112,7 +112,7 @@ public class Simulation {
 
         currentIteration++;
 
-        flushDroneData();
+        storeDroneData();
 
         reloadDronesFromDatabase();
 
@@ -237,11 +237,11 @@ public class Simulation {
                 parcelTimeToDisappearRange[0],
                 parcelTimeToDisappearRange[1]
         );
-        flushDroneData();
-        flushChargingStationData();
+        storeDroneData();
+        storeChargingStationData();
     }
 
-    public static void flushDroneData() {
+    public static void storeDroneData() {
         for (Drone drone : drones) {
             droneService.save(
                     parameters.getIdSimu(),
@@ -257,7 +257,7 @@ public class Simulation {
         }
     }
 
-    public static void flushChargingStationData() {
+    public static void storeChargingStationData() {
         for (ChargingStation chargingStation : chargingStations) {
             chargingStationService.save(
                     parameters.getIdSimu(),
@@ -270,10 +270,94 @@ public class Simulation {
     public static void startDefault() {
         initMainArea();
         //popAreas();
+        instanciateDefaultDrones();
+        instanciateDefaultCharginStations();
         popParcels();
-        popDrones();
-        popChargingStations();
         globalStart();
+    }
+
+    private static void instanciateDefaultCharginStations() {
+        ChargingStation chargingStation = new ChargingStation(0);
+        try {
+            chargingStation.setX(281f);
+            chargingStation.setY(347f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+
+        chargingStations.add(chargingStation);
+
+        chargingStation = new ChargingStation(1);
+        try {
+            chargingStation.setX(798f);
+            chargingStation.setY(349f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+
+        chargingStations.add(chargingStation);
+
+        chargingStation = new ChargingStation(2);
+        try {
+            chargingStation.setX(1421f);
+            chargingStation.setY(336f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+
+        chargingStations.add(chargingStation);
+    }
+
+    private static void instanciateDefaultDrones() {
+        Drone drone;
+
+        drone = new Drone(0);
+        try {
+            drone.setX(344f);
+            drone.setY(246f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+        drone.setBatteryCapacity(31.61f);
+        drone.setWeightCapacity(11.65f);
+
+        drones.add(drone);
+
+        drone = new Drone(1);
+        try {
+            drone.setX(644f);
+            drone.setY(469f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+        drone.setBatteryCapacity(31.61f);
+        drone.setWeightCapacity(11.65f);
+
+        drones.add(drone);
+
+        drone = new Drone(2);
+        try {
+            drone.setX(344f);
+            drone.setY(246f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+        drone.setBatteryCapacity(49.12f);
+        drone.setWeightCapacity(6.51f);
+
+        drones.add(drone);
+
+        drone = new Drone(3);
+        try {
+            drone.setX(1186f);
+            drone.setY(450f);
+        } catch (OutOfMainAreaException e) {
+            e.printStackTrace();
+        }
+        drone.setBatteryCapacity(16.29f);
+        drone.setWeightCapacity(20f);
+
+        drones.add(drone);
     }
 
     public static void startRandom() {

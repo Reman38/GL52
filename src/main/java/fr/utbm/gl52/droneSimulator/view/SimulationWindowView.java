@@ -334,4 +334,8 @@ public class SimulationWindowView {
     public static void closeStage(){
         Platform.runLater(() -> root.getScene().getWindow().hide());
     }
+
+    public static List<DroneGraphicElement> getDroneGraphicElements() {
+        return droneGraphicElements;
+    }
 }

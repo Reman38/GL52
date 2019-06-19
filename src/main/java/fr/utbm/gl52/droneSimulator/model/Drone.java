@@ -5,6 +5,9 @@ import fr.utbm.gl52.droneSimulator.repository.HibernateHelper;
 import fr.utbm.gl52.droneSimulator.service.DbParcelService;
 import fr.utbm.gl52.droneSimulator.service.entity.DbParcel;
 import fr.utbm.gl52.droneSimulator.view.SimulationWindowView;
+import fr.utbm.gl52.droneSimulator.view.graphicElement.DroneGraphicElement;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import java.util.*;
 
@@ -253,6 +256,8 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
+        getDroneGraphic().getShape().setFill(Paint.valueOf("red"));
         realDeltaT = deltaT;
     }
 
@@ -284,6 +289,7 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
 
         loadParcelAtCoord(targetParcel.getCoords(), this);
         geographicalTarget = targetParcel.getDestCoords();
+        getDroneGraphic().getShape().setFill(Paint.valueOf("blue"));
 
         parcelT1 = Simulation.getElapsedTime();
     }
@@ -724,6 +730,22 @@ public class Drone extends CenteredAndSquaredSimulationElement implements Runnab
      */
     private Boolean isBatteryEmpty(){
         return batteryCapacity <= 0f;
+    }
+
+    /**
+     * get graphic element
+     *
+     * @return Drone graphic element
+     */
+    private DroneGraphicElement getDroneGraphic(){
+        DroneGraphicElement result = null;
+        for(DroneGraphicElement droneGraphic: SimulationWindowView.getDroneGraphicElements()){
+            if(droneGraphic.getSimulationElement() == this){
+                result = droneGraphic;
+            }
+        }
+
+        return result;
     }
 
     private void setRotation(Float radian) {
